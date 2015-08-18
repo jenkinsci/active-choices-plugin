@@ -28,6 +28,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.Util;
+import hudson.model.AbstractProject;
 
 import java.util.Collections;
 import java.util.Map;
@@ -42,6 +43,8 @@ import jenkins.model.Jenkins;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * A Groovy script.
@@ -57,6 +60,8 @@ public class GroovyScript extends AbstractScript {
     private static final long serialVersionUID = -4886250205110550815L;
 
     private static final Logger LOGGER = Logger.getLogger(GroovyScript.class.getName());
+    
+    private static final String JENKINS_PROJECT_VARIABLE_NAME = "jenkinsProject";
 
     /**
      * Script content.
@@ -98,7 +103,7 @@ public class GroovyScript extends AbstractScript {
      * (non-Javadoc)
      * @see org.biouno.unochoice.model.Script#eval(java.util.Map)
      */
-    public Object eval(Map<String, String> parameters) throws RuntimeException {
+     public Object eval(Map<String, String> parameters) throws RuntimeException {
         ClassLoader cl = null;
         try {
             cl = Jenkins.getInstance().getPluginManager().uberClassLoader;
@@ -108,9 +113,9 @@ public class GroovyScript extends AbstractScript {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
-
+   
         final Binding context = new Binding();
-
+        
         // @SuppressWarnings("unchecked")
         final Map<String, String> envVars = System.getenv();
         for (Entry<String, String> parameter : parameters.entrySet()) {
@@ -122,6 +127,12 @@ public class GroovyScript extends AbstractScript {
                 context.setVariable(parameter.getKey().toString(), value);
             }
         }
+        StaplerRequest req = Stapler.getCurrentRequest();
+        AbstractProject<?,?> project = null;
+        if (req!=null) {
+             project = req.findAncestorObject(AbstractProject.class);
+        } 
+        context.setVariable(JENKINS_PROJECT_VARIABLE_NAME, project);
 
         final GroovyShell shell = new GroovyShell(cl, context, CompilerConfiguration.DEFAULT);
         try {
