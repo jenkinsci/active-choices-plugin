@@ -77,7 +77,7 @@ public class TestIssue28785 {
     public void testEnvVarsExpanding() {
         Map<String, String> referencedParameters = new HashMap<String, String>();
         referencedParameters.put("flag", "any value...");
-        List<Integer> returnValue = (List<Integer>) scriptlerScript.eval(referencedParameters);
+        List<Integer> returnValue = (List<Integer>) scriptlerScript.eval(null,referencedParameters);
         assertEquals(Arrays.asList(new Integer[] { 1000, 100, 1 }), returnValue);
     }
 

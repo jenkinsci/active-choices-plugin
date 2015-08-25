@@ -84,7 +84,7 @@ public class TestIssue28764 {
     @SuppressWarnings("unchecked")
     @Test
     public void testEnvVarsExpanding() {
-        List<Integer> returnValue = (List<Integer>) scriptlerScript.eval();
+        List<Integer> returnValue = (List<Integer>) scriptlerScript.eval(null);
         assertEquals(Arrays.asList(new Integer[] { 1000, 100, 1 }), returnValue);
     }
 
