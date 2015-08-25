@@ -24,6 +24,8 @@
 
 package org.biouno.unochoice;
 
+import hudson.model.AbstractProject;
+import hudson.model.Label;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 
@@ -35,6 +37,7 @@ import java.util.logging.Level;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.biouno.unochoice.model.Script;
+import org.biouno.unochoice.util.JenkinsUtils;
 import org.biouno.unochoice.util.ScriptCallback;
 
 /**
@@ -55,6 +58,8 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     protected final Script script;
 
     private volatile int visibleItemCount = 1;
+    
+    private static final String JENKINS_PROJECT_VARIABLE_NAME = "jenkinsProject";
 
     /**
      * Inherited constructor.
@@ -133,8 +138,10 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object eval(Map<Object, Object> parameters) {
+        AbstractProject project = JenkinsUtils.findCurrentProject(this.getUUID());
+      
         try {
-            final ScriptCallback<Exception> callback = new ScriptCallback(getName(), script, parameters);
+            final ScriptCallback<Exception> callback = new ScriptCallback(getName(), script, parameters, project);
             return callback.call();
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Error executing script for dynamic parameter", e);

@@ -24,24 +24,31 @@
 
 package org.biouno.unochoice.model;
 
+import antlr.Version;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.Util;
+import hudson.model.AbstractProject;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
 import jenkins.model.Jenkins;
+import org.biouno.unochoice.util.JenkinsUtils;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * A Groovy script.
@@ -57,6 +64,8 @@ public class GroovyScript extends AbstractScript {
     private static final long serialVersionUID = -4886250205110550815L;
 
     private static final Logger LOGGER = Logger.getLogger(GroovyScript.class.getName());
+    
+    private static final String JENKINS_PROJECT_VARIABLE_NAME = "jenkinsProject";
 
     /**
      * Script content.
@@ -90,15 +99,15 @@ public class GroovyScript extends AbstractScript {
      * (non-Javadoc)
      * @see org.biouno.unochoice.model.Script#eval()
      */
-    public Object eval() {
-        return eval(Collections.<String, String>emptyMap());
+    public Object eval(AbstractProject project) {
+        return eval(project, Collections.<String, String>emptyMap());
     }
 
     /*
      * (non-Javadoc)
      * @see org.biouno.unochoice.model.Script#eval(java.util.Map)
      */
-    public Object eval(Map<String, String> parameters) throws RuntimeException {
+     public Object eval(AbstractProject project, Map<String, String> parameters) throws RuntimeException {
         ClassLoader cl = null;
         try {
             cl = Jenkins.getInstance().getPluginManager().uberClassLoader;
@@ -108,12 +117,13 @@ public class GroovyScript extends AbstractScript {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
-
+   
         final Binding context = new Binding();
-
+       
         // @SuppressWarnings("unchecked")
         final Map<String, String> envVars = System.getenv();
         for (Entry<String, String> parameter : parameters.entrySet()) {
+        
             Object value = parameter.getValue();
             if (value != null) {
                 if (value instanceof String) {
@@ -122,6 +132,13 @@ public class GroovyScript extends AbstractScript {
                 context.setVariable(parameter.getKey().toString(), value);
             }
         }
+        if(project==null){
+            StaplerRequest req = Stapler.getCurrentRequest();
+            if (req!=null) {
+                project = req.findAncestorObject(AbstractProject.class);
+            }
+        }
+        context.setVariable(JENKINS_PROJECT_VARIABLE_NAME, project);
 
         final GroovyShell shell = new GroovyShell(cl, context, CompilerConfiguration.DEFAULT);
         try {
