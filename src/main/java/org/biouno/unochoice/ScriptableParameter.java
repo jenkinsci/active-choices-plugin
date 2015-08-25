@@ -24,15 +24,7 @@
 
 package org.biouno.unochoice;
 
-import hudson.Extension;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.ParameterDefinition;
-import java.util.List;
 import java.util.Map;
-import net.sf.json.JSONObject;
-import org.kohsuke.stapler.Ancestor;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * A parameter that is obtained through the execution of a script.
@@ -50,36 +42,5 @@ public interface ScriptableParameter<T> extends UnoChoiceParameter {
      * @return script result as Map
      */
     T getChoices(Map<Object, Object> parameters);
-    
-    
-        // --- descriptor
 
-    @Extension
-    public static final class DescriptorImpl extends UnoChoiceParameterDescriptor {
-
-        private AbstractProject<?, ?> project;
-
-        /*
-         * Used to store a reference to the Jenkins project related to this parameter.
-         * A bit hacky, probably using another extension point would be a good idea.
-         */
-        @Override
-        public ParameterDefinition newInstance(StaplerRequest req, JSONObject formData) throws hudson.model.Descriptor.FormException {
-            List<Ancestor> ancestors = req.getAncestors();
-            AbstractProject<?, ?> project = null;
-            for (Ancestor ancestor : ancestors) {
-                Object object = ancestor.getObject();
-                if (object instanceof AbstractProject<?, ?>) {
-                    project = (AbstractProject<?, ?>) object;
-                    break;
-                }
-            }
-            this.project = project;
-            return super.newInstance(req, formData);
-        }
-
-        public AbstractProject<?, ?> getProject() {
-            return project;
-        }
-    }    
 }
