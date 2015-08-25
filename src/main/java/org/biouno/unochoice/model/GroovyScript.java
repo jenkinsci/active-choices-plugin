@@ -123,12 +123,7 @@ public class GroovyScript extends AbstractScript {
         // @SuppressWarnings("unchecked")
         final Map<String, String> envVars = System.getenv();
         for (Entry<String, String> parameter : parameters.entrySet()) {
-//            
-//            if(parameter.getKey().equals(JENKINS_PROJECT_VARIABLE_NAME)){
-//                String projectName = parameter.getValue();
-//                project=JenkinsUtils.findProjectFromName(projectName);
-//            }
-//            
+        
             Object value = parameter.getValue();
             if (value != null) {
                 if (value instanceof String) {
