@@ -24,6 +24,7 @@
 
 package org.biouno.unochoice.util;
 
+import hudson.model.AbstractProject;
 import hudson.remoting.Callable;
 
 import java.util.Map;
@@ -46,11 +47,13 @@ public class ScriptCallback<T extends Throwable> implements Callable<Object, T> 
     private final String name;
     private final Script script;
     private Map<String, String> parameters;
+    private AbstractProject project;
 
-    public ScriptCallback(String name, Script script, Map<String, String> parameters) {
+    public ScriptCallback(String name, Script script, Map<String, String> parameters, AbstractProject project) {
         this.name = name;
         this.script = script;
         this.parameters = parameters;
+        this.project = project;
     }
 
     public String getName() {
@@ -65,8 +68,12 @@ public class ScriptCallback<T extends Throwable> implements Callable<Object, T> 
         return script;
     }
 
+    public AbstractProject getProject() {
+        return project;
+    }
+
     public Object call() throws T {
-        final Object eval = script.eval(getParameters());
+        final Object eval = script.eval(project, getParameters());
         return eval;
     }
 

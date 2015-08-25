@@ -42,6 +42,8 @@ import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.util.Utils;
 import org.kohsuke.stapler.StaplerRequest;
 
+import java.util.UUID;
+
 /**
  * Abstract Uno Choice parameter. Provides basic methods common to all Uno Choice parameters.
  *
@@ -77,6 +79,8 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
     public static final int DEFAULT_MAX_VISIBLE_ITEM_COUNT = 10;
 
     private String randomName;
+    
+    private /*final*/ UUID _uuid;
 
       /**
        * Inherited constructor.
@@ -89,6 +93,7 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
     protected AbstractUnoChoiceParameter(String name, String description) {
         super(name, description);
         randomName = Utils.createRandomParameterName("choice-parameter", "");
+        _uuid = UUID.randomUUID();
     }
 
     /**
@@ -101,7 +106,11 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
             randomName = Utils.createRandomParameterName("choice-parameter", "");
         return randomName;
     }
-
+  public final UUID getUUID()
+  {
+    return _uuid;
+  }
+    
     /*
      * (non-Javadoc)
      * @see hudson.model.SimpleParameterDefinition#createValue(java.lang.String)

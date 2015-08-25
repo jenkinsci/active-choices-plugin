@@ -26,6 +26,7 @@ package org.biouno.unochoice.model;
 
 import hudson.Extension;
 import hudson.Util;
+import hudson.model.AbstractProject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -79,15 +80,15 @@ public class ScriptlerScript extends AbstractScript {
         return parameters;
     }
 
-    public Object eval() {
-        return eval(null);
+    public Object eval(AbstractProject project) {
+        return eval(project, null);
     }
 
     /*
      * (non-Javadoc)
      * @see org.biouno.unochoice.model.Script#eval(java.util.Map)
      */
-    public Object eval(Map<String, String> parameters) {
+    public Object eval(AbstractProject project, Map<String, String> parameters) {
         final Map<String, String> envVars = Utils.getSystemEnv();
         Map<String, String> evaledParameters = new HashMap<String, String>(envVars);
         // if we have any parameter that came from UI, let's eval and use them
@@ -103,7 +104,7 @@ public class ScriptlerScript extends AbstractScript {
         } else {
             evaledParameters.putAll(this.getParameters());
         }
-        return this.toGroovyScript().eval(evaledParameters);
+        return this.toGroovyScript().eval(project,evaledParameters);
     }
 
     // --- utility methods for conversion
