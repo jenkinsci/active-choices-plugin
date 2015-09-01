@@ -55,13 +55,13 @@ public class TestGroovyScript {
 	public void testEvals() {
 		GroovyScript script = new GroovyScript("return [flag, 'b']", "return ['EMPTY!']");
 		
-		List<String> returnValue = (List<String>) script.eval();
+		List<String> returnValue = (List<String>) script.eval(null);
 		assertEquals(Arrays.asList(new String[]{"EMPTY!"}), returnValue);
 		
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("flag", "true");
 		
-		returnValue = (List<String>) script.eval(parameters);
+		returnValue = (List<String>) script.eval(null,parameters);
 		assertEquals(Arrays.asList(new String[]{"true", "b"}), returnValue);
 	}
 	

@@ -49,7 +49,7 @@ public class TestScriptlerExpandsParameters {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("flag", "test");
 
-        List<Integer> returnValue = (List<Integer>) script.eval(parameters);
+        List<Integer> returnValue = (List<Integer>) script.eval(null,parameters);
         assertEquals(Arrays.asList(new Integer[]{1, 2, 3}), returnValue);
     }
 

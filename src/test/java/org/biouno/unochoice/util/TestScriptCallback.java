@@ -48,7 +48,8 @@ public class TestScriptCallback {
 		ScriptCallback<Exception> sc = new ScriptCallback<Exception>(
 			"callback1",
 			script, 
-			parameters
+			parameters,
+                        null
 		);
 		
 		assertEquals("callback1", sc.getName());

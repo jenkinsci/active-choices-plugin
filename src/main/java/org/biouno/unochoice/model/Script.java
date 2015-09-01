@@ -24,6 +24,7 @@
 
 package org.biouno.unochoice.model;
 
+import hudson.model.AbstractProject;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public interface Script extends Serializable {
      *
      * @return output of the script
      */
-    Object eval();
+    Object eval(AbstractProject project);
 
     /**
      * Evaluates the script using the given parameters binding parameters.
@@ -48,6 +49,6 @@ public interface Script extends Serializable {
      * @param parameters binding parameters
      * @return output of the script
      */
-    Object eval(Map<String, String> parameters);
+    Object eval(AbstractProject project, Map<String, String> parameters);
 
 }

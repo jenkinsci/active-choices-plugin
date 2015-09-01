@@ -76,7 +76,7 @@ public class TestScriptlerScript {
 	public void testEvals() {
 		ScriptlerScript script = new ScriptlerScript("id", params);
 		
-		List<Integer> returnValue = (List<Integer>) script.eval();
+		List<Integer> returnValue = (List<Integer>) script.eval(null);
 		assertEquals(Arrays.asList(new Integer[]{1,2,3}), returnValue);
 	}
 	
