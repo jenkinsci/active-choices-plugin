@@ -151,11 +151,22 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "getDefaultParameterValue");
         }
+        /* The commented out approach led into huge performance loss in the Jenkins UI,
+         * when the default parameter values are calculated multiple times, eg by other plugins
+         * (like the inheritance plugin).
+         * Anyway, one should reconsider if this approach is right, as the 'default' value
+         * has rather more static semantic, while the below approach assumes the first element in the list,
+         * which could be rather volatile value, by the nature and dynamic of the script logic behind it.
+         * Maybe the 'default' value should be provided as an UI option, used in case when the script 
+         * returns 'null'.
+         * Until it's redesigned this method will return an empty string.
+         *
+        */
         Object firstElement = "";
-        final Map<Object, Object> choices = getChoices(Collections.<Object, Object> emptyMap());
-        if (choices != null && choices.size() > 0) {
-            firstElement = choices.entrySet().iterator().next().getValue();
-        }
+//        final Map<Object, Object> choices = getChoices(Collections.<Object, Object> emptyMap());
+//        if (choices != null && choices.size() > 0) {
+//            firstElement = choices.entrySet().iterator().next().getValue();
+//        }
         final String name = getName();
         final String value = ObjectUtils.toString(firstElement, ""); // Jenkins doesn't like null parameter values
         final StringParameterValue stringParameterValue = new StringParameterValue(name, value);
