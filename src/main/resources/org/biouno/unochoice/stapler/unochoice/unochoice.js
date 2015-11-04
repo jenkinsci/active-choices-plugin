@@ -320,7 +320,8 @@ var UnoChoice = UnoChoice || (function($) {
                                 label.innerHTML = entry;
                             }
                             hiddenValue.setAttribute('json', key);
-                            if(String(JSON.parse(choices)[0][i]).endsWith(':selected')) {
+                            var selectWhich = JSON.parse(choices)[0];
+                            if(String(selectWhich[i]).endsWith(':selected')) {
                             	 hiddenValue.setAttribute('name', 'value');
                             } else {
                             	 hiddenValue.setAttribute('name', '');
