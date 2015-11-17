@@ -61,12 +61,16 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param script script
      * @param choiceType choice type
      * @param filterable filter flag
+     * @param filterLength length when filter start filtering
      * @deprecated see JENKINS-32149
      */
     public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable) {
+    @DataBoundConstructor
+    public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable, Integer filterLength) {
         super(name, description, script);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
+        this.filterLength = filterLength;
     }
 
     /**
@@ -78,13 +82,15 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param script script
      * @param choiceType choice type
      * @param filterable filter flag
+     * @param filterLength length when filter start filtering
      */
     @DataBoundConstructor
     public ChoiceParameter(String name, String description, String randomName, Script script, String choiceType,
-            Boolean filterable) {
+            Boolean filterable, Integer filterLength) {
         super(name, description, randomName, script);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
+        this.filterLength = filterLength;
     }
 
     /*
@@ -103,6 +109,14 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      */
     public Boolean getFilterable() {
         return filterable;
+    }
+
+    /**
+     * Gets the filter length
+     * @return
+     */
+    public Integer getFilterLength() {
+        return filterLength;
     }
 
     // --- descriptor

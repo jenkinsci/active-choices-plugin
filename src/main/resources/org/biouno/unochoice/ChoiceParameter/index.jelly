@@ -14,7 +14,7 @@
     if (parameterHtmlElement &amp;&amp; parameterHtmlElement.get(0)) {
         var filterHtmlElement = parentDiv.find('.uno_choice_filter');
         if (filterHtmlElement &amp;&amp; filterHtmlElement.get(0)) {
-            filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0));
+            filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), ${it.getFilterLength()});
             parameterHtmlElement.filterElement = filterElement; // TBD: not very elegant
         } else {
             console.log('Filter error: Missing filter element!');
