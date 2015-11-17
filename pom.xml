@@ -11,7 +11,7 @@
 
 	<groupId>org.biouno</groupId>
 	<artifactId>uno-choice</artifactId>
-	<version>1.4-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<name>Active Choices Plug-in</name>
