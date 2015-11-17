@@ -61,6 +61,11 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
     private final Boolean filterable;
 
     /**
+     * Filter Length
+     */
+    private final Integer filterLength;
+
+    /**
      * Constructor called from Jelly with parameters.
      *
      * @param name name
@@ -69,13 +74,15 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param filterable filter flag
+     * @param filterLength length when filter start filtering
      */
     @DataBoundConstructor
     public CascadeChoiceParameter(String name, String description, Script script, 
-            String choiceType, String referencedParameters, Boolean filterable) {
+            String choiceType, String referencedParameters, Boolean filterable, Integer filterLength) {
         super(name, description, script, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
+        this.filterLength = filterLength;
     }
 
     /*
@@ -96,6 +103,13 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
         return filterable;
     }
 
+    /**
+     * Gets the filter length
+     * @return
+     */
+    public Integer getFilterLength() {
+        return filterLength;
+    }
     // --- descriptor
 
     @Extension

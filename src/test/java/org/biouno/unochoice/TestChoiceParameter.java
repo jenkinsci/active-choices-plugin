@@ -37,12 +37,13 @@ public class TestChoiceParameter {
 		GroovyScript script = new GroovyScript("return ['a', 'b']", "return ['EMPTY!']");
 		ChoiceParameter param = new ChoiceParameter(
 			"param000", "description", 
-			script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true);
+			script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true, 5);
 		
 		assertEquals("param000", param.getName());
 		assertEquals("description", param.getDescription());
 		assertEquals(script, param.getScript());
 		assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
 		assertTrue(param.getFilterable());
+		assertEquals(Integer.valueOf(5), param.getFilterLength());
 	}
 }
