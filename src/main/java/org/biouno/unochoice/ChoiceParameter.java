@@ -57,14 +57,15 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * Filter Length
      */
     private final Integer filterLength;
+
     /**
      * Constructor called from Jelly with parameters.
      *
-     * @param name name
-     * @param description description
-     * @param script script
-     * @param choiceType choice type
-     * @param filterable filter flag
+     * @param name         name
+     * @param description  description
+     * @param script       script
+     * @param choiceType   choice type
+     * @param filterable   filter flag
      * @param filterLength length when filter start filtering
      */
     @DataBoundConstructor
@@ -95,9 +96,13 @@ public class ChoiceParameter extends AbstractScriptableParameter {
 
     /**
      * Gets the filter length
+     *
      * @return
      */
     public Integer getFilterLength() {
+        if (filterLength == null) {
+            return 1;
+        }
         return filterLength;
     }
 
