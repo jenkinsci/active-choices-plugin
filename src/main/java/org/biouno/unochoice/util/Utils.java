@@ -24,12 +24,21 @@
 
 package org.biouno.unochoice.util;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.biouno.unochoice.AbstractUnoChoiceParameter;
 import org.jenkinsci.plugins.scriptler.config.Script;
 import org.jenkinsci.plugins.scriptler.config.ScriptlerConfiguration;
+
+import hudson.model.ParameterDefinition;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.model.Project;
+import jenkins.model.Jenkins;
 
 /**
  * Utility methods.
@@ -110,5 +119,90 @@ public class Utils {
      */
     public static Map<String, String> getSystemEnv() {
         return System.getenv();
+    }
+
+    /**
+     * Get project in Jenkins given its name.
+     *
+     * @since 1.3
+     * @param projectName project name in Jenkins
+     * @return Project or {@code null} if none with this name
+     */
+    public static Project<?, ?> getProjectByName(String projectName) {
+        Jenkins instance = Jenkins.getInstance();
+        if (instance != null) {
+            Object o = instance.getItem(projectName);
+            if (o instanceof Project)
+                return (Project<?, ?>) o;
+        }
+        return null;
+    }
+
+    /**
+     * Find the current project give its parameter UUID.
+     *
+     * @author dynamic-parameter-plugin
+     * @since 1.3
+     * @param parameterUUID parameter UUID
+     * @return {@code null} if the current project cannot be found
+     */
+    @SuppressWarnings("rawtypes")
+    public static Project findProjectByParameterUUID(String parameterUUID) {
+        Jenkins instance = Jenkins.getInstance();
+        if (instance != null) {
+            List<Project> projects = instance.getAllItems(Project.class);
+            for (Project project : projects) {
+                if (isParameterDefintionOf(parameterUUID, project)) {
+                    return project;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if this parameter definition is a definition of the given project.
+     *
+     * @since 1.3
+     * @author dynamic-parameter-plugin
+     * @param parameterUUID UUID of the project parameter
+     * @param project the project to search for this parameter definition.
+     * @return {@code true} if the project contains this parameter definition.
+     */
+    @SuppressWarnings("rawtypes")
+    private static boolean isParameterDefintionOf(String parameterUUID, Project project) {
+        List<ParameterDefinition> parameterDefinitions = getProjectParameterDefinitions(project);
+        for (ParameterDefinition pd : parameterDefinitions) {
+            if (pd instanceof AbstractUnoChoiceParameter) {
+                AbstractUnoChoiceParameter parameterDefinition = (AbstractUnoChoiceParameter) pd;
+                String uuid = parameterDefinition.getRandomName();
+                if (ObjectUtils.equals(parameterUUID, uuid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Get the parameter definitions for the given project.
+     *
+     * @since 1.3
+     * @author dynamic-parameter-plugin
+     * @param project the project for which the parameter definitions should be found
+     * @return parameter definitions or an empty list
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static List<ParameterDefinition> getProjectParameterDefinitions(Project project) {
+        ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) project
+                .getProperty(ParametersDefinitionProperty.class);
+        if (parametersDefinitionProperty != null) {
+            List<ParameterDefinition> parameterDefinitions = parametersDefinitionProperty.getParameterDefinitions();
+            if (parameterDefinitions != null) {
+                return parameterDefinitions;
+            }
+        }
+        return Collections.EMPTY_LIST;
     }
 }

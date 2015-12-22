@@ -295,6 +295,9 @@ var UnoChoice = UnoChoice || (function($) {
                             var hiddenValue = document.createElement('input');
                             if (selectedElements.indexOf(i) >= 0) {
                                 input.setAttribute('checked', 'checked');
+                                hiddenValue.setAttribute('name', 'value');
+                            } else {
+                            	hiddenValue.setAttribute('name', '');
                             }
                             if (!entry instanceof String) {
                                 input.setAttribute('json', key);
@@ -320,7 +323,6 @@ var UnoChoice = UnoChoice || (function($) {
                                 label.innerHTML = entry;
                             }
                             hiddenValue.setAttribute('json', key);
-                            hiddenValue.setAttribute('name', '');
                             hiddenValue.setAttribute("value", key);
                             hiddenValue.setAttribute("class", _self.getParameterName());
                             hiddenValue.setAttribute("type", "hidden");
@@ -355,9 +357,9 @@ var UnoChoice = UnoChoice || (function($) {
             } // if (oldSel.tagName == 'SELECT') { // else if (oldSel.tagName == 'DIV') {
         });
         // propagate change
-//        console.log('Propagating change event from ' + this.getParameterName());
-//        var e = jQuery.Event('change', {parameterName: this.getParameterName()});
-//        jQuery(this.getParameterElement()).trigger(e);
+        // console.log('Propagating change event from ' + this.getParameterName());
+        // var e = jQuery.Event('change', {parameterName: this.getParameterName()});
+        // jQuery(this.getParameterElement()).trigger(e);
         if (!avoidRecursion) {
             var otherCascadeParameters = cascadeParameters;
             if (cascadeParameters && cascadeParameters.length > 0) {
@@ -517,9 +519,9 @@ var UnoChoice = UnoChoice || (function($) {
             });
         }
         // propagate change
-//        console.log('Propagating change event from ' + this.getParameterName());
-//        var e = jQuery.Event('change', {parameterName: this.getParameterName()});
-//        jQuery(this.getParameterElement()).trigger(e);
+        // console.log('Propagating change event from ' + this.getParameterName());
+        // var e = jQuery.Event('change', {parameterName: this.getParameterName()});
+        // jQuery(this.getParameterElement()).trigger(e);
         if (!avoidRecursion) {
             var otherCascadeParameters = cascadeParameters;
             if (cascadeParameters && cascadeParameters.length > 0) {

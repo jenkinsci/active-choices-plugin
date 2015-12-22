@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) <2014-2015> <Ioannis Moutsatsos, Bruno P. Kinoshita>
+ * Copyright (c) 2014-2015 Ioannis Moutsatsos, Bruno P. Kinoshita
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,6 @@
 
 package org.biouno.unochoice;
 
-import hudson.model.ParameterValue;
-import hudson.model.StringParameterValue;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,8 +31,17 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.biouno.unochoice.util.ScriptCallback;
+import org.biouno.unochoice.util.Utils;
+import org.kohsuke.stapler.Ancestor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+
+import hudson.model.ParameterValue;
+import hudson.model.Project;
+import hudson.model.StringParameterValue;
 
 /**
  * Base class for parameters with scripts.
@@ -43,18 +49,33 @@ import org.biouno.unochoice.util.ScriptCallback;
  * @author Bruno P. Kinoshita
  * @since 0.20
  */
-public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParameter implements ScriptableParameter<Map<Object, Object>> {
+public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParameter
+    implements ScriptableParameter<Map<Object, Object>> {
 
     /*
      * Serial UID.
      */
-    private static final long serialVersionUID = -1718340722437175976L;
-
-    protected static final String SEPARATOR = "__LESEP__"; // used to split values that come from the UI via Ajax POST's
-
-    protected final Script script;
-
+    private static final long serialVersionUID = -6533352776594510145L;
+    /**
+     * Used to split values that come from the UI via Ajax POST's
+     */
+    protected static final String SEPARATOR = "__LESEP__";
+    /**
+     * Constant used to add the project in the environment variables map.
+     */
+    protected static final String JENKINS_PROJECT_VARIABLE_NAME = "jenkinsProject";
+    /**
+     * Number of visible items on the screen.
+     */
     private volatile int visibleItemCount = 1;
+    /**
+     * Script used to render the parameter.
+     */
+    protected final Script script;
+    /**
+     * The project name.
+     */
+    private final String projectName;
 
     /**
      * Inherited constructor.
@@ -64,10 +85,43 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * @param name name
      * @param description description
      * @param script script used to generate the list of parameter values
+     * @deprecated see JENKINS-32149
      */
     protected AbstractScriptableParameter(String name, String description, Script script) {
         super(name, description);
         this.script = script;
+        this.projectName = null;
+    }
+
+    /**
+     * Inherited constructor.
+     *
+     * {@inheritDoc}
+     *
+     * @param name name
+     * @param description description
+     * @param randomName parameter random generated name (uuid)
+     * @param script script used to generate the list of parameter values
+     */
+    protected AbstractScriptableParameter(String name, String description, String randomName, Script script) {
+        super(name, description, randomName);
+        this.script = script;
+        // Try to get the project name from the current request. In case of being called in some other non-web way,
+        // the name will be fetched later via Jenkins.getInstance() and iterating through all items. This is for a
+        // performance wise approach first.
+        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        String projectName = null;
+        if (currentRequest != null) {
+            final Ancestor ancestor = currentRequest.findAncestor(Project.class);
+            if (ancestor != null) {
+                final Object o = ancestor.getObject();
+                if (o instanceof Project) {
+                    final Project<?, ?> project = (Project<?, ?>) o;
+                    projectName = project.getName();
+                }
+            }
+        }
+        this.projectName = projectName;
     }
 
     /**
@@ -80,13 +134,32 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     }
 
     /**
-     * Gets the current parameters, be it before or after other referenced parameters 
-     * triggered an update.
+     * Gets the current parameters, be it before or after other referenced parameters triggered an update. Populates
+     * parameters common to all evaluations, such as jenkinsProject, which is the current Jenkins project.
      *
-     * @return the current parameters
+     * @return the current parameters with pre-populated defaults
      */
     public Map<Object, Object> getParameters() {
         return Collections.emptyMap();
+    }
+
+    /**
+     * Helper parameters used to render the parameter definition.
+     * @return Map with helper parameters
+     */
+    private Map<Object, Object> getHelperParameters() {
+        final Map<Object, Object> helperParameters = new LinkedHashMap<Object, Object>();
+        Project<?, ?> project = null;
+        if (StringUtils.isNotBlank(this.projectName)) {
+            // first we try to get the item given its name, which is more efficient
+            project = Utils.getProjectByName(this.projectName);
+        } else {
+            // otherwise, in case we don't have the item name, we iterate looking for a job that uses this UUID
+            project = Utils.findProjectByParameterUUID(this.getRandomName());
+        }
+        if (project != null)
+            helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
+        return helperParameters;
     }
 
     public Map<Object, Object> getChoices() {
@@ -117,7 +190,8 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
             visibleItemCount = map.size();
             return map;
         }
-        LOGGER.warning(String.format("Script parameter with name '%s' is not an instance of java.util.Map. The parameter value is %s", getName(), value));
+        LOGGER.warning(String.format("Script parameter with name '%s' is not an instance of java.util.Map. The "
+                + "parameter value is %s", getName(), value));
         return Collections.emptyMap();
     }
 
@@ -135,7 +209,9 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object eval(Map<Object, Object> parameters) {
         try {
-            final ScriptCallback<Exception> callback = new ScriptCallback(getName(), script, parameters);
+            Map<Object, Object> scriptParameters = getHelperParameters();
+            scriptParameters.putAll(parameters);
+            final ScriptCallback<Exception> callback = new ScriptCallback(getName(), script, scriptParameters);
             return callback.call();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error executing script for dynamic parameter", e);

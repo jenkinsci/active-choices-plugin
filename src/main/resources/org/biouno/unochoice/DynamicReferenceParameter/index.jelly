@@ -70,7 +70,13 @@
     }
     // find the cascade parameter element
     var parentDiv = jQuery('#${paramName}');
-    
+    // if the parameter class has been set to hidden, then we hide it now
+    if (parentDiv.get(0).getAttribute('class') == 'hidden_uno_choice_parameter') {
+      var parentTbody = jQuery(parentDiv.get(0)).parents('tbody');
+      if (parentTbody &amp;&amp; parentTbody.length > 0) {
+        jQuery(parentTbody.get(0)).attr('style', 'visibility:hidden;position:absolute;');
+      }
+    }
     var parameterHtmlElement = null;
     for(var i = 0; i &lt; parentDiv.children().length; i++) {
         var child = parentDiv.children()[i];
@@ -123,13 +129,6 @@
                         }
                     }
                 }
-            }
-            
-            if (div &amp;&amp; div.getAttribute('class') == 'hidden_uno_choice_parameter') {
-              var parentTbody = jQuery(div).parents('tbody');
-              if (parentTbody &amp;&amp; parentTbody.length > 0) {
-                jQuery(parentTbody.get(0)).attr('style', 'visibility:hidden;position:absolute;');
-              }
             }
             
             new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);

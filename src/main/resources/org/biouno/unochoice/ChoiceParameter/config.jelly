@@ -1,6 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:invisibleEntry>
+    <f:textbox name="parameter.randomName" value="${instance.randomName}" />
+  </f:invisibleEntry>
   <f:entry title="${%Name}">
     <f:textbox name="parameter.name" value="${instance.name}" />
   </f:entry>

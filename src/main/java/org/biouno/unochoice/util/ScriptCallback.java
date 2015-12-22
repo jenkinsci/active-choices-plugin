@@ -25,11 +25,14 @@
 package org.biouno.unochoice.util;
 
 import hudson.remoting.Callable;
+import jenkins.security.Roles;
 
 import java.util.Map;
 
 import org.biouno.unochoice.model.Script;
+import org.jenkinsci.remoting.Role;
 import org.jenkinsci.remoting.RoleChecker;
+import org.jenkinsci.remoting.RoleSensitive;
 
 /**
  * A callable (Jenkins remoting API) object that executes the script locally (when executed in the master)
@@ -48,33 +51,63 @@ public class ScriptCallback<T extends Throwable> implements Callable<Object, T> 
     // Map is not serializable, but LinkedHashMap is. Ignore static analysis errors
     private Map<String, String> parameters;
 
+    /**
+     * Create a new ScriptCallback. This can be used to execute code either local or
+     * remotely.
+     * @param name callable name
+     * @param script script
+     * @param parameters Map of parameters
+     */
     public ScriptCallback(String name, Script script, Map<String, String> parameters) {
         this.name = name;
         this.script = script;
         this.parameters = parameters;
     }
 
+    /**
+     * Get script callback name.
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get script parameters. Used to populate bound variables.
+     * @return Map with parameters
+     */
     public Map<String, String> getParameters() {
         return parameters;
     }
 
+    /**
+     * Get the script.
+     * @return Script script
+     */
     public Script getScript() {
         return script;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see hudson.remoting.Callable#call()
+     */
     @Override
     public Object call() throws T {
         final Object eval = script.eval(getParameters());
         return eval;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jenkinsci.remoting.RoleSensitive#checkRoles(org.jenkinsci.remoting.RoleChecker)
+     */
     @Override
     public void checkRoles(RoleChecker roleChecker) throws SecurityException {
-        // FIXME: check script roles and add security
+        // normally parameters will be executed on the master, but in the
+        // future we may start evaluating on slaves as well, with a custom
+        // classpath as in dynamic-parameter-plugin
+        roleChecker.check((RoleSensitive) this, Role.UNKNOWN);
     }
 
 }

@@ -84,13 +84,33 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
      * @param script script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
-     * @param omitValueField used in the UI to decide whether to include a hidden empty &lt;input name=value&gt;. 
+     * @param omitValueField used in the UI to decide whether to include a hidden empty &lt;input name=value&gt;.
      * <code>false</code> by default.
+     * @deprecated see JENKINS-32149
      */
-    @DataBoundConstructor
     public DynamicReferenceParameter(String name, String description, Script script, 
             String choiceType, String referencedParameters, Boolean omitValueField) {
         super(name, description, script, referencedParameters);
+        this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
+        this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
+    }
+
+    /**
+     * Constructor called from Jelly with parameters.
+     *
+     * @param name name
+     * @param description description
+     * @param randomName parameter random generated name (uuid)
+     * @param script script
+     * @param choiceType choice type
+     * @param referencedParameters referenced parameters
+     * @param omitValueField used in the UI to decide whether to include a hidden empty &lt;input name=value&gt;.
+     * <code>false</code> by default.
+     */
+    @DataBoundConstructor
+    public DynamicReferenceParameter(String name, String description, String randomName, Script script,
+            String choiceType, String referencedParameters, Boolean omitValueField) {
+        super(name, description, randomName, script, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
     }

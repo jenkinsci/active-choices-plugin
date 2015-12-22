@@ -31,13 +31,13 @@ import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * <p>A choice parameter, that gets updated when another parameter changes. The simplest
+ * <p>A choice parameter, that gets updated when another parameter changes. The simplest 
  * use case for this, would be having a list of states, and when the user selected a
  * state it would trigger an update of the city fields.</p>
- * <p>
+ *
  * <p>The state parameter would be a choice parameter, and the city parameter would be a
  * cascade choice parameter, that referenced the former.</p>
- * <p>
+ *
  * <p>Its options are retrieved from the evaluation of a Groovy script.</p>
  *
  * @author Bruno P. Kinoshita
@@ -68,18 +68,38 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
     /**
      * Constructor called from Jelly with parameters.
      *
-     * @param name                 name
-     * @param description          description
-     * @param script               script
-     * @param choiceType           choice type
+     * @param name name
+     * @param description description
+     * @param script script
+     * @param choiceType choice type
      * @param referencedParameters referenced parameters
-     * @param filterable           filter flag
+     * @param filterable filter flag
      * @param filterLength         length when filter start filtering
+     * @deprecated see JENKINS-32149
+     */
+    public CascadeChoiceParameter(String name, String description, Script script, 
+            String choiceType, String referencedParameters, Boolean filterable, Integer filterLength) {
+        super(name, description, script, referencedParameters);
+        this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
+        this.filterable = filterable;
+        this.filterLength = filterLength;
+    }
+
+    /**
+     * Constructor called from Jelly with parameters.
+     *
+     * @param name name
+     * @param description description
+     * @param randomName parameter random generated name (uuid)
+     * @param script script
+     * @param choiceType choice type
+     * @param referencedParameters referenced parameters
+     * @param filterable filter flag
      */
     @DataBoundConstructor
-    public CascadeChoiceParameter(String name, String description, Script script,
-                                  String choiceType, String referencedParameters, Boolean filterable, Integer filterLength) {
-        super(name, description, script, referencedParameters);
+    public CascadeChoiceParameter(String name, String description, String randomName, Script script,
+            String choiceType, String referencedParameters, Boolean filterable, Integer filterLength) {
+        super(name, description, randomName, script, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = filterLength;

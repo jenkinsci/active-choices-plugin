@@ -57,9 +57,30 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
      */
     private final String referencedParameters;
 
-    protected AbstractCascadableParameter(String name, String description,
-            Script script, String referencedParameters) {
+    /**
+     * Create a new abstract cascadable parameter.
+     * @param name name
+     * @param description description
+     * @param script script used to generate the list of parameter values
+     * @param referencedParameters comma separated list of referenced parameters
+     * @deprecated see JENKINS-32149
+     */
+    protected AbstractCascadableParameter(String name, String description, Script script, String referencedParameters) {
         super(name, description, script);
+        this.referencedParameters = referencedParameters;
+    }
+
+    /**
+     * Create a new abstract cascadable parameter.
+     * @param name name
+     * @param description description
+     * @param randomName parameter random generated name (uuid)
+     * @param script script used to generate the list of parameter values
+     * @param referencedParameters comma separated list of referenced parameters
+     */
+    protected AbstractCascadableParameter(String name, String description, String randomName,
+            Script script, String referencedParameters) {
+        super(name, description, randomName, script);
         this.referencedParameters = referencedParameters;
     }
 

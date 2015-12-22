@@ -78,17 +78,37 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
 
     private String randomName;
 
-      /**
-       * Inherited constructor.
-       *
-       * {@inheritDoc}.
-       *
-       * @param name name
-       * @param description description
-       */
+    /**
+     * Inherited constructor.
+     *
+     * {@inheritDoc}.
+     *
+     * @param name name
+     * @param description description
+     * FIXME: remove in new major release
+     * @deprecated to fix JENKINS-32149 (create random name only once - this is the parameter ID)
+     */
     protected AbstractUnoChoiceParameter(String name, String description) {
         super(name, description);
         randomName = Utils.createRandomParameterName("choice-parameter", "");
+    }
+
+    /**
+     * Inherited constructor.
+     *
+     * {@inheritDoc}.
+     *
+     * @param name name
+     * @param description description
+     * @param randomName the parameter unique ID (a random uuid) created once per parameter. If blank or {@code null}
+     * it will be created a new random parameter name that starts with choice-parameter
+     */
+    protected AbstractUnoChoiceParameter(String name, String description, String randomName) {
+        super(name, description);
+        if (StringUtils.isBlank(randomName))
+            this.randomName = Utils.createRandomParameterName("choice-parameter", "");
+        else
+            this.randomName = randomName;
     }
 
     /**
@@ -97,8 +117,6 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
      * @return a random string, created during object instantiation.
      */
     public String getRandomName() {
-        if (StringUtils.isBlank(randomName))
-            randomName = Utils.createRandomParameterName("choice-parameter", "");
         return randomName;
     }
 
