@@ -10,6 +10,9 @@
   <f:entry title="${%Script}">
     <f:hetero-radio field="script" descriptors="${descriptor.getApplicableResultSeekers()}" />
   </f:entry>
+  <f:entry title="${%Visibility Script}">
+    <f:hetero-radio field="visibilityScript" descriptors="${descriptor.getApplicableResultSeekers()}" />
+  </f:entry>
   <f:entry title="${%Description}" field="description" help="/help/parameter/description.html">
     <f:textarea name="parameter.description" value="${instance.description}" />
   </f:entry>

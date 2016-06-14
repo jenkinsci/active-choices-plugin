@@ -42,22 +42,22 @@ public class TestScriptCallback {
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-	@Test
-	public void testScriptCallback() {
-		List<ScriptlerScriptParameter> params = new ArrayList<ScriptlerScriptParameter>();
-		params.add(new ScriptlerScriptParameter("name1", "value1"));
-		params.add(new ScriptlerScriptParameter("name2", "value2"));
-		GroovyScript script = new GroovyScript("return ['a', 'b']", "return ['EMPTY!']");
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("flag", "true");
-		ScriptCallback<Exception> sc = new ScriptCallback<Exception>(
-			"callback1",
-			script, 
-			parameters
-		);
-		
-		assertEquals("callback1", sc.getName());
-		assertEquals(sc.getScript(), script);
-	}
-	
+    @Test
+    public void testScriptCallback() {
+        List<ScriptlerScriptParameter> params = new ArrayList<ScriptlerScriptParameter>();
+        params.add(new ScriptlerScriptParameter("name1", "value1"));
+        params.add(new ScriptlerScriptParameter("name2", "value2"));
+        GroovyScript script = new GroovyScript("return ['a', 'b']", "return ['EMPTY!']");
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("flag", "true");
+        ScriptCallback<Exception> sc = new ScriptCallback<Exception>(
+            "callback1",
+            script,
+            parameters
+        );
+
+        assertEquals("callback1", sc.getName());
+        assertEquals(sc.getScript(), script);
+    }
+
 }

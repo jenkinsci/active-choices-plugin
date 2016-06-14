@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -40,32 +41,37 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestParametersOrder {
 
-    private final String SCRIPT = "return ['D', 'C', 'B', 'A']";
-    private final String FALLBACK_SCRIPT = "";
+    private final static String SCRIPT = "return ['D', 'C', 'B', 'A']";
+    private final static String FALLBACK_SCRIPT = "";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = Utils.createRandomParameterName("choice-parameter", "test");
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
-    
+
     @Before
     public void setUp() throws Exception {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
-    
-	@Test
-	public void testParametersOrder() {
-		Map<Object, Object> parameters = new LinkedHashMap<Object, Object>();
-		parameters.put("D", "D");
-		parameters.put("C", "C");
-		parameters.put("B", "B");
-		parameters.put("A", "A");
-		
-		ChoiceParameter parameter = new ChoiceParameter(
-				"script001", "description", "random name", new GroovyScript(SCRIPT, FALLBACK_SCRIPT),
-				ChoiceParameter.PARAMETER_TYPE_MULTI_SELECT, true);
-		
-		Map<Object, Object> result = parameter.getChoices(Collections.<Object, Object>emptyMap());
-		assertArrayEquals(parameters.keySet().toArray(), result.keySet().toArray());
-	}
-	
+
+    @Test
+    public void testParametersOrder() {
+        Map<Object, Object> parameters = new LinkedHashMap<Object, Object>();
+        parameters.put("D", "D");
+        parameters.put("C", "C");
+        parameters.put("B", "B");
+        parameters.put("A", "A");
+
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript(VISIBILITY_SCRIPT, VISIBILITY_FALLBACK_SCRIPT);
+        ChoiceParameter parameter = new ChoiceParameter(
+                "script001", "description", RANDOM_NAME, script,visibilityScript,
+                ChoiceParameter.PARAMETER_TYPE_MULTI_SELECT, true);
+
+        Map<Object, Object> result = parameter.getChoices(Collections.<Object, Object>emptyMap());
+        assertArrayEquals(parameters.keySet().toArray(), result.keySet().toArray());
+    }
+
 }

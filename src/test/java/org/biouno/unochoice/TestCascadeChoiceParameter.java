@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -41,8 +42,11 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestCascadeChoiceParameter {
 
-    private final String SCRIPT = "return ['a', 'b']";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String SCRIPT = "return ['a', 'b']";
+    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = Utils.createRandomParameterName("choice-parameter", "test");
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -53,44 +57,84 @@ public class TestCascadeChoiceParameter {
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
-	@Test
-	public void testConstructor() {
-	    GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
-		CascadeChoiceParameter param = new CascadeChoiceParameter(
-			"param000", "description", 
-			script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, 
-			"param001, param002", true);
-		
-		assertEquals("param000", param.getName());
-		assertEquals("description", param.getDescription());
-		assertEquals(script, param.getScript());
-		assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
-		assertEquals("param001, param002", param.getReferencedParameters());
-		assertTrue(param.getFilterable());
-	}
-	
-	@Test
-	public void testParameters() {
-	    GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
-		CascadeChoiceParameter param = new CascadeChoiceParameter(
-			"param000", "description", 
-			script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, 
-			"param001, param002", true);
-		assertTrue(param.getParameters().isEmpty());
-		
-		param.doUpdate("param001=A__LESEP__param002=B__LESEP__param003=");
-		
-		Map<String, String> expected = new LinkedHashMap<String, String>();
-		expected.put("param001", "A");
-		expected.put("param002", "B");
-		expected.put("param003", "");
-		assertEquals(expected, param.getParameters());
-		
-		param.doUpdate("");
-		expected.clear();
-		assertEquals(expected, param.getParameters());
-		
-		assertEquals(Arrays.asList("param001", "param002"), Arrays.asList(param.getReferencedParametersAsArray()));
-	}
-	
+    @Test
+    public void testConstructor() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript(VISIBILITY_SCRIPT, VISIBILITY_FALLBACK_SCRIPT);
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true);
+
+        assertEquals("param000", param.getName());
+        assertEquals("description", param.getDescription());
+        assertEquals(script, param.getScript());
+        assertEquals(visibilityScript, param.getVisibilityScript());
+        assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
+        assertEquals("param001, param002", param.getReferencedParameters());
+        assertTrue(param.getFilterable());
+    }
+
+    @Test
+    public void testParameters() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript(VISIBILITY_SCRIPT, VISIBILITY_FALLBACK_SCRIPT);
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true);
+        assertTrue(param.getParameters().isEmpty());
+
+        param.doUpdate("param001=A__LESEP__param002=B__LESEP__param003=");
+
+        Map<String, String> expected = new LinkedHashMap<String, String>();
+        expected.put("param001", "A");
+        expected.put("param002", "B");
+        expected.put("param003", "");
+        assertEquals(expected, param.getParameters());
+
+        param.doUpdate("");
+        expected.clear();
+        assertEquals(expected, param.getParameters());
+
+        assertEquals(Arrays.asList("param001", "param002"), Arrays.asList(param.getReferencedParametersAsArray()));
+    }
+
+    @Test
+    public void testVisibility() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript(VISIBILITY_SCRIPT, VISIBILITY_FALLBACK_SCRIPT);
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "", true);
+
+        assertTrue(param.isVisible());
+    }
+    
+    @Test
+    public void testDefaultVisibility() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript("", VISIBILITY_FALLBACK_SCRIPT);
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "", true);
+
+        assertTrue(param.isVisible());
+    }
+
+    @Test
+    public void testCascadedVisibility() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript("return param001=='A' && param002=='B'", VISIBILITY_FALLBACK_SCRIPT);
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true);
+        param.doUpdate("param001=A__LESEP__param002=B");
+
+        assertTrue(param.isVisible());
+    }
+
 }

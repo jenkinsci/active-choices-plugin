@@ -62,11 +62,12 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
      * @param name name
      * @param description description
      * @param script script used to generate the list of parameter values
+     * @param visibilityScript script used to determine the visibility of this parameter
      * @param referencedParameters comma separated list of referenced parameters
      * @deprecated see JENKINS-32149
      */
-    protected AbstractCascadableParameter(String name, String description, Script script, String referencedParameters) {
-        super(name, description, script);
+    protected AbstractCascadableParameter(String name, String description, Script script, Script visibilityScript,  String referencedParameters) {
+        super(name, description, script, visibilityScript);
         this.referencedParameters = referencedParameters;
     }
 
@@ -76,11 +77,12 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script used to generate the list of parameter values
+     * @param visibilityScript script used to determine the visibility of this parameter
      * @param referencedParameters comma separated list of referenced parameters
      */
     protected AbstractCascadableParameter(String name, String description, String randomName,
-            Script script, String referencedParameters) {
-        super(name, description, randomName, script);
+            Script script, Script visibilityScript, String referencedParameters) {
+        super(name, description, randomName, script, visibilityScript);
         this.referencedParameters = referencedParameters;
     }
 
@@ -136,6 +138,12 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
     public List<Object> getChoicesForUI() {
         Map<Object, Object> mapResult = getChoices(getParameters());
         return Arrays.<Object>asList(mapResult.values(), mapResult.keySet());
+    }
+    
+    @Override
+    @JavaScriptMethod
+    public boolean isVisible() {
+        return isVisible(getParameters());
     }
 
     public String[] getReferencedParametersAsArray() {

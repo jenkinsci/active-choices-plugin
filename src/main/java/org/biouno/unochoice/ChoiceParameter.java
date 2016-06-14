@@ -27,6 +27,7 @@ package org.biouno.unochoice;
 import hudson.Extension;
 
 import org.apache.commons.lang.StringUtils;
+import org.biouno.unochoice.model.GroovyScript;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -59,12 +60,13 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param name name
      * @param description description
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param filterable filter flag
      * @deprecated see JENKINS-32149
      */
-    public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable) {
-        super(name, description, script);
+    public ChoiceParameter(String name, String description, Script script, Script visibilityScript,String choiceType, Boolean filterable) {
+        super(name, description, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
     }
@@ -76,13 +78,14 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param filterable filter flag
      */
     @DataBoundConstructor
-    public ChoiceParameter(String name, String description, String randomName, Script script, String choiceType,
+    public ChoiceParameter(String name, String description, String randomName, Script script, Script visibilityScript, String choiceType,
             Boolean filterable) {
-        super(name, description, randomName, script);
+        super(name, description, randomName, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
     }

@@ -30,6 +30,7 @@ import hudson.model.StringParameterValue;
 import net.sf.json.JSONObject;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -44,8 +45,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class TestAbstractUnoChoiceParameter {
 
-    private final String SCRIPT = "return ['a', 'b']";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String SCRIPT = "return ['a', 'b']";
+    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = Utils.createRandomParameterName("choice-parameter", "test");
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -56,24 +60,25 @@ public class TestAbstractUnoChoiceParameter {
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
-	@Test
-	public void testCreateValue() {
-	    GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
-		ChoiceParameter param = new ChoiceParameter("name", "description", script, "choiceType", true);
-		ParameterValue value = param.createValue("value");
-		
-		assertEquals("value", value.getValue().toString());
-		
-		JSONObject json = new JSONObject();
-		json.put("name", "name");
-		json.put("value", "value");
-		
-		StaplerRequest request = PowerMockito.mock(StaplerRequest.class);
-		PowerMockito.when(request.bindJSON(StringParameterValue.class, json)).thenReturn((StringParameterValue) value);
-		
-		value = param.createValue(request, json);
-		
-		assertEquals("value", value.getValue().toString());
-	}
+    @Test
+    public void testCreateValue() {
+        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript visibilityScript = new GroovyScript(VISIBILITY_SCRIPT, VISIBILITY_FALLBACK_SCRIPT);
+        ChoiceParameter param = new ChoiceParameter("name", "description", RANDOM_NAME, script, visibilityScript, "choiceType", true);
+        ParameterValue value = param.createValue("value");
+
+        assertEquals("value", value.getValue().toString());
+
+        JSONObject json = new JSONObject();
+        json.put("name", "name");
+        json.put("value", "value");
+
+        StaplerRequest request = PowerMockito.mock(StaplerRequest.class);
+        PowerMockito.when(request.bindJSON(StringParameterValue.class, json)).thenReturn((StringParameterValue) value);
+
+        value = param.createValue(request, json);
+
+        assertEquals("value", value.getValue().toString());
+    }
 
 }
