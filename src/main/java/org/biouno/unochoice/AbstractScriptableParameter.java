@@ -239,7 +239,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object eval(Map<Object, Object> parameters) {
         if (script == null) {
-            return true;
+            return Collections.emptyMap();
         }
         try {
             Map<Object, Object> scriptParameters = getHelperParameters();
