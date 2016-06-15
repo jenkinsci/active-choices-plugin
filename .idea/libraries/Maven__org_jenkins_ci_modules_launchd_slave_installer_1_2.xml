@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.modules:launchd-slave-installer:1.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/launchd-slave-installer/1.2/launchd-slave-installer-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/launchd-slave-installer/1.2/launchd-slave-installer-1.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/launchd-slave-installer/1.2/launchd-slave-installer-1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

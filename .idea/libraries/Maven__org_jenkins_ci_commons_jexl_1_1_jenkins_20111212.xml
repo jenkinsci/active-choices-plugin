@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci:commons-jexl:1.1-jenkins-20111212">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jexl/1.1-jenkins-20111212/commons-jexl-1.1-jenkins-20111212.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jexl/1.1-jenkins-20111212/commons-jexl-1.1-jenkins-20111212-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jexl/1.1-jenkins-20111212/commons-jexl-1.1-jenkins-20111212-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

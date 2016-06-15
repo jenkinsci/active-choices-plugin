@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci:commons-jelly:1.1-jenkins-20120928">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jelly/1.1-jenkins-20120928/commons-jelly-1.1-jenkins-20120928.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jelly/1.1-jenkins-20120928/commons-jelly-1.1-jenkins-20120928-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/commons-jelly/1.1-jenkins-20120928/commons-jelly-1.1-jenkins-20120928-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

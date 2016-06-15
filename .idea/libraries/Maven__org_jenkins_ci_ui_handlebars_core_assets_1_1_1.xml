@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.ui:handlebars:core-assets:1.1.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/handlebars/1.1.1/handlebars-1.1.1-core-assets.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/handlebars/1.1.1/handlebars-1.1.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/handlebars/1.1.1/handlebars-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

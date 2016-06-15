@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.kohsuke:owasp-html-sanitizer:r88">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/owasp-html-sanitizer/r88/owasp-html-sanitizer-r88.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/owasp-html-sanitizer/r88/owasp-html-sanitizer-r88-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/owasp-html-sanitizer/r88/owasp-html-sanitizer-r88-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

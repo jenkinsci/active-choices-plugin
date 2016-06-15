@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.modules:slave-installer:1.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/slave-installer/1.5/slave-installer-1.5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/slave-installer/1.5/slave-installer-1.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/modules/slave-installer/1.5/slave-installer-1.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

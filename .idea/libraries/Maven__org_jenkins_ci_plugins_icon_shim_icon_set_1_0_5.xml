@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.plugins.icon-shim:icon-set:1.0.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/plugins/icon-shim/icon-set/1.0.5/icon-set-1.0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/plugins/icon-shim/icon-set/1.0.5/icon-set-1.0.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/plugins/icon-shim/icon-set/1.0.5/icon-set-1.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.kohsuke.stapler:json-lib:2.4-jenkins-2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/json-lib/2.4-jenkins-2/json-lib-2.4-jenkins-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/json-lib/2.4-jenkins-2/json-lib-2.4-jenkins-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/json-lib/2.4-jenkins-2/json-lib-2.4-jenkins-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

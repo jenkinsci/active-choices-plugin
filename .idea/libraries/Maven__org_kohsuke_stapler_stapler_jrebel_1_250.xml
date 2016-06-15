@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.kohsuke.stapler:stapler-jrebel:1.250">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/stapler-jrebel/1.250/stapler-jrebel-1.250.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/stapler-jrebel/1.250/stapler-jrebel-1.250-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/kohsuke/stapler/stapler-jrebel/1.250/stapler-jrebel-1.250-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

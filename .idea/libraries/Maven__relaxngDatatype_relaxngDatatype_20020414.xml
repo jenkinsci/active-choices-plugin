@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: relaxngDatatype:relaxngDatatype:20020414">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/relaxngDatatype/relaxngDatatype/20020414/relaxngDatatype-20020414.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/relaxngDatatype/relaxngDatatype/20020414/relaxngDatatype-20020414-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/relaxngDatatype/relaxngDatatype/20020414/relaxngDatatype-20020414-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

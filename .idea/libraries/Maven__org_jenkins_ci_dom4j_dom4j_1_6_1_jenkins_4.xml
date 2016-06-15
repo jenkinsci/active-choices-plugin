@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.dom4j:dom4j:1.6.1-jenkins-4">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/dom4j/dom4j/1.6.1-jenkins-4/dom4j-1.6.1-jenkins-4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/dom4j/dom4j/1.6.1-jenkins-4/dom4j-1.6.1-jenkins-4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/dom4j/dom4j/1.6.1-jenkins-4/dom4j-1.6.1-jenkins-4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jvnet.hudson:jtidy:4aug2000r7-dev-hudson-1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/jtidy/4aug2000r7-dev-hudson-1/jtidy-4aug2000r7-dev-hudson-1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/jtidy/4aug2000r7-dev-hudson-1/jtidy-4aug2000r7-dev-hudson-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/jtidy/4aug2000r7-dev-hudson-1/jtidy-4aug2000r7-dev-hudson-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

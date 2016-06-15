@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jenkins-ci.ui:bootstrap:core-assets:1.3.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/bootstrap/1.3.2/bootstrap-1.3.2-core-assets.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/bootstrap/1.3.2/bootstrap-1.3.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jenkins-ci/ui/bootstrap/1.3.2/bootstrap-1.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

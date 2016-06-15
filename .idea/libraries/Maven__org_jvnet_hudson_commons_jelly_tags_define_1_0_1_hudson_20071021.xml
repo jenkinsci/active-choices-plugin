@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jvnet.hudson:commons-jelly-tags-define:1.0.1-hudson-20071021">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/commons-jelly-tags-define/1.0.1-hudson-20071021/commons-jelly-tags-define-1.0.1-hudson-20071021.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/commons-jelly-tags-define/1.0.1-hudson-20071021/commons-jelly-tags-define-1.0.1-hudson-20071021-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/hudson/commons-jelly-tags-define/1.0.1-hudson-20071021/commons-jelly-tags-define-1.0.1-hudson-20071021-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
