@@ -25,6 +25,7 @@
 package org.biouno.unochoice;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,7 +203,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
 
     public String getChoicesAsString(Map<Object, Object> parameters) {
         final Object value = eval(parameters);
-        if (value != null) 
+        if (value != null)
             return value.toString();
         return "";
     }
@@ -229,14 +230,30 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "getDefaultParameterValue");
         }
-        Object firstElement = "";
-        final Map<Object, Object> choices = getChoices(Collections.<Object, Object> emptyMap());
+        String selected = ":selected";
+        final Map<Object, Object> choices = getChoices(Collections.<Object, Object>emptyMap());
+
+        //Get all selected element
+        String returnValue = "";
         if (choices != null && !choices.isEmpty()) {
-            firstElement = choices.entrySet().iterator().next().getValue();
+            Iterator<Map.Entry<Object, Object>> iterator = choices.entrySet().iterator();
+            while (iterator.hasNext()) {
+                String element = (String) iterator.next().getValue();
+                if (element.toLowerCase().endsWith(selected)) {
+                    returnValue += (element.substring(0, element.length() - selected.length()) + ",");
+                }
+            }
+            returnValue = StringUtils.removeEndIgnoreCase(returnValue, ",");
+
+            //if selectedElement is empty get first
+            if (StringUtils.isBlank(returnValue)) {
+                returnValue = (String) choices.entrySet().iterator().next().getValue();
+            }
         }
+
         final String name = getName();
-        final String value = ObjectUtils.toString(firstElement, ""); // Jenkins doesn't like null parameter values
-        final StringParameterValue stringParameterValue = new StringParameterValue(name, value);
+        returnValue = ObjectUtils.toString(returnValue, "");
+        final StringParameterValue stringParameterValue = new StringParameterValue(name, returnValue);
         return stringParameterValue;
     }
 
