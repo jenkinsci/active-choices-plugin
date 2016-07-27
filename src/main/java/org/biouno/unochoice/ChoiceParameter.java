@@ -69,8 +69,6 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param filterLength length when filter start filtering
      * @deprecated see JENKINS-32149
      */
-    public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable) {
-    @DataBoundConstructor
     public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable, Integer filterLength) {
         super(name, description, script);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
