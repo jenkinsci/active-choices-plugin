@@ -160,10 +160,10 @@ var UnoChoice = UnoChoice || (function($) {
             var parameterName = _self.getParameterName();
             var parameterElement = _self.getParameterElement();
             if (choices == 'true') {
-                parameterElement.parentNode.parentNode.parentNode.style.display = 'table-row';
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'table-row-group';
                 console.log('Show parameter: ' + parameterName);
             } else {
-                parameterElement.parentNode.parentNode.parentNode.style.display = 'none';
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
                 console.log('Hide parameter: ' + parameterName);
             }
         });
@@ -498,10 +498,10 @@ var UnoChoice = UnoChoice || (function($) {
             var choices = t.responseText;
             console.log('Value returned from server: ' + choices);
             if (choices == 'true') {
-                parameterElement.parentNode.parentNode.parentNode.style.display = 'table-row';
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'table-row-group';
                 console.log('Show parameter: ' + parameterName);
             } else {
-                parameterElement.parentNode.parentNode.parentNode.style.display = 'none';
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
                 console.log('Hide parameter: ' + parameterName);
             }
         });
