@@ -59,7 +59,7 @@ public class TestAbstractUnoChoiceParameter {
 	@Test
 	public void testCreateValue() {
 	    GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
-		ChoiceParameter param = new ChoiceParameter("name", "description", script, "choiceType", true);
+		ChoiceParameter param = new ChoiceParameter("name", "description", script, "choiceType", true, 0);
 		ParameterValue value = param.createValue("value");
 		
 		assertEquals("value", value.getValue().toString());
