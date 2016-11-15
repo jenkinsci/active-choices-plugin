@@ -1,7 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-  <div id="ecp_${it.randomName}" style="float:left; overflow-y:auto; padding-right:25px">
+  <div id="ecp_${it.randomName}" style="float:left; overflow-y:auto; padding-right:25px; display:table;">
     <j:set var="index" value="0"/>
     <table id="tbl_ecp_${it.randomName}">
       <j:forEach var="iter" items="${it.getChoices()}" indexVar="indexVar">
@@ -35,30 +35,4 @@
       </j:forEach>
     </table>
   </div>
-<script type="text/javascript">
-<![CDATA[
-  (function() {
-      var f = function() {
-          var height = 0;
-          var maxCount = ${index};
-          if(maxCount > ${it.visibleItemCount}) {
-              maxCount = ${it.visibleItemCount};
-          }
-
-          if(maxCount > 0 && document.getElementById("${id}").offsetHeight !=0) {
-              for(var i=0; i< maxCount; i++) {
-                  height += document.getElementById("${id}").offsetHeight + 3;
-              }
-          }
-          else {
-              height = maxCount * 25.5;
-          }
-          height = Math.floor(height);
-          document.getElementById("ecp_${it.randomName}").style.height = height + "px";
-      };
-
-      f();
-  })();
-]]>
-</script>
 </j:jelly>
