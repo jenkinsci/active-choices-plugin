@@ -547,10 +547,12 @@ var UnoChoice = UnoChoice || (function($) {
      *
      * @param paramElement parameter HTML element being filtered
      * @param filterElement HTML element where the user enter the filter
+     * @param filterLength length when filter start filtering
      */
-    /* public */ function FilterElement(paramElement, filterElement) {
+    /* public */ function FilterElement(paramElement, filterElement, filterLength) {
         this.paramElement = paramElement;
         this.filterElement = filterElement;
+        this.filterLength = filterLength;
         this.originalArray = new Array();
         // push existing values into originalArray array
         if (this.paramElement.tagName == 'SELECT') { // handle SELECTS
@@ -608,6 +610,12 @@ var UnoChoice = UnoChoice || (function($) {
         return this.originalArray;
     }
     /**
+     * @return length when filter start filtering
+     */
+    FilterElement.prototype.getFilterLength = function() {
+        return this.filterLength;
+    }
+    /**
      * Sets the array with the original options of the filtered element. Once the array has been
      * set, it empties the value of the filter input box, thus allowing the user to type in again.
      *
@@ -636,6 +644,10 @@ var UnoChoice = UnoChoice || (function($) {
             var filterElement = _self.getFilterElement();
             var filteredElement = _self.getParameterElement();
             var text = filterElement.value.toLowerCase();
+            if (text.length != 0 && text.length < _self.getFilterLength()) {
+                console.log("Filter pattern to short " + text.length + " < " + _self.getFilterLength());
+                return;
+            }
             var options = _self.originalArray;
             var newOptions = Array();
             for (var i = 0; i < options.length; i++) {

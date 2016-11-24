@@ -183,7 +183,7 @@ QUnit.test("Test FilteredElement with selects", function() {
     if (parameterHtmlElement && parameterHtmlElement.get(0)) {
         var filterHtmlElement = $fixture.find('.uno_choice_filter');
         if (filterHtmlElement && filterHtmlElement.get(0)) {
-            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0));
+            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), 0);
         } else {
             console.log('Filter error: Missing filter element!');
         }
@@ -194,4 +194,76 @@ QUnit.test("Test FilteredElement with selects", function() {
     filterElement.getFilterElement().value = 'uno';
     jQuery(filterElement.getFilterElement()).keyup();
     equal(2, jQuery(parameterHtmlElement).children().length, "Right select options count");
+});
+
+/**
+ * Tests for FilteredElement.
+ */
+QUnit.test("Test FilteredElement with selects", function() {
+	var $fixture = jQuery("#qunit-fixture");
+	$fixture.append('<select name="value" multiple="multiple" size="8"><option value="1">Bruno</option><option value="2">Nuno</option><option value="3">Joe</option><option selected="true" value="4">Jeea</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>');
+	$fixture.append('<input class="uno_choice_filter" type="text" value="" name="test" placeholder="Filter">');
+    var parameterHtmlElement = $fixture.find('*[name="value"]');
+    if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+        var filterHtmlElement = $fixture.find('.uno_choice_filter');
+        if (filterHtmlElement && filterHtmlElement.get(0)) {
+            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), 0);
+        } else {
+            console.log('Filter error: Missing filter element!');
+        }
+    } else {
+        log('Filter error: Missing parameter element!');
+    }
+    equal(8, jQuery(parameterHtmlElement).children().length, "Right select options count");
+    filterElement.getFilterElement().value = 'uno';
+    jQuery(filterElement.getFilterElement()).keyup();
+    equal(2, jQuery(parameterHtmlElement).children().length, "Right select options count");
+});
+
+/**
+ * Tests for FilteredElement.
+ */
+QUnit.test("Test FilteredElement with selects and set filtered pattern length: positive", function() {
+	var $fixture = jQuery("#qunit-fixture");
+	$fixture.append('<select name="value" multiple="multiple" size="8"><option value="1">Brunos</option><option value="2">Nunos</option><option value="3">Joe</option><option selected="true" value="4">Jeea</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>');
+	$fixture.append('<input class="uno_choice_filter" type="text" value="" name="test" placeholder="Filter">');
+    var parameterHtmlElement = $fixture.find('*[name="value"]');
+    if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+        var filterHtmlElement = $fixture.find('.uno_choice_filter');
+        if (filterHtmlElement && filterHtmlElement.get(0)) {
+            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), 4);
+        } else {
+            console.log('Filter error: Missing filter element!');
+        }
+    } else {
+        log('Filter error: Missing parameter element!');
+    }
+    equal(8, jQuery(parameterHtmlElement).children().length, "Right select options count");
+    filterElement.getFilterElement().value = 'unos';
+    jQuery(filterElement.getFilterElement()).keyup();
+    equal(2, jQuery(parameterHtmlElement).children().length, "Right select options count");
+});
+
+/**
+ * Tests for FilteredElement.
+ */
+QUnit.test("Test FilteredElement with selects and set filtered pattern length: negative", function() {
+	var $fixture = jQuery("#qunit-fixture");
+	$fixture.append('<select name="value" multiple="multiple" size="8"><option value="1">Brunos</option><option value="2">Nunos</option><option value="3">Joe</option><option selected="true" value="4">Jeea</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>');
+	$fixture.append('<input class="uno_choice_filter" type="text" value="" name="test" placeholder="Filter">');
+    var parameterHtmlElement = $fixture.find('*[name="value"]');
+    if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+        var filterHtmlElement = $fixture.find('.uno_choice_filter');
+        if (filterHtmlElement && filterHtmlElement.get(0)) {
+            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), 4);
+        } else {
+            console.log('Filter error: Missing filter element!');
+        }
+    } else {
+        log('Filter error: Missing parameter element!');
+    }
+    equal(8, jQuery(parameterHtmlElement).children().length, "Right select options count");
+    filterElement.getFilterElement().value = 'uno';
+    jQuery(filterElement.getFilterElement()).keyup();
+    equal(8, jQuery(parameterHtmlElement).children().length, "Right select options count");
 });
