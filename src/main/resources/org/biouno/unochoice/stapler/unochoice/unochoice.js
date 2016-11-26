@@ -645,7 +645,6 @@ var UnoChoice = UnoChoice || (function($) {
             var filteredElement = _self.getParameterElement();
             var text = filterElement.value.toLowerCase();
             if (text.length != 0 && text.length < _self.getFilterLength()) {
-                console.log("Filter pattern to short " + text.length + " < " + _self.getFilterLength());
                 return;
             }
             var options = _self.originalArray;
