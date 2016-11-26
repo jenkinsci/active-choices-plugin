@@ -75,7 +75,7 @@ public class TestParameterValuesWithEquals {
                 new SecureGroovyScript(SCRIPT_LIST_SELECTION, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST_SELECTION, Boolean.FALSE, null));
         ChoiceParameter listParam = new ChoiceParameter("LIST", "description...", "random-name1", listScript,
-                CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true);
+                CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true, 0);
         DynamicReferenceParameter listSelectionParam = new DynamicReferenceParameter("LIST_SELECTION", "description...",
                 "random-name2", listSelectionScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "LIST",
                 true);
