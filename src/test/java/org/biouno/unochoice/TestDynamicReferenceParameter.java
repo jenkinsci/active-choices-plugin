@@ -55,7 +55,7 @@ public class TestDynamicReferenceParameter {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         DynamicReferenceParameter param = new DynamicReferenceParameter("param000", "description", "some-random-name",
-                script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true);
+                script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true, 0);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
