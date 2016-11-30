@@ -46,13 +46,16 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 
+/**
+ * Test the {@link Utils} utility class.
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Utils.class })
 @PowerMockIgnore({"javax.crypto.*" })
 public class TestUtils {
 
     @Rule
-    JenkinsRule jenkins = new JenkinsRule();
+    JenkinsRule j = new JenkinsRule();
 
     @Test
     public void testGetAllScriptlerScripts() {
@@ -114,7 +117,7 @@ public class TestUtils {
         EnvironmentVariablesNodeProperty.Entry entry = new EnvironmentVariablesNodeProperty.Entry("time",
                 testMap.get("time"));
         EnvironmentVariablesNodeProperty envVarsNodeProp = new EnvironmentVariablesNodeProperty(entry);
-        jenkins.jenkins.getGlobalNodeProperties().add(envVarsNodeProp);
+        j.jenkins.getGlobalNodeProperties().add(envVarsNodeProp);
         map = Utils.getGlobalNodeProperties();
         assertEquals("20:13:13", map.values().iterator().next());
     }

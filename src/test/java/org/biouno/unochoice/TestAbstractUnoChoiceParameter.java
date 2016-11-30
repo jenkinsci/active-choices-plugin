@@ -45,6 +45,9 @@ import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 import net.sf.json.JSONObject;
 
+/**
+ * Test the behavior of the {@link AbstractUnoChoiceParameter}.
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({StaplerRequest.class})
 @PowerMockIgnore({"javax.crypto.*" })

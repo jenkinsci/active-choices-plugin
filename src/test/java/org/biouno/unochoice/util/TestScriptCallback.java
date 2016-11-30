@@ -41,6 +41,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+/**
+ * Test the {@link ScriptCallback} bean.
+ */
 public class TestScriptCallback {
 
     private final static String SCRIPT = "return ['a', 'b']";
