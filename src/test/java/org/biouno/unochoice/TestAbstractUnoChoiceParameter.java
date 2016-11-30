@@ -25,9 +25,6 @@
 package org.biouno.unochoice;
 
 import static org.junit.Assert.assertEquals;
-import hudson.model.ParameterValue;
-import hudson.model.StringParameterValue;
-import net.sf.json.JSONObject;
 
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -40,9 +37,17 @@ import org.junit.runner.RunWith;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.StaplerRequest;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import hudson.model.ParameterValue;
+import hudson.model.StringParameterValue;
+import net.sf.json.JSONObject;
+
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({StaplerRequest.class})
+@PowerMockIgnore({"javax.crypto.*" })
 public class TestAbstractUnoChoiceParameter {
 
     private final String SCRIPT = "return ['a', 'b']";

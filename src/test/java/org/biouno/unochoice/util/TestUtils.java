@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -47,6 +48,7 @@ import hudson.slaves.EnvironmentVariablesNodeProperty;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Utils.class })
+@PowerMockIgnore({"javax.crypto.*" })
 public class TestUtils {
 
     @Rule
