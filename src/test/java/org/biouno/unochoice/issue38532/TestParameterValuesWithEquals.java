@@ -79,9 +79,18 @@ public class TestParameterValuesWithEquals {
         DynamicReferenceParameter listSelectionParam = new DynamicReferenceParameter("LIST_SELECTION", "description...",
                 "random-name2", listSelectionScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "LIST",
                 true);
-        String listValue = listParam.getDefaultParameterValue().getValue().toString(); // should be a String
+        String listValue = listParam.getDefaultParameterValue().getValue().toString(); // should
+                                                                                       // be
+                                                                                       // a
+                                                                                       // String
         listSelectionParam.doUpdate(String.format(String.format("%s=%s", listParam.getName(), listValue)));
-        String listSelectionValue = listSelectionParam.getChoicesAsString(); // as this is a formatted hidden HTML...
+        String listSelectionValue = listSelectionParam.getChoicesAsString(); // as
+                                                                             // this
+                                                                             // is
+                                                                             // a
+                                                                             // formatted
+                                                                             // hidden
+                                                                             // HTML...
 
         // by default, the plug-in returns the first element in the list...
         assertEquals("Value returned from selection list doesn't match first element in list parameter", "A=1",

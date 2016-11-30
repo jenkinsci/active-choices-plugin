@@ -24,6 +24,7 @@
 
 /**
  * Tests for global node properties issue. See JENKINS-34818.
+ *
  * @since 1.5.x
  */
 package org.biouno.unochoice.issue34818;

@@ -24,6 +24,7 @@
 
 /**
  * Tests for parameters with the equals separator. See JENKINS-38532.
+ *
  * @since 1.5.x
  */
 package org.biouno.unochoice.issue38532;
