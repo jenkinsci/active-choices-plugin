@@ -1,0 +1,137 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 Ioannis Moutsatsos, Bruno P. Kinoshita
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.biouno.unochoice;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.biouno.unochoice.model.GroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
+import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+
+import hudson.XmlFile;
+import hudson.model.FreeStyleBuild;
+import hudson.model.FreeStyleProject;
+import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.model.Result;
+import hudson.model.queue.QueueTaskFuture;
+
+/**
+ * Regression tests, to confirm we are able to:
+ *
+ * <ul>
+ * <li>Save a job with parameters</li>
+ * <li>Confirm the values are persisted to the job configuration</li>
+ * <li>Confirm we can also see parameters of Scriptler parameters</li>
+ * </ul>
+ *
+ * <p>
+ * These tests have been created after regressions in 1.5.0 and 1.5.1.
+ * </p>
+ * 
+ * @since 1.5.3
+ */
+public class TestPersistingParameters {
+
+    private final static String SCRIPT_PARAM001 = "return 1..10";
+    private final static String SCRIPT_FALLBACK_PARAM001 = "return []";
+    private final static String SCRIPT_PARAM002 = "return [PARAM001]";
+    private final static String SCRIPT_FALLBACK_PARAM002 = "return []";
+
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
+
+    @Before
+    public void setUp() {
+        ScriptApproval.get().preapprove(SCRIPT_PARAM001, new GroovyLanguage());
+        ScriptApproval.get().preapprove(SCRIPT_FALLBACK_PARAM001, new GroovyLanguage());
+        ScriptApproval.get().preapprove(SCRIPT_PARAM002, new GroovyLanguage());
+        ScriptApproval.get().preapprove(SCRIPT_FALLBACK_PARAM002, new GroovyLanguage());
+    }
+
+    @Test
+    public void testSaveParameters() throws Exception {
+        FreeStyleProject project = j.createFreeStyleProject();
+        GroovyScript scriptParam001 = new GroovyScript(new SecureGroovyScript(SCRIPT_PARAM001, false, null),
+                new SecureGroovyScript(SCRIPT_FALLBACK_PARAM001, false, null));
+        ChoiceParameter param001 = new ChoiceParameter("param001", "param001 description", "random-name",
+                scriptParam001, AbstractUnoChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true);
+        GroovyScript scriptParam002 = new GroovyScript(new SecureGroovyScript(SCRIPT_PARAM002, false, null),
+                new SecureGroovyScript(SCRIPT_FALLBACK_PARAM002, false, null));
+        CascadeChoiceParameter param002 = new CascadeChoiceParameter("param002", "param002 description", "random-name",
+                scriptParam002, AbstractUnoChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, "param001", true);
+        ParametersDefinitionProperty param001Def = new ParametersDefinitionProperty(
+                Arrays.<ParameterDefinition>asList(param001, param002));
+        project.addProperty(param001Def);
+        QueueTaskFuture<FreeStyleBuild> future = project.scheduleBuild2(0);
+        FreeStyleBuild build = future.get();
+        // even though the cascaded parameter will fail to evaluate, we should
+        // still get a success here.
+        assertEquals(Result.SUCCESS, build.getResult());
+        XmlFile configXml = project.getConfigFile();
+        FreeStyleProject reReadProject = (FreeStyleProject) configXml.read();
+        int found = 0;
+        for (Entry<JobPropertyDescriptor, JobProperty<? super FreeStyleProject>> entry : reReadProject.getProperties()
+                .entrySet()) {
+            JobProperty<? super FreeStyleProject> jobProperty = entry.getValue();
+            if (jobProperty instanceof ParametersDefinitionProperty) {
+                ParametersDefinitionProperty paramDef = (ParametersDefinitionProperty) jobProperty;
+                List<ParameterDefinition> parameters = paramDef.getParameterDefinitions();
+                for (ParameterDefinition parameter : parameters) {
+                    if (parameter instanceof AbstractScriptableParameter) {
+                        found++;
+                        AbstractScriptableParameter choiceParam = (AbstractScriptableParameter) parameter;
+                        String scriptText = ((GroovyScript) choiceParam.getScript()).getScript().getScript();
+                        String fallbackScriptText = ((GroovyScript) choiceParam.getScript()).getFallbackScript()
+                                .getScript();
+                        assertTrue("Found an empty script!", StringUtils.isNotBlank(scriptText));
+                        assertTrue("Found an empty fallback script!", StringUtils.isNotBlank(fallbackScriptText));
+                        if (parameter.getName().equals("param001")) {
+                            assertEquals(SCRIPT_PARAM001, scriptText);
+                            assertEquals(SCRIPT_FALLBACK_PARAM001, fallbackScriptText);
+                        } else {
+                            assertEquals(SCRIPT_PARAM002, scriptText);
+                            assertEquals(SCRIPT_FALLBACK_PARAM002, fallbackScriptText);
+                        }
+                    }
+                }
+            }
+        }
+        // We have two parameters before saving. We must have two now.
+        assertEquals("Didn't find all parameters after persisting xml", 2, found);
+    }
+}
