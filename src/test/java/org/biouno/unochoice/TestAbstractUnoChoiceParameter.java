@@ -30,6 +30,7 @@ import hudson.model.StringParameterValue;
 import net.sf.json.JSONObject;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -58,8 +59,11 @@ public class TestAbstractUnoChoiceParameter {
 
     @Test
     public void testCreateValue() {
-        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
-        ChoiceParameter param = new ChoiceParameter("name", "description", script, "choiceType", true, 0);
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        ChoiceParameter param = new ChoiceParameter("name", "description", "some-random-name", script, "choiceType",
+                true, 0);
         ParameterValue value = param.createValue("value");
 
         assertEquals("value", value.getValue().toString());

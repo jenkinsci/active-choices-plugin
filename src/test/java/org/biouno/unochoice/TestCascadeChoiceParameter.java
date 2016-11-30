@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -55,14 +56,17 @@ public class TestCascadeChoiceParameter {
 
     @Test
     public void testConstructor() {
-        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", 
+            "param000", "description", "some-random-name",
             script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, 
             "param001, param002", true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
+        assertEquals("randomName", param.getRandomName());
         assertEquals(script, param.getScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
@@ -72,9 +76,11 @@ public class TestCascadeChoiceParameter {
 
     @Test
     public void testParameters() {
-        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", 
+            "param000", "description", "some-random-name",
             script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, 
             "param001, param002", true, 0);
         assertTrue(param.getParameters().isEmpty());

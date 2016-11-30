@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.biouno.unochoice.model.GroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -51,13 +52,16 @@ public class TestChoiceParameter {
 
     @Test
     public void testConstructor() {
-        GroovyScript script = new GroovyScript(SCRIPT, FALLBACK_SCRIPT);
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter(
-            "param000", "description", 
+            "param000", "description", "some-random-name",
             script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
+        assertEquals("some-random-name", param.getRandomName());
         assertEquals(script, param.getScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertTrue(param.getFilterable());

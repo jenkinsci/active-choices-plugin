@@ -33,21 +33,36 @@ import java.util.Map;
 
 import org.biouno.unochoice.model.GroovyScript;
 import org.biouno.unochoice.model.ScriptlerScriptParameter;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
+import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestScriptCallback {
 
+    private final static String SCRIPT = "return ['a', 'b']";
+    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+
     @Rule
     public JenkinsRule j = new JenkinsRule();
+
+    @Before
+    public void setUp() {
+        ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
+        ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
+    }
 
     @Test
     public void testScriptCallback() {
         List<ScriptlerScriptParameter> params = new ArrayList<ScriptlerScriptParameter>();
         params.add(new ScriptlerScriptParameter("name1", "value1"));
         params.add(new ScriptlerScriptParameter("name2", "value2"));
-        GroovyScript script = new GroovyScript("return ['a', 'b']", "return ['EMPTY!']");
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("flag", "true");
         ScriptCallback<Exception> sc = new ScriptCallback<Exception>(
