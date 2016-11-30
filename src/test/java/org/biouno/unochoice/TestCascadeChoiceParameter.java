@@ -63,7 +63,7 @@ public class TestCascadeChoiceParameter {
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
-        assertEquals("randomName", param.getRandomName());
+        assertEquals("some-random-name", param.getRandomName());
         assertEquals(script, param.getScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
