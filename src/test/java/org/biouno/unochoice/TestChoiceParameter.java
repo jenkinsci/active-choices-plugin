@@ -55,7 +55,7 @@ public class TestChoiceParameter {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,
-                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true);
+                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
@@ -63,5 +63,6 @@ public class TestChoiceParameter {
         assertEquals(script, param.getScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertTrue(param.getFilterable());
+        assertEquals(Integer.valueOf(5), param.getFilterLength());
     }
 }

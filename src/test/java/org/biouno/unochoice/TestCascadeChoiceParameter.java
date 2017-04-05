@@ -59,7 +59,7 @@ public class TestCascadeChoiceParameter {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
-                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true);
+                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
@@ -68,6 +68,7 @@ public class TestCascadeChoiceParameter {
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
         assertTrue(param.getFilterable());
+        assertEquals(Integer.valueOf(5), param.getFilterLength());
     }
 
     @Test
@@ -75,7 +76,7 @@ public class TestCascadeChoiceParameter {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
-                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true);
+                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true, 0);
         assertTrue(param.getParameters().isEmpty());
 
         param.doUpdate("param001=A__LESEP__param002=B__LESEP__param003=");

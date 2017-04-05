@@ -26,7 +26,7 @@
         <j:if test="${it.filterable}">
         var filterHtmlElement = parentDiv.find('.uno_choice_filter');
         if (filterHtmlElement &amp;&amp; filterHtmlElement.get(0)) {
-            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0));
+            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), ${it.getFilterLength()});
             cascadeParameter.setFilterElement(filterElement);
         } else {
             console.log('Filter error: Missing filter element!');
