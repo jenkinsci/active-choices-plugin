@@ -24,8 +24,16 @@
 
 package org.biouno.unochoice.util;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +54,9 @@ import hudson.model.Project;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
+import hudson.tasks.BuildWrapper;
 import hudson.util.DescribableList;
+import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
 
 /**
@@ -139,13 +149,11 @@ public class Utils {
      */
     public static @CheckForNull Project<?, ?> getProjectByName(@Nonnull String projectName) {
         Jenkins instance = Jenkins.getInstance();
-        if (instance != null) {
-            @SuppressWarnings("rawtypes")
-            List<Project> projects = instance.getAllItems(Project.class);
-            for (Project<?, ?> p : projects) {
-                if (p.getName().equals(projectName)) {
-                    return p;
-                }
+        @SuppressWarnings("rawtypes")
+        List<Project> projects = instance.getAllItems(Project.class);
+        for (Project<?, ?> p : projects) {
+            if (p.getName().equals(projectName)) {
+                return p;
             }
         }
         return null;
@@ -162,12 +170,10 @@ public class Utils {
     @SuppressWarnings("rawtypes")
     public static @CheckForNull Project findProjectByParameterUUID(@Nonnull String parameterUUID) {
         Jenkins instance = Jenkins.getInstance();
-        if (instance != null) {
-            List<Project> projects = instance.getAllItems(Project.class);
-            for (Project project : projects) {
-                if (isParameterDefintionOf(parameterUUID, project)) {
-                    return project;
-                }
+        List<Project> projects = instance.getAllItems(Project.class);
+        for (Project project : projects) {
+            if (isParameterDefinitionOf(parameterUUID, project)) {
+                return project;
             }
         }
         return null;
@@ -182,9 +188,12 @@ public class Utils {
      * @param project the project to search for this parameter definition.
      * @return {@code true} if the project contains this parameter definition.
      */
-    @SuppressWarnings("rawtypes")
-    private static boolean isParameterDefintionOf(@Nonnull String parameterUUID, @Nonnull Project project) {
-        List<ParameterDefinition> parameterDefinitions = getProjectParameterDefinitions(project);
+    private static boolean isParameterDefinitionOf(@Nonnull String parameterUUID, @Nonnull Project<?, ?> project) {
+        List<ParameterDefinition> parameterDefinitions = new ArrayList<ParameterDefinition>();
+        parameterDefinitions.addAll(getProjectParameterDefinitions(project));
+        for (List<ParameterDefinition> params : getBuildWrapperParameterDefinitions(project).values()) {
+            parameterDefinitions.addAll(params);
+        }
         for (ParameterDefinition pd : parameterDefinitions) {
             if (pd instanceof AbstractUnoChoiceParameter) {
                 AbstractUnoChoiceParameter parameterDefinition = (AbstractUnoChoiceParameter) pd;
@@ -205,17 +214,15 @@ public class Utils {
      * @param project the project for which the parameter definitions should be found
      * @return parameter definitions or an empty list
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static @Nonnull List<ParameterDefinition> getProjectParameterDefinitions(@Nonnull Project project) {
-        ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) project
-                .getProperty(ParametersDefinitionProperty.class);
+    public static @Nonnull List<ParameterDefinition> getProjectParameterDefinitions(@Nonnull Project<?, ?> project) {
+        ParametersDefinitionProperty parametersDefinitionProperty = project.getProperty(ParametersDefinitionProperty.class);
         if (parametersDefinitionProperty != null) {
             List<ParameterDefinition> parameterDefinitions = parametersDefinitionProperty.getParameterDefinitions();
             if (parameterDefinitions != null) {
                 return parameterDefinitions;
             }
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -227,18 +234,91 @@ public class Utils {
     public static @Nonnull Map<String, Object> getGlobalNodeProperties() {
         Map<String, Object> map = new HashMap<String, Object>();
         Jenkins instance = Jenkins.getInstance();
-        if (instance != null) {
-            DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = instance
-                    .getGlobalNodeProperties();
-            if (globalNodeProperties != null) {
-                for (NodeProperty<?> nodeProperty : globalNodeProperties) {
-                    if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                        EnvironmentVariablesNodeProperty envNodeProperty = (EnvironmentVariablesNodeProperty) nodeProperty;
-                        map.putAll(envNodeProperty.getEnvVars());
-                    }
+        DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = instance.getGlobalNodeProperties();
+        if (globalNodeProperties != null) {
+            for (NodeProperty<?> nodeProperty : globalNodeProperties) {
+                if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                    EnvironmentVariablesNodeProperty envNodeProperty = (EnvironmentVariablesNodeProperty) nodeProperty;
+                    map.putAll(envNodeProperty.getEnvVars());
                 }
             }
         }
         return map;
+    }
+
+    /**
+     * Get parameter definitions associated with {@link BuildWrapper}s of the given {@link Project}.
+     * @param project the project for which the parameter definitions should be found
+     * @return Map
+     */
+    public static @Nonnull Map<BuildWrapper, List<ParameterDefinition>> getBuildWrapperParameterDefinitions(@Nonnull Project<?, ?> project) {
+        final List<BuildWrapper> buildWrappersList = project.getBuildWrappersList();
+
+        final Map<BuildWrapper, List<ParameterDefinition>> result = new LinkedHashMap<BuildWrapper, List<ParameterDefinition>>();
+
+        List<ParameterDefinition> value = new ArrayList<ParameterDefinition>();
+
+        for (BuildWrapper buildWrapper : buildWrappersList) {
+            final PropertyDescriptor[] propertyDescriptors;
+            try {
+                propertyDescriptors = Introspector.getBeanInfo(buildWrapper.getClass()).getPropertyDescriptors();
+            } catch (IntrospectionException e) {
+                continue;
+            }
+            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                addParameterDefinitionsTo(value, buildWrapper, propertyDescriptor);
+            }
+            if (!value.isEmpty()) {
+                result.put(buildWrapper, value);
+                value = new ArrayList<ParameterDefinition>();
+            }
+        }
+        return result.isEmpty() ? Collections.<BuildWrapper, List<ParameterDefinition>> emptyMap() : result;
+    }
+
+    private static void addParameterDefinitionsTo(List<ParameterDefinition> target, Object bean, PropertyDescriptor pd) {
+        if (ParameterDefinition.class.isAssignableFrom(pd.getPropertyType())) {
+            final ParameterDefinition param = read(bean, pd);
+            if (param != null) {
+                target.add(param);
+            }
+            return;
+        }
+        Iterable<?> iterable = null;
+
+        if (Iterable.class.isAssignableFrom(pd.getPropertyType())) {
+            iterable = read(bean, pd);
+        } else if (Object[].class.isAssignableFrom(pd.getPropertyType())) {
+            final Object[] array = read(bean, pd);
+            if (array != null)
+                iterable = Arrays.asList(array);
+        }
+        if (iterable == null)
+            return;
+
+        for (Object o : iterable) {
+            if (ParameterDefinition.class.isInstance(o)) {
+                target.add((ParameterDefinition) o);
+            }
+        }
+    }
+
+    private static <T> T read(Object bean, PropertyDescriptor pd) {
+        final Method accessor = pd.getReadMethod();
+        if ((accessor != null) && (accessor.getParameterTypes().length == 0)) {
+            @SuppressWarnings("unchecked")
+            final T result = (T) ReflectionUtils.invokeMethod(accessor, bean);
+            return result;
+        }
+        final Field field = ReflectionUtils.findField(bean.getClass(), pd.getName());
+        if (field != null) {
+            final Object value = ReflectionUtils.getField(field, bean);
+            if (pd.getPropertyType().isInstance(value)) {
+                @SuppressWarnings("unchecked")
+                final T result = (T) value;
+                return result;
+            }
+        }
+        return null;
     }
 }
