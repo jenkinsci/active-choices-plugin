@@ -349,10 +349,6 @@ var UnoChoice = UnoChoice || (function($) {
                             _self.getFilterElement().setOriginalArray(originalArray);
                         }
                     } // if (oldSel.className == 'dynamic_checkbox')
-                    /*
-                     * This height is equivalent to setting the number of rows displayed in a select/multiple
-                     */
-                    parameterElement.style.height = '' + (23 * (newValues.length > 10 ? 10 : newValues.length)) + 'px';
                 } // if (oldSel.children.length > 0 && oldSel.children[0].tagName == 'TABLE')
             } // if (oldSel.tagName == 'SELECT') { // else if (oldSel.tagName == 'DIV') {
         });
