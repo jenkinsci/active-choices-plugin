@@ -37,22 +37,7 @@
 <![CDATA[
   (function() {
       var f = function() {
-          var height = 0;
-          var maxCount = ${index};
-          if(maxCount > ${it.visibleItemCount}) {
-              maxCount = ${it.visibleItemCount};
-          }
-
-          if(maxCount > 0 && document.getElementById("ecp_${it.randomName}_0").offsetHeight !=0) {
-              for(var i=0; i< maxCount; i++) {
-                  height += document.getElementById("${id}").offsetHeight + 3;
-              }
-          }
-          else {
-              height = maxCount * 25.5;
-          }
-          height = Math.floor(height);
-          document.getElementById("ecp_${it.randomName}").style.height = height + "px";
+          document.getElementById("ecp_${it.randomName}").style.height = "auto";
       };
 
       f();
