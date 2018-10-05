@@ -55,10 +55,8 @@
               height = maxCount * 25.5;
           }
 
-          if (${it.visibleItemCount} > 10) {
-              height = Math.floor(height);
-              document.getElementById("ecp_${it.randomName}").style.height = height + "px";
-          }
+          height = Math.floor(height);
+          document.getElementById("ecp_${it.randomName}").style.height = height + "px";
       };
 
       f();

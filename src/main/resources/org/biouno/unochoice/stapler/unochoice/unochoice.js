@@ -352,9 +352,7 @@ var UnoChoice = UnoChoice || (function($) {
                     /*
                      * This height is equivalent to setting the number of rows displayed in a select/multiple
                      */
-                    if (newValues.length > 10) {
-                        parameterElement.style.height = '' + (23 * (newValues.length > 10 ? 10 : newValues.length)) + 'px';
-                    }
+                    parameterElement.style.height = '' + (newValues.length > 10 ? '230px' : 'auto');
                 } // if (oldSel.children.length > 0 && oldSel.children[0].tagName == 'TABLE')
             } // if (oldSel.tagName == 'SELECT') { // else if (oldSel.tagName == 'DIV') {
         });
