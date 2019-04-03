@@ -67,7 +67,9 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
      * @param referencedParameters comma separated list of referenced parameters
      * @deprecated see JENKINS-32149
      */
-    protected AbstractCascadableParameter(String name, String description, Script script, Script visibilityScript,  String referencedParameters) {
+    protected AbstractCascadableParameter(String name, String description,
+                                          Script script, Script visibilityScript,
+                                          String referencedParameters) {
         super(name, description, script, visibilityScript);
         this.referencedParameters = referencedParameters;
     }
@@ -82,7 +84,8 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
      * @param referencedParameters comma separated list of referenced parameters
      */
     protected AbstractCascadableParameter(String name, String description, String randomName,
-            Script script, Script visibilityScript, String referencedParameters) {
+                                          Script script, Script visibilityScript,
+                                          String referencedParameters) {
         super(name, description, randomName, script, visibilityScript);
         this.referencedParameters = referencedParameters;
     }

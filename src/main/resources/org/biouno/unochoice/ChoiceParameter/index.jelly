@@ -5,6 +5,16 @@
   ${it.parameters.clear()}
   <st:include page="/org/biouno/unochoice/common/choiceParameterCommon.jelly"/>
   <script type="text/javascript">
+    <j:choose>
+      var parentDiv = jQuery('#${paramName}');
+      var parentRow = parentDiv.parent().parent().parent();
+      <j:when test="${it.isVisible()}">
+          parentRow.css('display', 'table-row-group');
+      </j:when>
+      <j:otherwise>
+          parentRow.css('display', 'none');
+      </j:otherwise>
+    </j:choose>
     <j:if test="${it.filterable}">
     var parentDiv = jQuery('#${paramName}');
     var parameterHtmlElement = parentDiv.find('DIV');

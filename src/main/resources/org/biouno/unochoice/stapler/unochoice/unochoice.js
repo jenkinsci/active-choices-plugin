@@ -510,19 +510,6 @@ var UnoChoice = UnoChoice || (function($) {
             }
         });
 
-        console.log('Calling Java server code to update visibility of HTML elements...');
-        this.proxy.isVisible(function (t) {
-            var choices = t.responseText;
-            console.log('Value returned from server: ' + choices);
-            if (choices == 'true') {
-                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'table-row-group';
-                console.log('Show parameter: ' + parameterName);
-            } else {
-                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
-                console.log('Hide parameter: ' + parameterName);
-            }
-        });
-
         // Here depending on the HTML element we might need to call a method to return a Map of elements,
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName == 'OL') { // handle OL's

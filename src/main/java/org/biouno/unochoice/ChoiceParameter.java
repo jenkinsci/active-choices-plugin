@@ -61,15 +61,17 @@ public class ChoiceParameter extends AbstractScriptableParameter {
     /**
      * Constructor called from Jelly with parameters.
      *
-     * @param name name
-     * @param description description
-     * @param script script
+     * @param name             name
+     * @param description      description
+     * @param script           script
      * @param visibilityScript visibility script
-     * @param choiceType choice type
-     * @param filterable filter flag
+     * @param choiceType       choice type
+     * @param filterable       filter flag
      * @deprecated see JENKINS-32149
      */
-    public ChoiceParameter(String name, String description, Script script, Script visibilityScript, String choiceType, Boolean filterable) {
+    public ChoiceParameter(String name, String description,
+                           Script script, Script visibilityScript,
+                           String choiceType, Boolean filterable) {
         super(name, description, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
@@ -79,17 +81,18 @@ public class ChoiceParameter extends AbstractScriptableParameter {
     /**
      * Constructor called from Jelly with parameters.
      *
-     * @param name name
-     * @param description description
-     * @param randomName parameter random generated name
-     * @param script script
+     * @param name             name
+     * @param description      description
+     * @param randomName       parameter random generated name
+     * @param script           script
      * @param visibilityScript visibility script
-     * @param choiceType choice type
-     * @param filterable filter flag
+     * @param choiceType       choice type
+     * @param filterable       filter flag
      * @deprecated see JENKINS-31625
      */
-    public ChoiceParameter(String name, String description, String randomName, Script script, Script visibilityScript, String choiceType,
-            Boolean filterable) {
+    public ChoiceParameter(String name, String description, String randomName,
+                           Script script, Script visibilityScript,
+                           String choiceType, Boolean filterable) {
         super(name, description, randomName, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
@@ -98,17 +101,19 @@ public class ChoiceParameter extends AbstractScriptableParameter {
 
     /**
      * Constructor called from Jelly with parameters.
-     * @param name name
-     * @param description description
-     * @param randomName parameter random generated name
-     * @param script script
+     *
+     * @param name             name
+     * @param description      description
+     * @param randomName       parameter random generated name
+     * @param script           script
      * @param visibilityScript visibility script
-     * @param choiceType choice type
-     * @param filterable filter flag
-     * @param filterLength length when filter start filtering
+     * @param choiceType       choice type
+     * @param filterable       filter flag
+     * @param filterLength     length when filter start filtering
      */
     @DataBoundConstructor
-    public ChoiceParameter(String name, String description, String randomName, Script script, Script visibilityScript,
+    public ChoiceParameter(String name, String description, String randomName,
+                           Script script, Script visibilityScript,
                            String choiceType, Boolean filterable, Integer filterLength) {
         super(name, description, randomName, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
@@ -116,10 +121,6 @@ public class ChoiceParameter extends AbstractScriptableParameter {
         this.filterLength = filterLength;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.biouno.unochoice.AbstractUnoChoiceParameter#getChoiceType()
-     */
     @Override
     public String getChoiceType() {
         return this.choiceType;
@@ -136,13 +137,12 @@ public class ChoiceParameter extends AbstractScriptableParameter {
 
     /**
      * Get the filter length.
+     *
      * @return filter length
      */
     public Integer getFilterLength() {
         return filterLength == null ? (Integer) 1 : filterLength;
     }
-
-    // --- descriptor
 
     @Extension
     public static final class DescriptImpl extends UnoChoiceParameterDescriptor {
@@ -151,7 +151,6 @@ public class ChoiceParameter extends AbstractScriptableParameter {
         public String getDisplayName() {
             return "Active Choices Parameter";
         }
-
     }
 
 }

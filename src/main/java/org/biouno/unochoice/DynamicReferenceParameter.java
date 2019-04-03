@@ -82,8 +82,9 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
      * <code>false</code> by default.
      * @deprecated see JENKINS-32149
      */
-    public DynamicReferenceParameter(String name, String description, Script script, Script visibilityScript,
-            String choiceType, String referencedParameters, Boolean omitValueField) {
+    public DynamicReferenceParameter(String name, String description,
+                                     Script script, Script visibilityScript,
+                                     String choiceType, String referencedParameters, Boolean omitValueField) {
         super(name, description, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
@@ -103,8 +104,9 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
      * <code>false</code> by default.
      */
     @DataBoundConstructor
-    public DynamicReferenceParameter(String name, String description, String randomName, Script script, Script visibilityScript,
-            String choiceType, String referencedParameters, Boolean omitValueField) {
+    public DynamicReferenceParameter(String name, String description, String randomName,
+                                     Script script, Script visibilityScript,
+                                     String choiceType, String referencedParameters, Boolean omitValueField) {
         super(name, description, randomName, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
