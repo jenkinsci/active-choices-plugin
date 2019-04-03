@@ -5,3 +5,4 @@ test-output/
 .settings/
 .project
 **/*~
+/.idea/

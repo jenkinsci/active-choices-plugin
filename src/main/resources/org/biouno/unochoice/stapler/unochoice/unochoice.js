@@ -152,9 +152,7 @@ var UnoChoice = UnoChoice || (function($) {
         // Now we get the updated choices, after the Groovy script is eval'd using the updated Map of parameters
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         var _self = this; // re-reference this to use within the inner function
-<<<<<<< HEAD
-=======
-        
+
         console.log('Calling Java server code to update visibility of HTML elements...');
         this.proxy.isVisible(function (t) {
             var choices = t.responseText;
@@ -169,8 +167,7 @@ var UnoChoice = UnoChoice || (function($) {
                 console.log('Hide parameter: ' + parameterName);
             }
         });
-        
->>>>>>> [JENKINS-32827] Hide description
+
         console.log('Calling Java server code to update HTML elements...');
         this.proxy.getChoicesForUI(function (t) {
             var choices = t.responseText;
