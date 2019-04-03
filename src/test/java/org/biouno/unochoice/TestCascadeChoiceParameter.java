@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014-2016 Ioannis Moutsatsos, Bruno P. Kinoshita
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,16 +24,9 @@
 
 package org.biouno.unochoice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.biouno.unochoice.model.GroovyScript;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.biouno.unochoice.util.Utils;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -41,6 +34,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.HttpResponses;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestCascadeChoiceParameter {
 
@@ -54,7 +55,7 @@ public class TestCascadeChoiceParameter {
     public JenkinsRule j = new JenkinsRule();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
@@ -68,9 +69,9 @@ public class TestCascadeChoiceParameter {
                 new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", RANDOM_NAME,
-            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
-            "param001, param002", true, 5);
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "param001, param002", true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
@@ -91,9 +92,9 @@ public class TestCascadeChoiceParameter {
                 new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", RANDOM_NAME,
-            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
-            "param001, param002", true, 0);
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "param001, param002", true, 0);
         assertTrue(param.getParameters().isEmpty());
 
         try {
@@ -128,9 +129,9 @@ public class TestCascadeChoiceParameter {
                 new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", RANDOM_NAME,
-            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
-            "", true, 0);
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "", true, 0);
 
         assertTrue(param.isVisible());
     }
@@ -144,11 +145,27 @@ public class TestCascadeChoiceParameter {
                 new SecureGroovyScript("", Boolean.FALSE, null),
                 new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", RANDOM_NAME,
-            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
-            "", true, 0);
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "", true, 0);
 
         assertTrue(param.isVisible());
+    }
+
+    @Test
+    public void testInvisibility() {
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "", true, 0);
+
+        assertFalse(param.isVisible());
     }
 
     @Test
@@ -156,12 +173,13 @@ public class TestCascadeChoiceParameter {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         GroovyScript visibilityScript = new GroovyScript(
-                new SecureGroovyScript("return param001=='A' && param002=='B'",Boolean.FALSE, null),
+                new SecureGroovyScript("return param001=='A' && param002=='B'", Boolean.FALSE, null),
                 new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter(
-            "param000", "description", RANDOM_NAME,
-            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
-            "param001, param002", true, 0);
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "param001, param002", true, 0);
+
         try {
             param.doUpdate("param001=A__LESEP__param002=B");
         } catch (HttpResponses.HttpResponseException response) {
@@ -169,6 +187,27 @@ public class TestCascadeChoiceParameter {
         }
 
         assertTrue(param.isVisible());
+    }
+
+    @Test
+    public void testCascadedInvisibility() {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript("return param001=='A' && param002=='A'", Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+                "param000", "description", RANDOM_NAME,
+                script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+                "param001, param002", true, 0);
+
+        try {
+            param.doUpdate("param001=A__LESEP__param002=B");
+        } catch (HttpResponses.HttpResponseException response) {
+            // ignore
+        }
+
+        assertFalse(param.isVisible());
     }
 
 }
