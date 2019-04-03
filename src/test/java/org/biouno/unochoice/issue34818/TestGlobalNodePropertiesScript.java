@@ -73,7 +73,7 @@ public class TestGlobalNodePropertiesScript {
         j.jenkins.getGlobalNodeProperties().add(envVarsNodeProp);
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
-        ChoiceParameter param = new ChoiceParameter("param000", "description", "randomName", script,
+        ChoiceParameter param = new ChoiceParameter("param000", "description", "randomName", script, null,
                 CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, true, 0);
 
         assertEquals(Arrays.asList("a", "b", "20:13:13").toString(), param.getChoices().values().toString());

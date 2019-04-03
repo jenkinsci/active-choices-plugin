@@ -29,7 +29,7 @@ public class Security470Test {
             GroovyScript script = new GroovyScript(new SecureGroovyScript("return '<img src=\\'fail\\' onerror=\\'alert(\"foo\");\\' /><b>text</b>'", true, null),
                     null);
             DynamicReferenceParameter param = new DynamicReferenceParameter("whatever", "description", "some-random-name",
-                    script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
+                    script, null, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
             Assert.assertEquals("<img src=\"fail\"><b>text</b>", param.getChoicesAsStringForUI());
         }
 
@@ -38,7 +38,7 @@ public class Security470Test {
             GroovyScript script = new GroovyScript(new SecureGroovyScript(htmlScript, false, null),
                     null);
             DynamicReferenceParameter param = new DynamicReferenceParameter("whatever", "description", "some-random-name",
-                    script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
+                    script, null, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
             Assert.assertEquals("{}", param.getChoicesAsStringForUI()); // not yet approved
 
             ScriptApproval.get().preapprove(htmlScript, GroovyLanguage.get());

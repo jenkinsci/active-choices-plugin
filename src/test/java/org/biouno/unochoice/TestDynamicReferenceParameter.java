@@ -9,10 +9,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,8 +38,11 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestDynamicReferenceParameter {
 
-    private final String SCRIPT = "return ['D', 'C', 'B', 'A']";
-    private final String FALLBACK_SCRIPT = "";
+    private final static String SCRIPT = "return ['D', 'C', 'B', 'A']";
+    private final static String FALLBACK_SCRIPT = "";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = "some-random-name";
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -52,15 +55,20 @@ public class TestDynamicReferenceParameter {
 
     @Test
     public void testConstructor() {
-        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+        GroovyScript script =  new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
-        DynamicReferenceParameter param = new DynamicReferenceParameter("param000", "description", "some-random-name",
-                script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true);
+        GroovyScript visibilityScript =  new GroovyScript(new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        DynamicReferenceParameter param = new DynamicReferenceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
         assertEquals(script, param.getScript());
-        assertEquals("some-random-name", param.getRandomName());
+        assertEquals(visibilityScript, param.getVisibilityScript());
+        assertEquals(RANDOM_NAME, param.getRandomName());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
         assertTrue(param.getOmitValueField());

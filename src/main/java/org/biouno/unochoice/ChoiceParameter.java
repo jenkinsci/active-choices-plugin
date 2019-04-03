@@ -25,7 +25,6 @@
 package org.biouno.unochoice;
 
 import hudson.Extension;
-
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -65,12 +64,13 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param name name
      * @param description description
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param filterable filter flag
      * @deprecated see JENKINS-32149
      */
-    public ChoiceParameter(String name, String description, Script script, String choiceType, Boolean filterable) {
-        super(name, description, script);
+    public ChoiceParameter(String name, String description, Script script, Script visibilityScript, String choiceType, Boolean filterable) {
+        super(name, description, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = null;
@@ -78,17 +78,19 @@ public class ChoiceParameter extends AbstractScriptableParameter {
 
     /**
      * Constructor called from Jelly with parameters.
+     *
      * @param name name
      * @param description description
      * @param randomName parameter random generated name
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param filterable filter flag
      * @deprecated see JENKINS-31625
      */
-    public ChoiceParameter(String name, String description, String randomName, Script script, String choiceType,
-                           Boolean filterable) {
-        super(name, description, randomName, script);
+    public ChoiceParameter(String name, String description, String randomName, Script script, Script visibilityScript, String choiceType,
+            Boolean filterable) {
+        super(name, description, randomName, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = null;
@@ -100,14 +102,15 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * @param description description
      * @param randomName parameter random generated name
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param filterable filter flag
      * @param filterLength length when filter start filtering
      */
     @DataBoundConstructor
-    public ChoiceParameter(String name, String description, String randomName, Script script, String choiceType,
-                           Boolean filterable, Integer filterLength) {
-        super(name, description, randomName, script);
+    public ChoiceParameter(String name, String description, String randomName, Script script, Script visibilityScript,
+                           String choiceType, Boolean filterable, Integer filterLength) {
+        super(name, description, randomName, script, visibilityScript);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = filterLength;
@@ -123,7 +126,8 @@ public class ChoiceParameter extends AbstractScriptableParameter {
     }
 
     /**
-     * Get the filter flag.
+     * Gets the filter flag.
+     *
      * @return filter flag
      */
     public Boolean getFilterable() {

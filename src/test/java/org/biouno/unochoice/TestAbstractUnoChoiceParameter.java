@@ -2,17 +2,17 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2014-2016 Ioannis Moutsatsos, Bruno P. Kinoshita
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
+import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -53,8 +54,11 @@ import net.sf.json.JSONObject;
 @PowerMockIgnore({"javax.crypto.*" })
 public class TestAbstractUnoChoiceParameter {
 
-    private final String SCRIPT = "return ['a', 'b']";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String SCRIPT = "return ['a', 'b']";
+    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = Utils.createRandomParameterName("choice-parameter", "test");
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -67,10 +71,13 @@ public class TestAbstractUnoChoiceParameter {
 
     @Test
     public void testCreateValue() {
-        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
-        ChoiceParameter param = new ChoiceParameter("name", "description", "some-random-name", script, "choiceType",
-                true, 0);
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        ChoiceParameter param = new ChoiceParameter("name", "description", RANDOM_NAME, script, visibilityScript, "choiceType", true);
         ParameterValue value = param.createValue("value");
 
         assertEquals("value", value.getValue().toString());

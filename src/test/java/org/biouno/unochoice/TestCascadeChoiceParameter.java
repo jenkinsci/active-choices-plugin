@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- *
+ * 
  * Copyright (c) 2014-2016 Ioannis Moutsatsos, Bruno P. Kinoshita
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
+import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.junit.Before;
@@ -43,8 +44,11 @@ import org.kohsuke.stapler.HttpResponses;
 
 public class TestCascadeChoiceParameter {
 
-    private final String SCRIPT = "return ['a', 'b']";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String SCRIPT = "return ['a', 'b']";
+    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = Utils.createRandomParameterName("choice-parameter", "test");
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -57,15 +61,21 @@ public class TestCascadeChoiceParameter {
 
     @Test
     public void testConstructor() {
-        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
-        CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
-                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true, 5);
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true, 5);
 
         assertEquals("param000", param.getName());
         assertEquals("description", param.getDescription());
-        assertEquals("some-random-name", param.getRandomName());
         assertEquals(script, param.getScript());
+        assertEquals(visibilityScript, param.getVisibilityScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
         assertTrue(param.getFilterable());
@@ -74,10 +84,16 @@ public class TestCascadeChoiceParameter {
 
     @Test
     public void testParameters() {
-        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
-        CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
-                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", true, 0);
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true, 0);
         assertTrue(param.getParameters().isEmpty());
 
         try {
@@ -101,6 +117,54 @@ public class TestCascadeChoiceParameter {
         assertEquals(expected, param.getParameters());
 
         assertEquals(Arrays.asList("param001", "param002"), Arrays.asList(param.getReferencedParametersAsArray()));
+    }
+
+    @Test
+    public void testVisibility() {
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "", true, 0);
+
+        assertTrue(param.isVisible());
+    }
+
+    @Test
+    public void testDefaultVisibility() {
+        GroovyScript script = new GroovyScript(
+                new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript("", Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "", true, 0);
+
+        assertTrue(param.isVisible());
+    }
+
+    @Test
+    public void testCascadedVisibility() {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(
+                new SecureGroovyScript("return param001=='A' && param002=='B'",Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter(
+            "param000", "description", RANDOM_NAME,
+            script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
+            "param001, param002", true, 0);
+        param.doUpdate("param001=A__LESEP__param002=B");
+
+        assertTrue(param.isVisible());
     }
 
 }

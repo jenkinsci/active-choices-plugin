@@ -43,4 +43,12 @@ public interface ScriptableParameter<T> extends UnoChoiceParameter {
      */
     T getChoices(Map<Object, Object> parameters);
 
+    /**
+     * Evaluates a script and returns the visibility of this parameter.
+     *
+     * @param parameters parameters
+     * @return script result as boolean
+     */
+    boolean isVisible(Map<Object, Object> parameters);
+
 }
