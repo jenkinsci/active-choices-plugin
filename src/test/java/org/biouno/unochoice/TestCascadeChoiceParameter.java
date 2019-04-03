@@ -162,7 +162,11 @@ public class TestCascadeChoiceParameter {
             "param000", "description", RANDOM_NAME,
             script, visibilityScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML,
             "param001, param002", true, 0);
-        param.doUpdate("param001=A__LESEP__param002=B");
+        try {
+            param.doUpdate("param001=A__LESEP__param002=B");
+        } catch (HttpResponses.HttpResponseException response) {
+            // ignore
+        }
 
         assertTrue(param.isVisible());
     }
