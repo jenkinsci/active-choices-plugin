@@ -18,7 +18,7 @@
     <name>Active Choices Plug-in</name>
     <description>This plug-in provides additional parameter types for jobs, that allow you to cascade changes and render images or other HTML elements instead of the traditional parameter.</description>
 
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/Active+Choices+Plugin</url>
 
     <licenses>
         <license>
@@ -30,7 +30,7 @@
 
     <issueManagement>
         <system>JIRA</system>
-        <url>https://issues.jenkins-ci.org/secure/IssueNavigator.jspa?reset=true&amp;jqlQuery=project+%3D+JENKINS+AND+status+in+%28Open%2C+"In+Progress"%2C+Reopened%29+AND+component+%3D+${project.artifactId}</url>
+        <url>https://issues.jenkins.io/issues/?jql=project%20%3D%20JENKINS%20AND%20component%20%3D%20active-choices-plugin</url>
     </issueManagement>
 
     <properties>
@@ -178,14 +178,14 @@
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
 
