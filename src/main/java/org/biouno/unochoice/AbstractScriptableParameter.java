@@ -24,12 +24,12 @@
 
 package org.biouno.unochoice;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractItem;
+import hudson.model.ParameterValue;
+import hudson.model.Project;
+import hudson.model.StringParameterValue;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
@@ -39,12 +39,11 @@ import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractItem;
-import hudson.model.ParameterValue;
-import hudson.model.Project;
-import hudson.model.StringParameterValue;
-import jenkins.model.Jenkins;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Base class for parameters with scripts.
@@ -87,6 +86,12 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * Script used to render the parameter.
      */
     protected final Script script;
+
+    /**
+     * Script used to render the visibility.
+     */
+    protected final Script visibilityScript;
+
     /**
      * The project name.
      */
@@ -104,11 +109,13 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * @param name name
      * @param description description
      * @param script script used to generate the list of parameter values
+     * @param visibilityScript script used to determine the visibility of this parameter
      * @deprecated see JENKINS-32149
      */
-    protected AbstractScriptableParameter(String name, String description, Script script) {
+    protected AbstractScriptableParameter(String name, String description, Script script, Script visibilityScript) {
         super(name, description);
         this.script = script;
+        this.visibilityScript = visibilityScript;
         this.projectName = null;
         this.projectFullName = null;
     }
@@ -122,10 +129,12 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script used to generate the list of parameter values
+     * @param visibilityScript script used to determine the visibility of this parameter
      */
-    protected AbstractScriptableParameter(String name, String description, String randomName, Script script) {
+    protected AbstractScriptableParameter(String name, String description, String randomName, Script script, Script visibilityScript) {
         super(name, description, randomName);
         this.script = script;
+        this.visibilityScript = visibilityScript;
         // Try to get the project name from the current request. In case of being called in some other non-web way,
         // the name will be fetched later via Jenkins.getInstance() and iterating through all items. This is for a
         // performance wise approach first.
@@ -154,6 +163,24 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      */
     public Script getScript() {
         return script;
+    }
+
+    /**
+     * Gets the visibility script.
+     *
+     * @return the visibility script
+     */
+    public Script getVisibilityScript() {
+        return visibilityScript;
+    }
+
+    public boolean isVisible() {
+        return evalVisibility(getParameters());
+    }
+
+    @Override
+    public boolean isVisible(Map<Object, Object> parameters) {
+        return evalVisibility(parameters);
     }
 
     /**
@@ -253,6 +280,9 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object eval(Map<Object, Object> parameters) {
+        if (script == null) {
+            return Collections.emptyMap();
+        }
         try {
             Map<Object, Object> scriptParameters = getHelperParameters();
             scriptParameters.putAll(parameters);
@@ -261,6 +291,22 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error executing script for dynamic parameter", e);
             return Collections.emptyMap();
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected boolean evalVisibility(Map<Object, Object> parameters) {
+        if (visibilityScript == null) {
+            return true;
+        }
+        try {
+            Map<Object, Object> scriptParameters = getHelperParameters();
+            scriptParameters.putAll(parameters);
+            final ScriptCallback<Exception> callback = new ScriptCallback(getName(), visibilityScript, scriptParameters);
+            return (Boolean) callback.call();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error executing visibility script for dynamic parameter", e);
+            return true;
         }
     }
 

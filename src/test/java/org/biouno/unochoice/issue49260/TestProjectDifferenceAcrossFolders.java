@@ -80,7 +80,7 @@ public class TestProjectDifferenceAcrossFolders {
         PowerMockito.when(Stapler.getCurrentRequest()).thenReturn(requestA);
         PowerMockito.when(requestA.findAncestor(AbstractItem.class)).thenReturn(ancestorA);
         PowerMockito.when(ancestorA.getObject()).thenReturn(projectA);
-        ChoiceParameter listParamA = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name-A", listScript,
+        ChoiceParameter listParamA = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name-A", listScript, null,
                 CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
 
         StaplerRequest requestB = PowerMockito.mock(StaplerRequest.class);
@@ -88,7 +88,7 @@ public class TestProjectDifferenceAcrossFolders {
         PowerMockito.when(Stapler.getCurrentRequest()).thenReturn(requestB);
         PowerMockito.when(requestB.findAncestor(AbstractItem.class)).thenReturn(ancestorB);
         PowerMockito.when(ancestorB.getObject()).thenReturn(projectB);
-        ChoiceParameter listParamB = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name-B", listScript,
+        ChoiceParameter listParamB = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name-B", listScript, null,
                 CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
         
         ParametersDefinitionProperty paramsDefA = new ParametersDefinitionProperty(listParamA);

@@ -53,6 +53,13 @@ public interface CascadableParameter<T> extends ScriptableParameter<T> {
     public List<Object> getChoicesForUI();
 
     /**
+     * Evaluates a script and returns the visibility of this parameter.
+     *
+     * @return script result as boolean
+     */
+    public boolean isVisible();
+
+    /**
      * Exposed to the UI. Is triggered everytime any of the referenced parameters gets updated.
      * @param parameters Comma separated list of parameters
      */

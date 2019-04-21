@@ -69,7 +69,7 @@ public class TestParameterObjectIsPresent {
     public void testParameterObjectIsPresent() throws IOException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
-        ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name1", listScript,
+        ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name1", listScript, null,
                 CascadeChoiceParameter.PARAMETER_TYPE_MULTI_SELECT, true, 1);
         Map<Object, Object> listSelectionValue = listParam.getChoices();
 

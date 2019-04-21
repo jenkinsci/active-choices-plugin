@@ -75,10 +75,10 @@ public class TestParameterValuesWithEquals {
         GroovyScript listSelectionScript = new GroovyScript(
                 new SecureGroovyScript(SCRIPT_LIST_SELECTION, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST_SELECTION, Boolean.FALSE, null));
-        ChoiceParameter listParam = new ChoiceParameter("LIST", "description...", "random-name1", listScript,
+        ChoiceParameter listParam = new ChoiceParameter("LIST", "description...", "random-name1", listScript, null,
                 CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true, 1);
         DynamicReferenceParameter listSelectionParam = new DynamicReferenceParameter("LIST_SELECTION", "description...",
-                "random-name2", listSelectionScript, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "LIST",
+                "random-name2", listSelectionScript, null, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "LIST",
                 true);
         // should be a String
         String listValue = listParam.getDefaultParameterValue().getValue().toString();

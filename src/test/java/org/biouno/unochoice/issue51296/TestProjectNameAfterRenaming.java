@@ -67,7 +67,7 @@ public class TestProjectNameAfterRenaming {
 
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                                                     new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
-        
+
         PowerMockito.mockStatic(Stapler.class);
 
         StaplerRequest request = PowerMockito.mock(StaplerRequest.class);
@@ -75,7 +75,7 @@ public class TestProjectNameAfterRenaming {
         PowerMockito.when(Stapler.getCurrentRequest()).thenReturn(request);
         PowerMockito.when(request.findAncestor(AbstractItem.class)).thenReturn(ancestor);
         PowerMockito.when(ancestor.getObject()).thenReturn(project);
-        ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name", listScript,
+        ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name", listScript, null,
                 CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
 
         ParametersDefinitionProperty paramsDef = new ParametersDefinitionProperty(listParam);

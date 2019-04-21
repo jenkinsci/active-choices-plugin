@@ -131,7 +131,7 @@ var UnoChoice = UnoChoice || (function($) {
     /**
      * Updates the CascadeParameter object.
      *
-     * <p>Once this method gets called, it will call the Java code (using Stapler proxy),
+     * <p>Once this method gets called, it will call the Java code (using a modified-sync Stapler proxy),
      * that is responsible for updating the referenced parameter values. The Java method receives the value of
      * other referenced parameters.</p>
      *
@@ -152,6 +152,22 @@ var UnoChoice = UnoChoice || (function($) {
         // Now we get the updated choices, after the Groovy script is eval'd using the updated Map of parameters
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         var _self = this; // re-reference this to use within the inner function
+
+        console.log('Calling Java server code to update visibility of HTML elements...');
+        this.proxy.isVisible(function (t) {
+            var choices = t.responseText;
+            console.log('Value returned from server: ' + choices);
+            var parameterName = _self.getParameterName();
+            var parameterElement = _self.getParameterElement();
+            if (choices == 'true') {
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'table-row-group';
+                console.log('Show parameter: ' + parameterName);
+            } else {
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+                console.log('Hide parameter: ' + parameterName);
+            }
+        });
+
         console.log('Calling Java server code to update HTML elements...');
         this.proxy.getChoicesForUI(function (t) {
             var choices = t.responseText;
@@ -352,7 +368,7 @@ var UnoChoice = UnoChoice || (function($) {
                     /*
                      * This height is equivalent to setting the number of rows displayed in a select/multiple
                      */
-                    parameterElement.style.height = newValues.length > 10 ? '230px' : 'auto';
+                    parameterElement.style.height = '' + (23 * (newValues.length > 10 ? 10 : newValues.length)) + 'px';
                 } // if (oldSel.children.length > 0 && oldSel.children[0].tagName == 'TABLE')
             } // if (oldSel.tagName == 'SELECT') { // else if (oldSel.tagName == 'DIV') {
         });
@@ -423,7 +439,7 @@ var UnoChoice = UnoChoice || (function($) {
                 jQuery(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
                 setTimeout(function () {
-                   _self.cascadeParameter.update(); 
+                   _self.cascadeParameter.update();
                    jQuery(".behavior-loading").hide();
                 }, 0);
             }
@@ -460,7 +476,7 @@ var UnoChoice = UnoChoice || (function($) {
     /**
      * <p>Updates the DynamicReferenceParameter object. Debug information goes into the browser console.</p>
      *
-     * <p>Once this method gets called, it will call the Java code (using Stapler proxy),
+     * <p>Once this method gets called, it will call the Java code (using a modified-sync Stapler proxy),
      * that is responsible for updating the referenced parameter values. The Java method receives the value of
      * other referenced parameters.</p>
      *
@@ -478,7 +494,22 @@ var UnoChoice = UnoChoice || (function($) {
         console.log('Values retrieved from Referenced Parameters: ' + parametersString);
         // Update the Map of parameters
         this.proxy.doUpdate(parametersString);
+        var parameterName = this.getParameterName();
         var parameterElement = this.getParameterElement();
+
+        console.log('Calling Java server code to update visibility of HTML elements...');
+        this.proxy.isVisible(function (t) {
+            var choices = t.responseText;
+            console.log('Value returned from server: ' + choices);
+            if (choices == 'true') {
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'table-row-group';
+                console.log('Show parameter: ' + parameterName);
+            } else {
+                parameterElement.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+                console.log('Hide parameter: ' + parameterName);
+            }
+        });
+
         // Here depending on the HTML element we might need to call a method to return a Map of elements,
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName == 'OL') { // handle OL's

@@ -24,8 +24,11 @@
 
 package org.biouno.unochoice;
 
-import java.util.List;
-
+import hudson.Extension;
+import hudson.model.AbstractProject;
+import hudson.model.ParameterDefinition;
+import hudson.util.FormValidation;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
@@ -35,11 +38,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.ParameterDefinition;
-import hudson.util.FormValidation;
-import net.sf.json.JSONObject;
+import java.util.List;
 
 /**
  * <p>Provides a <b>dynamic reference parameter</b> for users. This is a not so elegant
@@ -76,15 +75,17 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
      * @param name name
      * @param description description
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param omitValueField used in the UI to decide whether to include a hidden empty &lt;input name=value&gt;.
      * <code>false</code> by default.
      * @deprecated see JENKINS-32149
      */
-    public DynamicReferenceParameter(String name, String description, Script script, 
-            String choiceType, String referencedParameters, Boolean omitValueField) {
-        super(name, description, script, referencedParameters);
+    public DynamicReferenceParameter(String name, String description,
+                                     Script script, Script visibilityScript,
+                                     String choiceType, String referencedParameters, Boolean omitValueField) {
+        super(name, description, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
     }
@@ -96,15 +97,17 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param omitValueField used in the UI to decide whether to include a hidden empty &lt;input name=value&gt;.
      * <code>false</code> by default.
      */
     @DataBoundConstructor
-    public DynamicReferenceParameter(String name, String description, String randomName, Script script,
-            String choiceType, String referencedParameters, Boolean omitValueField) {
-        super(name, description, randomName, script, referencedParameters);
+    public DynamicReferenceParameter(String name, String description, String randomName,
+                                     Script script, Script visibilityScript,
+                                     String choiceType, String referencedParameters, Boolean omitValueField) {
+        super(name, description, randomName, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.omitValueField = BooleanUtils.toBooleanDefaultIfNull(omitValueField, Boolean.FALSE);
     }

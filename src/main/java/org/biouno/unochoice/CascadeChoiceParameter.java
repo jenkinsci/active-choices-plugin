@@ -72,14 +72,16 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
      * @param name name
      * @param description description
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param filterable filter flag
      * @deprecated see JENKINS-32149
      */
-    public CascadeChoiceParameter(String name, String description, Script script,
-            String choiceType, String referencedParameters, Boolean filterable) {
-        super(name, description, script, referencedParameters);
+    public CascadeChoiceParameter(String name, String description,
+                                  Script script, Script visibilityScript,
+                                  String choiceType, String referencedParameters, Boolean filterable) {
+        super(name, description, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = null;
@@ -92,14 +94,16 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param filterable filter flag
      * @deprecated see JENKINS-31625
      */
-    public CascadeChoiceParameter(String name, String description, String randomName, Script script,
-            String choiceType, String referencedParameters, Boolean filterable) {
-        super(name, description, randomName, script, referencedParameters);
+    public CascadeChoiceParameter(String name, String description, String randomName,
+                                  Script script, Script visibilityScript,
+                                  String choiceType, String referencedParameters, Boolean filterable) {
+        super(name, description, randomName, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = null;
@@ -112,15 +116,18 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
      * @param description description
      * @param randomName parameter random generated name (uuid)
      * @param script script
+     * @param visibilityScript visibility script
      * @param choiceType choice type
      * @param referencedParameters referenced parameters
      * @param filterable filter flag
      * @param filterLength filter length
      */
     @DataBoundConstructor
-    public CascadeChoiceParameter(String name, String description, String randomName, Script script,
-            String choiceType, String referencedParameters, Boolean filterable, Integer filterLength) {
-        super(name, description, randomName, script, referencedParameters);
+    public CascadeChoiceParameter(String name, String description, String randomName,
+                                  Script script, Script visibilityScript,
+                                  String choiceType, String referencedParameters,
+                                  Boolean filterable, Integer filterLength) {
+        super(name, description, randomName, script, visibilityScript, referencedParameters);
         this.choiceType = StringUtils.defaultIfBlank(choiceType, PARAMETER_TYPE_SINGLE_SELECT);
         this.filterable = filterable;
         this.filterLength = filterLength;
@@ -136,7 +143,8 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
     }
 
     /**
-     * Get the filter flag.
+     * Gets the filter flag.
+     *
      * @return filter flag
      */
     public Boolean getFilterable() {

@@ -9,10 +9,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,12 +41,15 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestParametersOrder {
 
-    private final String SCRIPT = "return ['D', 'C', 'B', 'A']";
-    private final String FALLBACK_SCRIPT = "";
+    private final static String SCRIPT = "return ['D', 'C', 'B', 'A']";
+    private final static String FALLBACK_SCRIPT = "";
+    private final static String VISIBILITY_SCRIPT = "return true";
+    private final static String VISIBILITY_FALLBACK_SCRIPT = "return false";
+    private final static String RANDOM_NAME = "random name";
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
-
+    
     @Before
     public void setUp() throws Exception {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
@@ -61,9 +64,12 @@ public class TestParametersOrder {
         parameters.put("B", "B");
         parameters.put("A", "A");
 
-        ChoiceParameter parameter = new ChoiceParameter("script001", "description", "random name",
-                new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
-                        new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null)),
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        GroovyScript visibilityScript = new GroovyScript(new SecureGroovyScript(VISIBILITY_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(VISIBILITY_FALLBACK_SCRIPT, Boolean.FALSE, null));
+        ChoiceParameter parameter = new ChoiceParameter(
+                "script001", "description", RANDOM_NAME, script,visibilityScript,
                 ChoiceParameter.PARAMETER_TYPE_MULTI_SELECT, true, 0);
         Map<Object, Object> result = parameter.getChoices(Collections.<Object, Object>emptyMap());
         assertArrayEquals(parameters.keySet().toArray(), result.keySet().toArray());
