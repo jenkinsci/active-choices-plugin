@@ -834,7 +834,7 @@ var UnoChoice = UnoChoice || (function($) {
         if (e.attr('name') == 'value') {
             value = getElementValue(htmlParameter);
         }  else if (e.prop('tagName') == 'DIV') {
-            var subElements = e.find('[name="value"]');
+            var subElements = e.find('[name$="value"]'); //fix: <input name="xxx.value" type="checkbox" value="xxx">
             if (subElements) {
                 var valueBuffer = Array();
                 subElements.each(function() {
