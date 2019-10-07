@@ -173,18 +173,13 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     private Map<Object, Object> getHelperParameters() {
         // map with parameters
         final Map<Object, Object> helperParameters = new LinkedHashMap<Object, Object>();
-
+ 
         // First, if the project name is set, we then find the project by its name, and inject into the map
         Project<?, ?> project = null;
-        if (StringUtils.isNotBlank(this.projectFullName)) {
-            // First try full name if exists
-            project = Jenkins.getInstance().getItemByFullName(this.projectFullName, Project.class);
-        } else if (StringUtils.isNotBlank(this.projectName)) {
-            // next we try to get the item given its name, which is more efficient
+        if (StringUtils.isNotBlank(this.projectName)) {
+            // first we try to get the item given its name, which is more efficient
             project = Utils.getProjectByName(this.projectName);
-        } 
-        // Last chance, if we were unable to get project from name and full name, try uuid
-        if (project == null) {
+        } else {
             // otherwise, in case we don't have the item name, we iterate looking for a job that uses this UUID
             project = Utils.findProjectByParameterUUID(this.getRandomName());
         }
@@ -195,16 +190,12 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
                 helperParameters.put(JENKINS_BUILD_VARIABLE_NAME, build);
             }
         }
-
-        // Here we set the parameter name
-        helperParameters.put(JENKINS_PARAMETER_VARIABLE_NAME, this);
-
+ 
         // Here we inject the global node properties
         final Map<String, Object> globalNodeProperties = Utils.getGlobalNodeProperties();
         helperParameters.putAll(globalNodeProperties);
         return helperParameters;
     }
-
     public Map<Object, Object> getChoices() {
         Map<Object, Object> choices = this.getChoices(getParameters());
         visibleItemCount = choices.size();
