@@ -188,7 +188,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
             // otherwise, in case we don't have the item name, we iterate looking for a job that uses this UUID
             project = Utils.findProjectByParameterUUID(this.getRandomName());
         }
-        if (project != null && StringUtils.isNotBlank(project)) {
+        if (project != null && StringUtils.isNotBlank(this.project)) {
             helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
             AbstractBuild<?, ?> build = project.getLastBuild();
             if (build != null && build.getHasArtifacts()) {
