@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 
+import hudson.markup.EscapedMarkupFormatter;
+import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
@@ -121,7 +123,7 @@ public class GroovyScript extends AbstractScript {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.biouno.unochoice.model.Script#eval()
      */
     @Override
@@ -131,7 +133,7 @@ public class GroovyScript extends AbstractScript {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.biouno.unochoice.model.Script#eval(java.util.Map)
      */
     @Override
@@ -171,7 +173,7 @@ public class GroovyScript extends AbstractScript {
             Object returnValue = secureScript.evaluate(cl, context);
             if (returnValue instanceof CharSequence) {
                 if (secureScript.isSandbox()) {
-                    return new RawHtmlMarkupFormatter(false).translate(returnValue.toString());
+                    return determineMarkupFormatter().translate(returnValue.toString());
                 }
             }
             return returnValue;
@@ -182,7 +184,7 @@ public class GroovyScript extends AbstractScript {
                     Object returnValue = secureFallbackScript.evaluate(cl, context);
                     if (returnValue instanceof CharSequence) {
                         if (secureFallbackScript.isSandbox()) {
-                            return new RawHtmlMarkupFormatter(false).translate(returnValue.toString());
+                            return determineMarkupFormatter().translate(returnValue.toString());
                         }
                     }
                     return returnValue;
@@ -197,9 +199,20 @@ public class GroovyScript extends AbstractScript {
         }
     }
 
+    private MarkupFormatter determineMarkupFormatter() {
+        MarkupFormatter formatter = Jenkins.get().getMarkupFormatter();
+        if(formatter instanceof EscapedMarkupFormatter) {
+            // EscapedMarkupFormatter renders the markup as text, which we ostensibly never want to happen in this plugin.
+            // Returning RawHtmlMarkupFormatter.INSTANCE preserves legacy behavior unless a different markup formatter is selected.
+            return RawHtmlMarkupFormatter.INSTANCE;
+        } else {
+            return formatter;
+        }
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -211,7 +224,7 @@ public class GroovyScript extends AbstractScript {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -225,7 +238,7 @@ public class GroovyScript extends AbstractScript {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
