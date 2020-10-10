@@ -580,7 +580,6 @@ properties([
             scriptlerScriptId:'Environments.groovy',
             fallbackScript: [
               classpath: [],
-              sandbox: false,
               script: 'return ["ERROR: Environments.groovy in Scriptler failed"]'
             ],
           ]
@@ -598,7 +597,6 @@ properties([
             ],
             fallbackScript: [
               classpath: [],
-              sandbox: false,
               script: 'return ["ERROR: HostsInEnv.groovy in Scriptler failed"]'
             ],
           ]
