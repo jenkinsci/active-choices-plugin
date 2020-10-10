@@ -577,11 +577,7 @@ properties([
           name: 'Environment',
           script: [
             $class: 'ScriptlerScript',
-            scriptlerScriptId:'Environments.groovy',
-            fallbackScript: [
-              classpath: [],
-              script: 'return ["ERROR: Environments.groovy in Scriptler failed"]'
-            ],
+            scriptlerScriptId:'Environments.groovy'
           ]
         ],
         [
@@ -594,11 +590,7 @@ properties([
             scriptlerScriptId:'HostsInEnv.groovy',
             parameters: [
               [name:'Environment', value: '$Environment']
-            ],
-            fallbackScript: [
-              classpath: [],
-              script: 'return ["ERROR: HostsInEnv.groovy in Scriptler failed"]'
-            ],
+            ]
           ]
         ]
       ])
