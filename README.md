@@ -537,7 +537,87 @@ To make your Scriptler scripts reusable across multiple projects you
 should parameterize them and assign script parameters using build
 parameters.
 
-TODO: Provide an example
+#### Example
+
+Environments.groovy in Scriptler
+``` syntaxhighlighter-pre
+return ["Select:selected", "DEV", "TEST", "STAGE", "PROD"]
+```
+
+HostsInEnv.groovy in Scriptler
+``` syntaxhighlighter-pre
+// Static content examples. These lists can be generated dynamically as an alternative.
+List devList    = ["Select:selected", "dev1", "dev2"]
+List testList   = ["Select:selected", "test1", "test2", "test3"]
+List stageList  = ["Select:selected", "stage1"]
+List prodList   = ["Select:selected", "prod1", "prod2", "prod3", "prod4"]
+
+List default_item = ["None"]
+
+if (Environment.equals('DEV')) {
+  return devList
+} else if (Environment.equals('TEST')) {
+  return testList
+} else if (Environment.equals('STAGE')) {
+  return stageList
+} else if (Environment.equals('PROD')) {
+  return prodList
+} else {
+  return default_item
+}
+```
+
+Pipeline in Jenkinsfile
+``` syntaxhighlighter-pre
+properties([
+    parameters([
+        [
+          $class: 'ChoiceParameter',
+          choiceType: 'PT_SINGLE_SELECT',
+          name: 'Environment',
+          script: [
+            $class: 'ScriptlerScript',
+            scriptlerScriptId:'Environments.groovy',
+            fallbackScript: [
+              classpath: [],
+              sandbox: false,
+              script: 'return ["ERROR: Environments.groovy in Scriptler failed"]'
+            ],
+          ]
+        ],
+        [
+          $class: 'CascadeChoiceParameter',
+          choiceType: 'PT_SINGLE_SELECT',
+          name: 'Host',
+          referencedParameters: 'Environment',
+          script: [
+            $class: 'ScriptlerScript',
+            scriptlerScriptId:'HostsInEnv.groovy',
+            parameters: [
+              [name:'Environment', value: '$Environment']
+            ],
+            fallbackScript: [
+              classpath: [],
+              sandbox: false,
+              script: 'return ["ERROR: HostsInEnv.groovy in Scriptler failed"]'
+            ],
+          ]
+        ]
+      ])
+  ])
+
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        echo "${params.Environment}"
+        echo "${params.Host}"
+      }
+    }
+  }
+}
+```
 
 ### Filter Supports Regular Expressions
 
