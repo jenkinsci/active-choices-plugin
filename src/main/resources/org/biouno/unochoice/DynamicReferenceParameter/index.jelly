@@ -131,6 +131,9 @@
                         } else if (child.getAttribute('type') == 'file') {
                             parameterElement = child;
                             break;
+                        } else if (child.tagName === 'INPUT' &amp;&amp; !['', 'name'].includes(child.name)) {
+                            parameterElement = child;
+                            break;
                         }
                     }
                 }
