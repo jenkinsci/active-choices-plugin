@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.biouno.unochoice.util.Utils;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
 import org.jenkinsci.plugins.scriptler.builder.ScriptlerBuilder;
 import org.jenkinsci.plugins.scriptler.config.Parameter;
@@ -231,6 +232,7 @@ public class ScriptlerScript extends AbstractScript {
     // --- descriptor
 
     @Extension(optional = true)
+    @Symbol({"scriptlerScript"})
     public static class DescriptorImpl extends ScriptDescriptor {
         static {
             // make sure this class fails to load during extension discovery if scriptler isn't present

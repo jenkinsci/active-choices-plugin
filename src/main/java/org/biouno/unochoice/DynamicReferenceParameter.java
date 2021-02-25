@@ -30,6 +30,7 @@ import java.util.Objects;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -132,6 +133,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
     // --- descriptor
 
     @Extension
+    @Symbol({"referenceChoice"})
     public static final class DescriptorImpl extends UnoChoiceParameterDescriptor {
 
         private AbstractProject<?, ?> project;
