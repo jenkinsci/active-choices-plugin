@@ -29,6 +29,7 @@ import hudson.Extension;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 
 /**
  * <p>A choice parameter, that gets updated when another parameter changes. The simplest
@@ -154,6 +155,7 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
     // --- descriptor
 
     @Extension
+    @Symbol({"reactiveChoice"})
     public static final class DescriptImpl extends UnoChoiceParameterDescriptor {
 
         @Override

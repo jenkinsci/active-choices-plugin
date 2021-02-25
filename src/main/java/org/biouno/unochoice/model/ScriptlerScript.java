@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.biouno.unochoice.util.Utils;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
 import org.jenkinsci.plugins.scriptler.config.Script;
 import org.jenkinsci.plugins.scriptler.util.ScriptHelper;
@@ -137,6 +138,7 @@ public class ScriptlerScript extends AbstractScript {
     // --- descriptor
 
     @Extension(optional = true)
+    @Symbol({"scriptlerScript"})
     public static class DescriptorImpl extends ScriptDescriptor {
         static {
             // make sure this class fails to load during extension discovery if scriptler isn't present
