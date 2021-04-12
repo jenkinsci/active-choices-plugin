@@ -24,13 +24,12 @@
 
 package org.biouno.unochoice;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import hudson.model.AbstractItem;
+import hudson.model.Job;
+import hudson.model.ParameterValue;
+import hudson.model.Run;
+import hudson.model.StringParameterValue;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
@@ -40,12 +39,12 @@ import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractItem;
-import hudson.model.ParameterValue;
-import hudson.model.Project;
-import hudson.model.StringParameterValue;
-import jenkins.model.Jenkins;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Base class for parameters with scripts.
@@ -134,6 +133,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         String projectName = null;
         String projectFullName = null;
         if (currentRequest != null) {
+            // TODO: Check if we really need AbstractItem instead of Job class
             final Ancestor ancestor = currentRequest.findAncestor(AbstractItem.class);
             if (ancestor != null) {
                 final Object o = ancestor.getObject();
@@ -176,10 +176,10 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         final Map<Object, Object> helperParameters = new LinkedHashMap<>();
 
         // First, if the project name is set, we then find the project by its name, and inject into the map
-        Project<?, ?> project = null;
+        Job<?, ?> project = null;
         if (StringUtils.isNotBlank(this.projectFullName)) {
             // First try full name if exists
-            project = Jenkins.get().getItemByFullName(this.projectFullName, Project.class);
+            project = Jenkins.get().getItemByFullName(this.projectFullName, Job.class);
         } else if (StringUtils.isNotBlank(this.projectName)) {
             // next we try to get the item given its name, which is more efficient
             project = Utils.getProjectByName(this.projectName);
@@ -191,7 +191,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         }
         if (project != null) {
             helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
-            AbstractBuild<?, ?> build = project.getLastBuild();
+            Run<?, ?> build = project.getLastBuild();
             if (build != null && build.getHasArtifacts()) {
                 helperParameters.put(JENKINS_BUILD_VARIABLE_NAME, build);
             }

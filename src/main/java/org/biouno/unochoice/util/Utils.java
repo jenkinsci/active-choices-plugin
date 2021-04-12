@@ -24,6 +24,30 @@
 
 package org.biouno.unochoice.util;
 
+import hudson.model.Item;
+import hudson.model.Items;
+import hudson.model.Job;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.model.Project;
+import hudson.security.ACL;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.slaves.NodeProperty;
+import hudson.slaves.NodePropertyDescriptor;
+import hudson.tasks.BuildWrapper;
+import hudson.util.DescribableList;
+import hudson.util.ReflectionUtils;
+import jenkins.model.Jenkins;
+import org.acegisecurity.Authentication;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.biouno.unochoice.AbstractUnoChoiceParameter;
+import org.jenkinsci.plugins.scriptler.config.Script;
+import org.jenkinsci.plugins.scriptler.config.ScriptlerConfiguration;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -39,31 +63,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.biouno.unochoice.AbstractUnoChoiceParameter;
-import org.jenkinsci.plugins.scriptler.config.Script;
-import org.jenkinsci.plugins.scriptler.config.ScriptlerConfiguration;
-
-import hudson.model.Item;
-import hudson.model.Items;
-import hudson.model.ParameterDefinition;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.Project;
-import hudson.security.ACL;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.NodePropertyDescriptor;
-import hudson.tasks.BuildWrapper;
-import hudson.util.DescribableList;
-import hudson.util.ReflectionUtils;
-import jenkins.model.Jenkins;
-import org.acegisecurity.Authentication;
 
 /**
  * Utility methods.
@@ -201,13 +200,12 @@ public class Utils {
      *
      * @since 1.3
      * @param projectName project name in Jenkins
-     * @return Project or {@code null} if none with this name
+     * @return Job or {@code null} if none with this name
      * @deprecated The choice is arbitrary if there are multiple matches; use {@link Item#getFullName} and {@link Jenkins#getItemByFullName(String, Class)} instead.
      */
-    @SuppressWarnings("rawtypes")
-    public static @CheckForNull Project<?, ?> getProjectByName(@Nonnull String projectName) {
+    public static @CheckForNull Job<?, ?> getProjectByName(@Nonnull String projectName) {
         Authentication auth = Jenkins.getAuthentication();
-        for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.getInstance(), Project.class)) {
+        for (Job<?, ?> p : Items.allItems(ACL.SYSTEM, Jenkins.getInstance(), Job.class)) {
             if (p.getName().equals(projectName) && p.getACL().hasPermission(auth, Item.READ)) {
                 return p;
             }
@@ -223,10 +221,9 @@ public class Utils {
      * @param parameterUUID parameter UUID
      * @return {@code null} if the current project cannot be found
      */
-    @SuppressWarnings("rawtypes")
-    public static @CheckForNull Project findProjectByParameterUUID(@Nonnull String parameterUUID) {
+    public static @CheckForNull Job<?, ?> findProjectByParameterUUID(@Nonnull String parameterUUID) {
         Authentication auth = Jenkins.getAuthentication();
-        for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.get(), Project.class)) {
+        for (Job<?, ?> p : Items.allItems(ACL.SYSTEM, Jenkins.get(), Job.class)) {
             if (isParameterDefinitionOf(parameterUUID, p) && p.getACL().hasPermission(auth, Item.READ)) {
                 return p;
             }
@@ -243,11 +240,12 @@ public class Utils {
      * @param project the project to search for this parameter definition.
      * @return {@code true} if the project contains this parameter definition.
      */
-    private static boolean isParameterDefinitionOf(@Nonnull String parameterUUID, @Nonnull Project<?, ?> project) {
+    private static boolean isParameterDefinitionOf(@Nonnull String parameterUUID, @Nonnull Job<?, ?> project) {
         List<ParameterDefinition> parameterDefinitions = new ArrayList<>(getProjectParameterDefinitions(project));
-        for (List<ParameterDefinition> params : getBuildWrapperParameterDefinitions(project).values()) {
+        // TODO: Update or get rid of getBuildWrapperParameterDefinitions
+        /*for (List<ParameterDefinition> params : getBuildWrapperParameterDefinitions(project).values()) {
             parameterDefinitions.addAll(params);
-        }
+        }*/
         for (ParameterDefinition pd : parameterDefinitions) {
             if (pd instanceof AbstractUnoChoiceParameter) {
                 AbstractUnoChoiceParameter parameterDefinition = (AbstractUnoChoiceParameter) pd;
@@ -268,7 +266,7 @@ public class Utils {
      * @param project the project for which the parameter definitions should be found
      * @return parameter definitions or an empty list
      */
-    public static @Nonnull List<ParameterDefinition> getProjectParameterDefinitions(@Nonnull Project<?, ?> project) {
+    public static @Nonnull List<ParameterDefinition> getProjectParameterDefinitions(@Nonnull Job<?, ?> project) {
         ParametersDefinitionProperty parametersDefinitionProperty = project.getProperty(ParametersDefinitionProperty.class);
         if (parametersDefinitionProperty != null) {
             List<ParameterDefinition> parameterDefinitions = parametersDefinitionProperty.getParameterDefinitions();
