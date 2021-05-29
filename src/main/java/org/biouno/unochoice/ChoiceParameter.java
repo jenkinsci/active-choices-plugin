@@ -29,6 +29,7 @@ import hudson.Extension;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 
 /**
  * A parameter that renders its options as a choice (select) HTML component.
@@ -141,6 +142,7 @@ public class ChoiceParameter extends AbstractScriptableParameter {
     // --- descriptor
 
     @Extension
+    @Symbol({"activeChoice"})
     public static final class DescriptImpl extends UnoChoiceParameterDescriptor {
 
         @Override

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.biouno.unochoice.util.SafeHtmlExtendedMarkupFormatter;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -307,6 +308,7 @@ public class GroovyScript extends AbstractScript {
     // --- descriptor
 
     @Extension
+    @Symbol({"groovyScript"})
     public static class DescriptorImpl extends ScriptDescriptor {
         /*
          * (non-Javadoc)
