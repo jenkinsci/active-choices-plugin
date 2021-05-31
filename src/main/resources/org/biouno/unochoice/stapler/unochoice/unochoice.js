@@ -1087,6 +1087,8 @@ var UnoChoice = UnoChoice || (function($) {
                 var firstFile = filesList[0]; // ignoring other files... but we could use it...
                 value = firstFile.name;
             }
+        } else if (e.prop('tagName') === 'INPUT' && !['', 'name'].includes(e.attr('name'))) {
+            value = getElementValue(htmlParameter);
         }
         return value;
     }
