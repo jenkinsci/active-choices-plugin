@@ -124,6 +124,10 @@ public class ScriptlerScript extends AbstractScript {
     /**
      * Converts this scriptler script to a GroovyScript.
      *
+     * The script will run in the Groovy Sandbox environment by default, unless approved by a
+     * Jenkins administrator. In this case it won't use the Groovy Sandbox. This is useful if
+     * the Groovy script needs access to API not available in the Sandbox (e.g. Grapes).
+     *
      * @return a GroovyScript
      */
     public GroovyScript toGroovyScript() {
@@ -131,7 +135,7 @@ public class ScriptlerScript extends AbstractScript {
         if (scriptler == null) {
             throw new RuntimeException("Missing required scriptler!");
         }
-        boolean isSandbox = ScriptHelper.isApproved(scriptler.script) ? false : true;
+        boolean isSandbox = !ScriptHelper.isApproved(scriptler.script);
         return new GroovyScript(new SecureGroovyScript(scriptler.script, isSandbox, null), null);
     }
 
