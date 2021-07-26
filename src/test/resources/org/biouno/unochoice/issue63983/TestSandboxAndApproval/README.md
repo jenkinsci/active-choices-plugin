@@ -1,0 +1,1 @@
+Copied from https://github.com/jenkinsci/multi-slave-config-plugin/tree/cfa6f78fe7fc2f10c75b825db5a3616c198bc776/src/test/resources/com/sonyericsson/hudson/plugins/multislaveconfigplugin/NodeManageLinkHudsonTest
