@@ -1,106 +1,16 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project" xmlns:transitionWrapper="transitionWrapper">
-
-  <d:taglib uri="transitionWrapper">
-      <d:tag name="tableBlock">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div>
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <table>
-                      <d:invokeBody/>
-                  </table>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-      <d:tag name="fullWidthTableBlock">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div width="100%">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <table width="100%">
-                      <d:invokeBody/>
-                  </table>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-  </d:taglib>
-  <!-- Scriptler script and parameters -->
-  <st:once>
-    <script type="text/javascript" src="${rootURL}/plugin/scriptler/lib/scriptler.js" />
-  </st:once>
-  <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="getAllScriptlerScripts" var="scripts" />
-  <j:choose>
-    <j:when test="${empty(scripts)}">
-      <f:entry title="">
-        <div>
-          ${%WarnNoScript} <a href="${rootURL}/scriptler">scriptler</a>
-        </div>
-      </f:entry>
-    </j:when>
-    <j:otherwise>
-<!--
-      <j:if test="${!h.hasPermission(it.build,descriptor.requiredPermission)}">
-        <div class="warning">${%NoPermission}</div>
-      </j:if>
--->
-      <f:entry title="${%Script}" field="defaultValueScript">
-        <select name="scriptlerScriptId" onChange="scriptler_initDetailLink('${rootURL}', this);scriptler_showParams(this, this.value);" >
-          <option value="">(Default)</option>
-          <j:forEach var="inst" items="${scripts}" varStatus="loop">
-            <j:choose>
-              <j:when test="${inst.id == instance.scriptlerScriptId}">
-                <option value="${inst.id}" selected="selected">${inst.name}</option>
-              </j:when>
-              <j:otherwise>
-                <option value="${inst.id}">${inst.name}</option>
-              </j:otherwise>
-            </j:choose>
-          </j:forEach>
-        </select>
-        <a target="_blank" name="showScriptlerDetailLink" href="" style="display:none;" onclick="window.open(this.href,'window','width=900,height=640,resizable,scrollbars,toolbar,menubar') ;return false;"> ${%ViewScript}</a>
-        <div id="scriptlerDescription">${%RequiredParameters} <div name="scriptlerParameters" /></div>
-        <f:block>
-          <transitionWrapper:tableBlock>
-            <f:optionalBlock name="defineParams" title="${%ParametersDescription}" checked="${!empty(instance.parameters)}" help="/plugin/scriptler/help-params.html">
-              <f:entry title="${%Parameters}" field="parameters">
-                <f:repeatable var="param" items="${instance.parameters}" name="parameters" noAddButton="true" minimum="1">
-                  <transitionWrapper:fullWidthTableBlock>
-                    <f:entry>
-                      ${%Parameter name} <input type="text" name="name" value="${param.key}" size="20"/>
-                      ${%Parameter value} <input type="text" name="value" value="${param.value}" size="30"/>
-                      <input type="button" name="delete_button" value="${%Delete Parameter}" class="repeatable-delete show-if-not-only" style="margin-left: 1em;" />
-                      <input type="button" name="add_button" value="${%Add Parameter}" class="repeatable-add show-if-last" />
-                    </f:entry>
-                  </transitionWrapper:fullWidthTableBlock>
-                </f:repeatable>
-              </f:entry>
-            </f:optionalBlock>
-          </transitionWrapper:tableBlock>
-        </f:block>
-      </f:entry>
-    </j:otherwise>
-  </j:choose>
-  <st:bind var="scriptlerBuilderDesc" value="${descriptor}"/>
-  <st:once>
-    <script type="text/javascript">
-Event.observe(window, 'load', function() {
-    var all = new Array();
-    all = document.getElementsByName('scriptlerScriptId');
-    for(var i = 0; i &lt; all.length; i++) {
-        all.item(i).disabled=<j:out value="${!h.hasPermission(it.build,descriptor.requiredPermission)}" />;
-        scriptler_initDetailLink('<j:out value="${rootURL}" />', all.item(i));
-        scriptler_showParams(all.item(i), all.item(i).value);
-    }
-});
-    </script>
-  </st:once>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:property field="scriptlerBuilder"/>
+  <f:entry
+     title="Use Groovy Sandbox"
+     help="${rootURL}/../descriptor/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/help/sandbox"
+  >
+    <f:checkbox
+       value="${instance.isSandboxed}"
+       name="isSandboxed"
+       default="true"
+    >
+      Use Groovy Sandbox
+    </f:checkbox>
+  </f:entry>
 </j:jelly>

@@ -1,7 +1,5 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <j:forEach var="iter" items="${it.getChoices()}">
     <!-- Some options can contain the suffix :selected. If so, we escape that, and add selected to the HTML element -->
     <!-- Some options can contain the suffix :disabled. If so, we escape that, and add disabled to the HTML element -->

@@ -1,7 +1,5 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
   <f:invisibleEntry>
     <f:textbox name="parameter.randomName" value="${instance.randomName}" />
   </f:invisibleEntry>
@@ -14,7 +12,7 @@
   <f:entry title="${%Description}" field="description" help="/help/parameter/description.html">
     <f:textarea name="parameter.description" value="${instance.description}" />
   </f:entry>
-  <f:entry name="type" title="${%Choice Type}" field="choiceType">
+  <f:entry title="${%Choice Type}" field="choiceType">
     <select name="parameter.choiceType">
       <j:choose>
         <j:when test="${instance.choiceType eq 'ET_TEXT_BOX'}">

@@ -1,7 +1,5 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+<j:jelly xmlns:j="jelly:core">
   <j:invokeStatic var="paramName" className="org.biouno.unochoice.util.Utils" method="createRandomParameterName">
     <j:arg type="java.lang.String" value="choice-parameter" />
     <j:arg type="java.lang.String" value="" />

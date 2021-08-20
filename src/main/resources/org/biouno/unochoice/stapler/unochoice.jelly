@@ -2,7 +2,7 @@
 <!--
 Use it like <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
 -->
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core">
   <style type="text/css">
   .js-loading-overlay {
 
