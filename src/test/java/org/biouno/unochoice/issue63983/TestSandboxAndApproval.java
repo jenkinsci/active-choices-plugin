@@ -44,7 +44,6 @@ import org.jvnet.hudson.test.recipes.LocalData;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.Collections;
 
 @Issue("63983")
 public class TestSandboxAndApproval {
@@ -54,7 +53,7 @@ public class TestSandboxAndApproval {
 
     @Test
     @LocalData
-    public void testGroovyScriptApprovedSoNoSandbox() throws Exception {
+    public void testGroovyScriptApprovedNoSandboxOK() throws Exception {
         final ScriptlerManagement scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
         final ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
         // This method is sandboxed: https://github.com/jenkinsci/script-security-plugin/blob/ddce7c7653f6e15fefc081cd45e600805ae20fec/src/main/resources/org/jenkinsci/plugins/scriptsecurity/sandbox/whitelists/blacklist#L12-L13
@@ -68,8 +67,9 @@ public class TestSandboxAndApproval {
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
         ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
-        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
-        // Now let's pre-approve all scripts, so no sandbox required
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.FALSE);
+        // Now let's pre-approve all scripts. The script will run since it's approved, and won't use the
+        // sandbox since we specified so.
         ScriptApproval.get().preapproveAll();
         Object output = scriptParam001.eval();
         Assert.assertNotNull(output);
@@ -78,7 +78,7 @@ public class TestSandboxAndApproval {
 
     @Test
     @LocalData
-    public void testGroovyScriptPendingSoToTheSandbox() throws Exception {
+    public void testGroovyScriptPendingSandboxRejected() throws Exception {
         final ScriptlerManagement scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
         final ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
         final String scriptText = "import hudson.model.Hudson;\n" +
@@ -94,6 +94,59 @@ public class TestSandboxAndApproval {
         ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
         // Now let's deny all scripts
         ScriptApproval.get().clearApprovedScripts();
+        try {
+            scriptParam001.eval();
+            Assert.fail("Not supposed to evaluate when using Security, and GroovyScript not approved");
+        } catch (RuntimeException re) {
+            Assert.assertTrue(re.getCause() instanceof RejectedAccessException);
+        }
+    }
+
+    @Test
+    @LocalData
+    public void testGroovyScriptPendingNoSandboxRejected() throws Exception {
+        final ScriptlerManagement scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
+        final ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
+        final String scriptText = "import hudson.model.Hudson;\n" +
+                "Hudson.getInstance();\n" +
+                "return \"Got instance!\";";
+        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
+        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        scriptlerHelper.saveScript(fi, true, "63983");
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        ScriptlerConfiguration.getConfiguration().addOrReplace(script);
+        ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.FALSE);
+        // Now let's deny all scripts
+        ScriptApproval.get().clearApprovedScripts();
+        try {
+            scriptParam001.eval();
+            Assert.fail("Not supposed to evaluate when using Security, and GroovyScript not approved");
+        } catch (RuntimeException re) {
+            Assert.assertTrue(re.getCause() instanceof RuntimeException && re.getMessage().contains("not yet approved"));
+        }
+    }
+
+    @Test
+    @LocalData
+    public void testGroovyScriptApprovedSandboxRejected() throws Exception {
+        final ScriptlerManagement scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
+        final ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
+        final String scriptText = "import hudson.model.Hudson;\n" +
+                "Hudson.getInstance();\n" +
+                "return \"Got instance!\";";
+        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
+        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        scriptlerHelper.saveScript(fi, true, "63983");
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        ScriptlerConfiguration.getConfiguration().addOrReplace(script);
+        ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
+        // We are approving all scripts here. However, we also have sandbox enabled. The Hudson.getInstance() will
+        // trigger the sandbox alert, and the script is supposed to fail evaluation.
+        ScriptApproval.get().preapproveAll();
         try {
             scriptParam001.eval();
             Assert.fail("Not supposed to evaluate when using Security, and GroovyScript not approved");
