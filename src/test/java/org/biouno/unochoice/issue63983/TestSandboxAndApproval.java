@@ -29,6 +29,8 @@ import org.apache.commons.io.FileUtils;
 import org.biouno.unochoice.model.ScriptlerScript;
 import org.jenkinsci.plugins.scriptler.ScriptlerHelper;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
+import org.jenkinsci.plugins.scriptler.builder.ScriptlerBuilder;
+import org.jenkinsci.plugins.scriptler.config.Parameter;
 import org.jenkinsci.plugins.scriptler.config.Script;
 import org.jenkinsci.plugins.scriptler.config.ScriptlerConfiguration;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException;
@@ -65,7 +67,8 @@ public class TestSandboxAndApproval {
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
-        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList(), Boolean.TRUE);
+        ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
         // Now let's pre-approve all scripts, so no sandbox required
         ScriptApproval.get().preapproveAll();
         Object output = scriptParam001.eval();
@@ -87,7 +90,8 @@ public class TestSandboxAndApproval {
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
-        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList(), Boolean.TRUE);
+        ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
         // Now let's deny all scripts
         ScriptApproval.get().clearApprovedScripts();
         try {

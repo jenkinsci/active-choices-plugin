@@ -39,9 +39,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.GroovyScript;
 import org.biouno.unochoice.model.Script;
 import org.biouno.unochoice.model.ScriptlerScript;
-import org.biouno.unochoice.model.ScriptlerScriptParameter;
 import org.jenkinsci.plugins.scriptler.ScriptlerHelper;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
+import org.jenkinsci.plugins.scriptler.builder.ScriptlerBuilder;
 import org.jenkinsci.plugins.scriptler.config.Parameter;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -177,8 +177,8 @@ public class TestPersistingParameters {
     public void testSaveScriptlerParameters() throws Exception {
         FreeStyleProject project = j.createFreeStyleProject();
 
-        ScriptlerScriptParameter scriptlerScriptParameters = new ScriptlerScriptParameter("arg1", "bla");
-        ScriptlerScript scriptParam001 = new ScriptlerScript("dummy.groovy", Collections.singletonList(scriptlerScriptParameters), Boolean.TRUE);
+        final ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", "dummy.groovy", false, new Parameter[] {new Parameter("arg1", "bla")});
+        ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
         ChoiceParameter param001 = new ChoiceParameter("param001", "param001 description", "random-name",
                 scriptParam001, AbstractUnoChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true, 1);
         GroovyScript scriptParam002 = new GroovyScript(new SecureGroovyScript(SCRIPT_PARAM002, false, null),
