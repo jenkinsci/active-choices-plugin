@@ -178,7 +178,7 @@ public class TestPersistingParameters {
         FreeStyleProject project = j.createFreeStyleProject();
 
         ScriptlerScriptParameter scriptlerScriptParameters = new ScriptlerScriptParameter("arg1", "bla");
-        ScriptlerScript scriptParam001 = new ScriptlerScript("dummy.groovy", Collections.singletonList(scriptlerScriptParameters));
+        ScriptlerScript scriptParam001 = new ScriptlerScript("dummy.groovy", Collections.singletonList(scriptlerScriptParameters), Boolean.TRUE);
         ChoiceParameter param001 = new ChoiceParameter("param001", "param001 description", "random-name",
                 scriptParam001, AbstractUnoChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true, 1);
         GroovyScript scriptParam002 = new GroovyScript(new SecureGroovyScript(SCRIPT_PARAM002, false, null),

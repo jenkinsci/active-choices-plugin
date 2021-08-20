@@ -65,7 +65,7 @@ public class TestSandboxAndApproval {
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
-        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList());
+        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList(), Boolean.TRUE);
         // Now let's pre-approve all scripts, so no sandbox required
         ScriptApproval.get().preapproveAll();
         Object output = scriptParam001.eval();
@@ -87,7 +87,7 @@ public class TestSandboxAndApproval {
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
-        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList());
+        ScriptlerScript scriptParam001 = new ScriptlerScript(script.getId(), Collections.emptyList(), Boolean.TRUE);
         // Now let's deny all scripts
         ScriptApproval.get().clearApprovedScripts();
         try {
