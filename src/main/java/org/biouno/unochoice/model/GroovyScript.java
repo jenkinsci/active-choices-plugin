@@ -99,12 +99,16 @@ public class GroovyScript extends AbstractScript {
     }
 
     private Object readResolve() {
-        if (script != null) {
-            secureScript = new SecureGroovyScript(script, false, null).configuring(ApprovalContext.create());
+        if (secureScript == null) {
+            if (script != null) {
+                secureScript = new SecureGroovyScript(script, false, null).configuring(ApprovalContext.create());
+            }
         }
-        if (fallbackScript != null) {
-            secureFallbackScript = new SecureGroovyScript(fallbackScript, false, null)
-                    .configuring(ApprovalContext.create());
+        if (secureFallbackScript == null) {
+            if (fallbackScript != null) {
+                secureFallbackScript = new SecureGroovyScript(fallbackScript, false, null)
+                        .configuring(ApprovalContext.create());
+            }
         }
         return this;
     }
