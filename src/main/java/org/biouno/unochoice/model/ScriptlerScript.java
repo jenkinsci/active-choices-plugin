@@ -140,7 +140,7 @@ public class ScriptlerScript extends AbstractScript {
     /**
      * @return the sandbox flag
      */
-    public Boolean getSandboxed() {
+    public Boolean getIsSandboxed() {
         return isSandboxed;
     }
 
