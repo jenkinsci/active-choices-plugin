@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
 import org.jenkinsci.plugins.scriptler.config.Script;
@@ -57,15 +58,39 @@ public class ScriptlerScript extends AbstractScript {
     /*
      * Serial UID.
      */
-    private static final long serialVersionUID = -6600327523009436354L;
+    private static final long serialVersionUID = -6600327523119436354L;
 
+    /**
+     * The ID of the Scriptler script.
+     */
     private final String scriptlerScriptId;
+
+    /**
+     * Whether this scriptler script will run in the Groovy sandbox or not.
+     */
+    private final Boolean isSandboxed;
 
     // Map is not serializable, but LinkedHashMap is. Ignore static analysis errors
     private final Map<String, String> parameters;
 
-    @DataBoundConstructor
+    /**
+     * @deprecated use new constructor with the isSandboxed parameter (defaults to true)
+     */
+    @Deprecated
     public ScriptlerScript(String scriptlerScriptId, List<ScriptlerScriptParameter> parameters) {
+        this(scriptlerScriptId, parameters, Boolean.TRUE);
+    }
+
+    /**
+     * @param scriptlerScriptId Scriptler script ID
+     * @param parameters list of parameters for the Scriptler script
+     * @param isSandboxed whether this script must be sandboxed or not
+     */
+    @DataBoundConstructor
+    public ScriptlerScript(
+            String scriptlerScriptId,
+            List<ScriptlerScriptParameter> parameters,
+            Boolean isSandboxed) {
         super();
         this.scriptlerScriptId = scriptlerScriptId;
         this.parameters = new LinkedHashMap<>();
@@ -74,6 +99,7 @@ public class ScriptlerScript extends AbstractScript {
                 this.parameters.put(parameter.getName(), parameter.getValue());
             }
         }
+        this.isSandboxed = isSandboxed != null ? isSandboxed : Boolean.TRUE;
     }
 
     /**
@@ -88,6 +114,13 @@ public class ScriptlerScript extends AbstractScript {
      */
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    /**
+     * @return the sandbox flag
+     */
+    public Boolean getSandboxed() {
+        return isSandboxed;
     }
 
     @Override
@@ -135,8 +168,7 @@ public class ScriptlerScript extends AbstractScript {
         if (scriptler == null) {
             throw new RuntimeException("Missing required scriptler!");
         }
-        boolean isSandbox = !ScriptHelper.isApproved(scriptler.script);
-        return new GroovyScript(new SecureGroovyScript(scriptler.script, isSandbox, null), null);
+        return new GroovyScript(new SecureGroovyScript(scriptler.script, this.isSandboxed, null), null);
     }
 
     // --- descriptor
@@ -153,6 +185,7 @@ public class ScriptlerScript extends AbstractScript {
          * @see hudson.model.Descriptor#getDisplayName()
          */
         @Override
+        @NonNull
         public String getDisplayName() {
             return "Scriptler Script"; 
         }
@@ -163,6 +196,7 @@ public class ScriptlerScript extends AbstractScript {
             String scriptScriptId = jsonObject.getString("scriptlerScriptId");
             if (scriptScriptId != null && !scriptScriptId.trim().equals("")) {
                 List<ScriptlerScriptParameter> parameters = new ArrayList<>();
+                Boolean isSandboxed = jsonObject.getBoolean("isSandboxed");
 
                 final JSONObject defineParams = jsonObject.getJSONObject("defineParams");
                 if (defineParams != null && !defineParams.isNullObject()) {
@@ -189,7 +223,7 @@ public class ScriptlerScript extends AbstractScript {
                         }
                     }
                 }
-                script = new ScriptlerScript(scriptScriptId, parameters);
+                script = new ScriptlerScript(scriptScriptId, parameters, isSandboxed);
             }
             return script;
         }
