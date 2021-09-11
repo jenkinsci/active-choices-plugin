@@ -2,6 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
   <st:adjunct includes="org.kohsuke.stapler.jquery"/>
   <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
+  <st:adjunct includes="org.biouno.unochoice.stapler.vue"/>
   <j:set var="paramName" value="${it.randomName}" scope="parent" />
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>

@@ -1,0 +1,5 @@
+<?jelly escape-by-default='true' ?>
+<j:jelly xmlns:j="jelly:core">
+  <script src="${it.packageUrl}/vue/vue.global-3.11.2.js" type="text/javascript" />
+  <script src="${it.packageUrl}/vue/unochoice.js" type="text/javascript" defer="true" />
+</j:jelly>
