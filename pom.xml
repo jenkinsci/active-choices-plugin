@@ -125,8 +125,8 @@
         </dependency>
     </dependencies>
 
-    <!-- running JS tests -->
     <build>
+        <defaultGoal>clean test install</defaultGoal>
         <plugins>
             <!-- TODO: re-enable, probably with google-chrome headless or qunit/npm instead
             <plugin>
