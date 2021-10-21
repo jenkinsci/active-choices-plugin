@@ -6,7 +6,7 @@
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
-    <div name="parameter" description="${it.formattedDescription}" id='${paramName}'>
+    <div name="parameter" description="${it.formattedDescription}" id='${paramName}' class="active-choice">
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>
         <j:when test="${choiceType eq 'PT_SINGLE_SELECT'}">

@@ -5,17 +5,21 @@ Use it like <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
 <j:jelly xmlns:j="jelly:core">
   <style type="text/css">
   .js-loading-overlay {
+    position:absolute;
+    top:0; bottom:0;
+    left:0; right:0;
 
-  position:absolute;
-  top:0; bottom:0;
-  left:0; right:0;
+    z-index:199;
 
-  z-index:199;
+    background:#fff;
+    opacity:0.5;
 
-  background:#fff;
-  opacity:0.5;
-
-  border-radius: inherit;
+    border-radius: inherit;
+  }
+  .active-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
   </style>
   <script src="${it.packageUrl}/unochoice/unochoice.js" type="text/javascript" />
