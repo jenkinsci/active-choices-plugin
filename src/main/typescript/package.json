@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "index.ts",
   "scripts": {
+    "build": "tsc",
     "lint": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

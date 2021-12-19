@@ -2,11 +2,14 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "outDir": "../../../target/dist",
-    "sourceMap": true
+    "outDir": "dist",
+    "sourceMap": true,
+    "resolveJsonModule": true
   }
 }

@@ -6,3 +6,5 @@ test-output/
 .project
 **/*~
 *.iml
+**/node_modules/**
+**/dist/**
