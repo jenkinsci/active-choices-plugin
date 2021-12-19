@@ -1,0 +1,11 @@
+{
+  "name": "active-choices",
+  "version": "1.0.0",
+  "description": "Port of old unochoice.js, now in TypeScript.",
+  "author": "Bruno P. Kinoshita",
+  "license": "MIT",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
