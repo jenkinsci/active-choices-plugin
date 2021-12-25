@@ -4,13 +4,14 @@
   "description": "Port of old unochoice.js, now in TypeScript.",
   "author": "Bruno P. Kinoshita",
   "license": "MIT",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "lint": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.10",
     "tslint": "^6.1.3",
     "typescript": "^4.5.4"
   }
