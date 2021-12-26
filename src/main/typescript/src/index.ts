@@ -21,7 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+import {CascadeParameter} from "./CascadeParameter"
+import {DynamicReferenceParameter} from "./DynamicReferenceParameter"
+import {ReferencedParameter} from "./ReferencedParameter"
 
-export const ActiveChoices = {
-  cascadeParameters: []
+export {
+  CascadeParameter, DynamicReferenceParameter, ReferencedParameter
 }
+
