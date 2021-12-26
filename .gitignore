@@ -8,3 +8,5 @@ test-output/
 *.iml
 **/node_modules/**
 **/dist/**
+**/node/**
+
