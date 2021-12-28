@@ -8,7 +8,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist/org/biouno/unochoice/stapler/unochoice/'),
-    filename: "unochoice.js"
+    filename: "unochoice.js",
+    libraryTarget: "window",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
@@ -23,5 +24,8 @@ module.exports = {
         loader: "ts-loader"
       }
     ]
-  }
+  },
+  externals: [
+    'jquery'
+  ]
 }

@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* tslint:disable */
 /**
  * The MIT License (MIT)
  *
@@ -32,34 +34,6 @@ export type JenkinsProxy = {
   getChoicesAsStringForUI: (t: ProxyAjaxCallback) => void
 }
 
-const genMethod = (proxy: any, methodName: string, url: string, crumb: string): void => {
-  proxy[methodName] = (...args: any[]) => {
-    // the final argument can be a callback that receives the return value
-    if (args.length === 0) {
-      throw new Error(`The proxy callback must have at least one argument! None given.`)
-    }
-    const callback = args.slice(-1) as unknown as (t: any) => {}
-    $.ajax(`${url}${methodName}`, {
-      type: "POST" as "POST",
-      data: JSON.stringify(args),
-      contentType: 'application/x-stapler-method-invocationcharset=UTF-8',
-      headers: {'Crumb': crumb},
-      dataType: "json" as "json",
-      async: false as false, // Here's the juice
-      success: (data: any) => {
-        const t = {
-          responseObject: () => {
-            return data
-          }
-        }
-        if (callback) {
-          callback(t)
-        }
-      }
-    })
-  }
-}
-
 /**
  * This function is the same as makeStaplerProxy available in Jenkins core, but executes
  * calls synchronously. Since many parameters must be filled only after other parameters
@@ -70,11 +44,72 @@ const genMethod = (proxy: any, methodName: string, url: string, crumb: string): 
  * @param crumb
  * @param methods
  */
-export const makeStaplerProxy2 = (url: string, crumb: string, methods: any) => {
-  const url2 = url.slice(-1) === '/' ? url : `${url}/`
-  const proxy = {}
-  for (const method of methods) {
-    genMethod(proxy, method, url2, crumb)
+export const makeStaplerProxy2 = (url, crumb, methods) => {
+  if (url.substring(url.length - 1) !== '/') url+='/';
+  const proxy = {};
+
+  let stringify;
+  if (Object.toJSON) // needs to use Prototype.js if it's present. See commit comment for discussion
+    stringify = Object.toJSON;  // from prototype
+  else if (typeof(JSON)=="object" && JSON.stringify)
+    stringify = JSON.stringify; // standard
+
+  const genMethod = function(methodName) {
+    proxy[methodName] = function() {
+      const args = arguments;
+
+      // the final argument can be a callback that receives the return value
+      const callback = (function(){
+        if (args.length === 0) return null;
+        const tail = args[args.length-1];
+        return (typeof(tail) === 'function') ? tail : null;
+      })();
+
+      // 'arguments' is not an array so we convert it into an array
+      const a = [];
+      for (let i=0; i<args.length-(callback!=null?1:0); i++)
+        a.push(args[i]);
+
+      if(window.jQuery === window.$) { // Is jQuery the active framework?
+        $.ajax({
+          type: "POST",
+          url: url+methodName,
+          data: stringify(a),
+          contentType: 'application/x-stapler-method-invocation;charset=UTF-8',
+          headers: {'Crumb':crumb},
+          dataType: "json",
+          async: "false", // HACK: patched here
+          success: function(data, textStatus, jqXHR) {
+            if (callback != null) {
+              const t = {};
+              t.responseObject = function() {
+                return data;
+              };
+              callback(t);
+            }
+          }
+        });
+      } else { // Assume prototype should work
+        new Ajax.Request(url+methodName, {
+          method: 'post',
+          requestHeaders: {'Content-type':'application/x-stapler-method-invocation;charset=UTF-8','Crumb':crumb},
+          postBody: stringify(a),
+          onSuccess: function(t) {
+            if (callback!=null) {
+              t.responseObject = function() {
+                return eval('('+this.responseText+')');
+              };
+              callback(t);
+            }
+          }
+        });
+      }
+    }
+  };
+
+  for(var mi = 0; mi < methods.length; mi++) {
+    genMethod(methods[mi]);
   }
-  return proxy
+
+  return proxy;
 }

@@ -24,6 +24,8 @@
 import {CascadeParameter} from "./CascadeParameter"
 import {DynamicReferenceParameter} from "./DynamicReferenceParameter"
 import {ReferencedParameter} from "./ReferencedParameter"
+import {FilterElement} from "./FilterElement"
+import {makeStaplerProxy2} from "./Proxy";
 
 /**
  * Uno Choice Javascript module.
@@ -41,7 +43,23 @@ import {ReferencedParameter} from "./ReferencedParameter"
  * @since 0.20
  */
 
+// Otherwise we get errors in Prototype.js + JQuery like:
+// - Uncaught TypeError: Cannot read properties of undefined (reading 'ajax')
+// - Uncaught TypeError: element.dispatchEvent is not a function
+// - TypeError: $(...).addClassName is not a function
+// - ...
+jQuery.noConflict()
+
+const UnoChoice = {
+  cascadeParameters: [] as CascadeParameter[]
+}
+
 export {
-  CascadeParameter, DynamicReferenceParameter, ReferencedParameter
+  UnoChoice,
+  CascadeParameter,
+  DynamicReferenceParameter,
+  ReferencedParameter,
+  FilterElement,
+  makeStaplerProxy2
 }
 

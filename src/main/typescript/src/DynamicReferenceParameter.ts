@@ -25,6 +25,7 @@
 import {CascadeParameter} from "./CascadeParameter"
 import {log} from "./utils"
 import {JenkinsProxy} from "./Proxy";
+import {UnoChoice} from "./index";
 
 /**
  * A parameter that is used only as a render mechanism for other referenced parameters.
@@ -36,10 +37,9 @@ export class DynamicReferenceParameter extends CascadeParameter {
    * @param $element parameter HTML element
    * @param randomName randomName given to the parameter
    * @param proxy Stapler proxy object that references the CascadeChoiceParameter
-   * @param cascadeParameters the list of cascade parameters
    */
-  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
-    super(paramName, $element, randomName, proxy, cascadeParameters)
+  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy) {
+    super(paramName, $element, randomName, proxy)
   }
 
   /**
@@ -118,8 +118,9 @@ export class DynamicReferenceParameter extends CascadeParameter {
     // var e = jQuery.Event('change', {parameterName: this.getParameterName()})
     // jQuery(this.getParameterElement()).trigger(e)
     if (!avoidRecursion) {
-      if (this.cascadeParameters && this.cascadeParameters.length > 0) {
-        for (const other of this.cascadeParameters) {
+      const cascadeParameters = UnoChoice.cascadeParameters
+      if (cascadeParameters && cascadeParameters.length > 0) {
+        for (const other of cascadeParameters) {
           if (this.referencesMe(other)) {
             log(`Updating ${other.paramName} from ${this.paramName}`)
             other.update(true)

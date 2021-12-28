@@ -4,7 +4,7 @@
   "description": "Port of old unochoice.js, now in TypeScript.",
   "author": "Bruno P. Kinoshita",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "dist/org/biouno/unochoice/stapler/unochoice/unochoice.js",
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "npm run clean && webpack",
@@ -20,7 +20,7 @@
     "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1"
   },
-  "dependencies": {
+  "peerDependencies": {
     "jquery": "^3.6.0"
   }
 }

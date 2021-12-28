@@ -12,7 +12,7 @@
 
     if (window.makeStaplerProxy) {
         window.__old__makeStaplerProxy = window.makeStaplerProxy;
-        window.makeStaplerProxy = UnoChoice.makeStaplerProxy2;
+        window.makeStaplerProxy = makeStaplerProxy2;
     }
     var cascadeChoiceParameter = <st:bind value="${it}"/>; // Create Jenkins proxy
     if (window.makeStaplerProxy) {
@@ -21,18 +21,18 @@
     // find the cascade parameter element
     var parentDiv = jQuery('#${h.escape(paramName)}');
     var parameterHtmlElement = parentDiv.find('DIV');
-    if (!parameterHtmlElement || parameterHtmlElement.length == 0) {
+    if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
         console.log('Could not find element by name, perhaps it is a DIV?');
         parameterHtmlElement = parentDiv.find('*[name="value"]');
     }
     if (parameterHtmlElement &amp;&amp; parameterHtmlElement.get(0)) {
-        var cascadeParameter = new UnoChoice.CascadeParameter('${h.escape(it.getName())}', parameterHtmlElement.get(0), '${h.escape(it.getRandomName())}', cascadeChoiceParameter);
+        var cascadeParameter = new CascadeParameter('${h.escape(it.getName())}', parameterHtmlElement, '${h.escape(it.getRandomName())}', cascadeChoiceParameter);
         UnoChoice.cascadeParameters.push(cascadeParameter);
         // filter
         <j:if test="${it.filterable}">
         var filterHtmlElement = parentDiv.find('.uno_choice_filter');
         if (filterHtmlElement &amp;&amp; filterHtmlElement.get(0)) {
-            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), ${it.getFilterLength()});
+            var filterElement = new FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), ${it.getFilterLength()});
             cascadeParameter.setFilterElement(filterElement);
         } else {
             console.log('Filter error: Missing filter element!');
@@ -46,14 +46,14 @@
             for (var j = 0; j &lt; divs.length ; j++) {
                 var div = divs[j];
                 var hiddenNames = jQuery(div).find('input[name="name"]');
-                if (hiddenNames[0].value == referencedParameters[i]) {
+                if (hiddenNames[0].value === referencedParameters[i]) {
                     var children = div.children;
                     for (var k = 0; k &lt; children.length; ++k) {
                         var child = children[k];
-                        if (child.getAttribute('name') == 'value') {
+                        if (child.getAttribute('name') === 'value') {
                             parameterElement = child;
                             break;
-                        } else if (child.tagName == 'DIV') {
+                        } else if (child.tagName === 'DIV') {
                             var subValues = jQuery(child).find('input[name="value"]');
                             if (subValues &amp;&amp; subValues.get(0)) {
                                 parameterElement = child;
@@ -62,7 +62,7 @@
                                 parameterElement = child;
                                 break;
                             }
-                        } else if (child.getAttribute('type') == 'file') {
+                        } else if (child.getAttribute('type') === 'file') {
                             parameterElement = child;
                             break;
                         } else if (child.tagName === 'INPUT' &amp;&amp; !['', 'name'].includes(child.name)) {
@@ -73,7 +73,7 @@
                 }
             }
 
-            new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
+            new ReferencedParameter(referencedParameters[i], jQuery(parameterElement), cascadeParameter);
         }
 
         // call update methods in Java passing the HTML values

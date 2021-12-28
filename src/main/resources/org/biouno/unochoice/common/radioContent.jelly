@@ -77,22 +77,22 @@
                 <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
                   <j:arg type="java.lang.Object" value="${escapedKey}" />
                 </j:invokeStatic>
-                <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class=" " type="radio" onchange="fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
                 <label class="attach-previous">${escapedAndDisabledValue}</label>
                 <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedAndDisabledValue}" />
               </j:when>
               <j:when test="${selected}">
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
                 <label class="attach-previous">${escapedValue}</label>
                 <input json="${escapedKey}" name="value" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
               </j:when>
               <j:when test="${disabled}">
-                <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class=" " type="radio" onchange="fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
                 <label class="attach-previous">${escapedDisabledValue}</label>
                 <input disabled="${disabled}" json="${escapedDisabledKey}" name="" value="${escapedDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedDisabledValue}" />
               </j:when>
               <j:otherwise>
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
                 <label class="attach-previous">${escapedValue}</label>
                 <input json="${escapedKey}" name="" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
               </j:otherwise>

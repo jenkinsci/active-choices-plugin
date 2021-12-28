@@ -60,11 +60,7 @@ export abstract class AbstractParameter implements Parameter {
     const tagName: string = paramElement.tagName
     const type: string = paramElement.getAttribute('type') || ''
     if (attributeName === 'value') {
-      const value = this.getElementValue($element)
-      if (typeof(value) === 'string') {
-        return value
-      }
-      log(`Incompatible parameter type ${typeof(value)} for the attribute value.`)
+      return this.getElementValue($element)
     }
 
     if (tagName === 'DIV') {
@@ -111,15 +107,19 @@ export abstract class AbstractParameter implements Parameter {
    * @param $element HTML element
    * @return the returned value as string. Empty by default.
    */
-  getElementValue ($element: JQuery<HTMLElement>): string | string[] {
+  getElementValue ($element: JQuery<HTMLElement>): string {
     if ($element.prop('tagName') === 'SELECT') {
       // @ts-ignore we know we have a JQuery<HTMLSelectElement> by now
-      return this.getSelectValues($element)
+      return this.getSelectValues($element).join(',')
     }
     if ($element.attr('type') === 'checkbox' || $element.attr('type') === 'radio') {
-      return $element.prop('checked') ? $element.val() as string : ''
+      const checked = $element.prop('checked')
+      if (checked) {
+        const value = $element.val()
+        return (typeof value === 'string') ? value : ''
+      }
     }
-    return $element.val() as string
+    throw new Error(`Trying to get the element value of a type that is not implemented: ${$element.attr('type')}`)
   }
 
   /**
@@ -130,59 +130,12 @@ export abstract class AbstractParameter implements Parameter {
    * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
    */
   getSelectValues ($select: JQuery<HTMLSelectElement>): string[] {
-    if (!$select) {
+    if ($select === null || $select === undefined) {
       return []
     }
     const $options: JQuery<HTMLOptionElement> = $select.children('option:selected') as JQuery<HTMLOptionElement>
-    if (!$options) {
-      return []
-    }
-    const values: string[] = []
-    for (const option of $options) {
-      if (option instanceof HTMLOptionElement) {
-        values.push(option.value || option.text)
-      }
-    }
-    return values
-  }
-
-  /**
-   * Fake selects a radio button.
-   *
-   * In Jenkins, parameters in general have two main HTML elements. One which name is
-   * name with the value as the parameter name. And the other which name is value and
-   * with the value as the parameter value. For example:
-   *
-   * <code>
-   * &lt;div name='name' value='parameter1'&gt;
-   * &lt;div name='value' value='Sao Paulo'&gt;
-   * </code>
-   *
-   * This code ensures that only one radio button, in a radio group, contains the name
-   * value. Avoiding several values to be submitted.
-   *
-   * @param clazzName HTML element class name
-   * @param id HTML element ID
-   * @see issue #21 in GitHub
-   */
-  fakeSelectRadioButton (clazzName: string, id: string): void {
-    const $element = $(`#${id}`).get(0)
-    if ($element != null) {
-      // deselect all radios with the class=clazzName
-      const $radios = $('input[class="' + clazzName + '"]')
-      $radios.each(() => {
-        $(this).attr('name', '')
-      })
-      // select the radio with the id=id
-      const parent = $element.parentNode
-      if (parent) {
-        const children = parent.childNodes
-        for (const child of children) {
-          if ((child as any).className === clazzName) {
-            (child as any).name = 'value'
-          }
-        }
-      }
-    }
+    return $options
+      .get()
+      .map(option => option.value || option.text)
   }
 }

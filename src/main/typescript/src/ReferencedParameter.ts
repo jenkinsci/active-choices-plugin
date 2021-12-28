@@ -66,7 +66,7 @@ export class ReferencedParameter extends AbstractParameter {
     throw new Error("Method not implemented.");
   }
 
-  getElementValue($element: JQuery<HTMLElement>): string | string[] {
+  getElementValue($element: JQuery<HTMLElement>): string {
     throw new Error("Method not implemented.");
   }
 

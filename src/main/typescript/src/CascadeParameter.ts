@@ -28,6 +28,7 @@ import {log} from "./utils";
 import {AbstractParameter} from "./AbstractParameter";
 import {JenkinsProxy} from "./Proxy";
 import {FilterElement} from "./FilterElement";
+import {UnoChoice} from "./index";
 
 /**
  * A parameter that references parameters.
@@ -37,21 +38,18 @@ export class CascadeParameter extends AbstractParameter {
   proxy: JenkinsProxy
   filterElement: FilterElement | null
   referencedParameters: ReferencedParameter[] = []
-  cascadeParameters: CascadeParameter[]
 
   /**
    * @param paramName parameter name
    * @param $element parameter HTML element
    * @param randomName randomName given to the parameter
    * @param proxy Stapler proxy object that references the CascadeChoiceParameter
-   * @param cascadeParameters the list of cascade parameters
    */
-  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
+  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy) {
     super(paramName, $element)
     this.randomName = randomName
     this.proxy = proxy
     this.filterElement = null
-    this.cascadeParameters = cascadeParameters
   }
 
   /**
@@ -464,8 +462,9 @@ export class CascadeParameter extends AbstractParameter {
     // const e = jQuery.Event('change', {parameterName: this.getParameterName()})
     // jQuery(this.getParameterElement()).trigger(e)
     if (!avoidRecursion) {
-      if (this.cascadeParameters && this.cascadeParameters.length > 0) {
-        for (const other of this.cascadeParameters) {
+      const cascadeParameters = UnoChoice.cascadeParameters
+      if (cascadeParameters && cascadeParameters.length > 0) {
+        for (const other of cascadeParameters) {
           if (this.referencesMe(other)) {
             log(`Updating ${other.paramName} from ${this.paramName}`)
             other.update(true)
