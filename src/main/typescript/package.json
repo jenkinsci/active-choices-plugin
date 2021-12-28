@@ -7,7 +7,7 @@
   "main": "dist/org/biouno/unochoice/stapler/unochoice/unochoice.js",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && webpack",
+    "build": "yarn run clean && webpack",
     "compile": "tsc",
     "lint": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
