@@ -105,6 +105,14 @@ public class TestXssParameterNameBrowserConsole {
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
         final GroovyScript script = new GroovyScript(secureScript, secureScript);
 
+        // NOTE: This was added since the TypeScript code validates that
+        //       referenced parameters exist. So we must create a parameter with the
+        //       invalid error in this case. Otherwise the JS code will stop too
+        //       soon.
+        ChoiceParameter listParamA = new ChoiceParameter("]');alert(\"XSS\");console.log('[", "description...", "random-name-A", script,
+                CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
+        project.addProperty(new ParametersDefinitionProperty(listParamA));
+
         CascadeChoiceParameter parameter = new CascadeChoiceParameter(
                 "]');alert(\"XSS\");console.log('[",
                 "]');alert(\"XSS\");console.log('[",
@@ -139,6 +147,14 @@ public class TestXssParameterNameBrowserConsole {
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
         final GroovyScript script = new GroovyScript(secureScript, secureScript);
+
+        // NOTE: This was added since the TypeScript code validates that
+        //       referenced parameters exist. So we must create a parameter with the
+        //       invalid error in this case. Otherwise the JS code will stop too
+        //       soon.
+        ChoiceParameter listParamA = new ChoiceParameter("]');alert(\"XSS\");console.log('[", "description...", "random-name-A", script,
+                CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
+        project.addProperty(new ParametersDefinitionProperty(listParamA));
 
         DynamicReferenceParameter parameter = new DynamicReferenceParameter(
                 "]');alert(\"XSS\");console.log('[",

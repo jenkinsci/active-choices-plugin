@@ -119,7 +119,9 @@ export abstract class AbstractParameter implements Parameter {
         return (typeof value === 'string') ? value : ''
       }
     }
-    throw new Error(`Trying to get the element value of a type that is not implemented: ${$element.attr('type')}`)
+    // TODO: log(`Trying to get the element value of a type that is not implemented: ${$element.attr('type')}`)
+    const val = $element.val() || ''
+    return val !== null ? val.toString() : ''
   }
 
   /**
