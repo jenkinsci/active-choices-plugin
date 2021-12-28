@@ -28,13 +28,29 @@ import {log} from "./utils";
 
 export abstract class AbstractParameter implements Parameter {
   paramName: string;
-  paramElement: JQuery<HTMLElement>;
+  $element: JQuery<HTMLElement>;
 
-  protected constructor(paramName: string, paramElement: JQuery<HTMLElement>) {
+  protected constructor(paramName: string, $element: JQuery<HTMLElement>) {
     this.paramName = paramName
-    this.paramElement = paramElement
+    this.$element = $element
   }
 
+  /**
+   * Gets the value of a HTML element to use it as value in a parameter in Jenkins.
+   *
+   * For a HTML element which name is 'value', we use the getElementValue()
+   * method to retrieve it.
+   *
+   * For a DIV, we look for children elements with the name equal to 'value'.
+   *
+   * For a input with type equal file, we look for files to use as value.
+   *
+   * When there are multiple elements as return value, we append all the values
+   * to an Array and return its value as string (i.e. toString()).
+   *
+   * @param $element HTML element
+   * @return the value of the HTML element used as parameter value in Jenkins, as a string
+   */
   getParameterValue($element: JQuery<HTMLElement>): string {
     const paramElement = $element.get(0)
     if (!paramElement) {
@@ -86,26 +102,43 @@ export abstract class AbstractParameter implements Parameter {
     return ''
   }
 
-  getElementValue (element: JQuery<HTMLElement>): string | string[] {
-    if (element.prop('tagName') === 'SELECT') {
-      return this.getSelectValues(element)
+  /**
+   * Gets the value of a HTML element as string. If the returned value is an Array it
+   * gets serialized first.
+   *
+   * Correctly handles SELECT, CHECKBOX, RADIO, and other types.
+   *
+   * @param $element HTML element
+   * @return the returned value as string. Empty by default.
+   */
+  getElementValue ($element: JQuery<HTMLElement>): string | string[] {
+    if ($element.prop('tagName') === 'SELECT') {
+      // @ts-ignore we know we have a JQuery<HTMLSelectElement> by now
+      return this.getSelectValues($element)
     }
-    if (element.attr('type') === 'checkbox' || element.attr('type') === 'radio') {
-      return element.prop('checked') ? element.val() as string : ''
+    if ($element.attr('type') === 'checkbox' || $element.attr('type') === 'radio') {
+      return $element.prop('checked') ? $element.val() as string : ''
     }
-    return element.val() as string
+    return $element.val() as string
   }
 
-  getSelectValues (select: JQuery<HTMLElement>): string[] {
-    if (!select) {
+  /**
+   * Gets an array of the selected option values in a select element.
+   *
+   * @param $select select element
+   * @return an array with the select element values
+   * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
+   */
+  getSelectValues ($select: JQuery<HTMLSelectElement>): string[] {
+    if (!$select) {
       return []
     }
-    const options: JQuery<HTMLOptionElement> = select.children('option:selected') as JQuery<HTMLOptionElement>
-    if (!options) {
+    const $options: JQuery<HTMLOptionElement> = $select.children('option:selected') as JQuery<HTMLOptionElement>
+    if (!$options) {
       return []
     }
     const values: string[] = []
-    for (const option of options) {
+    for (const option of $options) {
       if (option instanceof HTMLOptionElement) {
         values.push(option.value || option.text)
       }
@@ -113,16 +146,35 @@ export abstract class AbstractParameter implements Parameter {
     return values
   }
 
+  /**
+   * Fake selects a radio button.
+   *
+   * In Jenkins, parameters in general have two main HTML elements. One which name is
+   * name with the value as the parameter name. And the other which name is value and
+   * with the value as the parameter value. For example:
+   *
+   * <code>
+   * &lt;div name='name' value='parameter1'&gt;
+   * &lt;div name='value' value='Sao Paulo'&gt;
+   * </code>
+   *
+   * This code ensures that only one radio button, in a radio group, contains the name
+   * value. Avoiding several values to be submitted.
+   *
+   * @param clazzName HTML element class name
+   * @param id HTML element ID
+   * @see issue #21 in GitHub
+   */
   fakeSelectRadioButton (clazzName: string, id: string): void {
-    const element = $(`#${id}`).get(0)
-    if (element != null) {
+    const $element = $(`#${id}`).get(0)
+    if ($element != null) {
       // deselect all radios with the class=clazzName
-      const radios = $('input[class="' + clazzName + '"]')
-      radios.each(() => {
+      const $radios = $('input[class="' + clazzName + '"]')
+      $radios.each(() => {
         $(this).attr('name', '')
       })
       // select the radio with the id=id
-      const parent = element.parentNode
+      const parent = $element.parentNode
       if (parent) {
         const children = parent.childNodes
         for (const child of children) {

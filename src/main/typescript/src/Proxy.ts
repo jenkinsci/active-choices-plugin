@@ -60,6 +60,16 @@ const genMethod = (proxy: any, methodName: string, url: string, crumb: string): 
   }
 }
 
+/**
+ * This function is the same as makeStaplerProxy available in Jenkins core, but executes
+ * calls synchronously. Since many parameters must be filled only after other parameters
+ * have been updated, calling Jenkins methods asynchronously causes several unpredictable
+ * errors.
+ *
+ * @param url Jenkins URL
+ * @param crumb
+ * @param methods
+ */
 export const makeStaplerProxy2 = (url: string, crumb: string, methods: any) => {
   const url2 = url.slice(-1) === '/' ? url : `${url}/`
   const proxy = {}

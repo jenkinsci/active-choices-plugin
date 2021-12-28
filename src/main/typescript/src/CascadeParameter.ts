@@ -29,6 +29,9 @@ import {AbstractParameter} from "./AbstractParameter";
 import {JenkinsProxy} from "./Proxy";
 import {FilterElement} from "./FilterElement";
 
+/**
+ * A parameter that references parameters.
+ */
 export class CascadeParameter extends AbstractParameter {
   randomName: string
   proxy: JenkinsProxy
@@ -36,19 +39,32 @@ export class CascadeParameter extends AbstractParameter {
   referencedParameters: ReferencedParameter[] = []
   cascadeParameters: CascadeParameter[]
 
-  constructor(paramName: string, paramElement: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
-    super(paramName, paramElement)
+  /**
+   * @param paramName parameter name
+   * @param $element parameter HTML element
+   * @param randomName randomName given to the parameter
+   * @param proxy Stapler proxy object that references the CascadeChoiceParameter
+   * @param cascadeParameters the list of cascade parameters
+   */
+  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
+    super(paramName, $element)
     this.randomName = randomName
     this.proxy = proxy
     this.filterElement = null
     this.cascadeParameters = cascadeParameters
   }
 
+  /**
+   * Used to create the request string that will update the cascade parameter values.
+   * Returns a String, with name=value for each referenced parameter.
+   *
+   * @return string with name=value for each referenced parameter
+   */
   getReferencedParametersAsText(): string {
     return this.referencedParameters
       .map(referencedParameter => {
         const name = referencedParameter.paramName
-        const value = this.getParameterValue(referencedParameter.paramElement)
+        const value = this.getParameterValue(referencedParameter.$element)
         return `${name}=${value}`
       })
       .join(SEPARATOR)
@@ -58,6 +74,15 @@ export class CascadeParameter extends AbstractParameter {
     this.referencedParameters.push(referenced)
   }
 
+  /**
+   * Returns true iff the given parameter is not null, and one of its
+   * reference parameters is the same parameter as this. In other words,
+   * it returns whether or not the given parameter references this parameter.
+   *
+   * @since 0.22
+   * @param cascadeParameter a given parameter
+   * @return boolean true iff the given parameter references this parameter
+   */
   referencesMe(cascadeParameter: CascadeParameter): boolean {
     if (cascadeParameter == null || cascadeParameter.referencedParameters.length === 0) {
       return false
@@ -67,8 +92,27 @@ export class CascadeParameter extends AbstractParameter {
       .find(referencedParameter => referencedParameter.paramName === this.paramName) !== undefined
   }
 
-  public update(avoidRecursion: boolean): void {
-    const paramElement = this.paramElement.get(0)
+  /**
+   * Updates the CascadeParameter object.
+   *
+   * Once this method gets called, it will call the Java code (using Stapler proxy),
+   * that is responsible for updating the referenced parameter values. The Java method
+   * receives the value of other referenced parameters.
+   *
+   * Then, we call the Java code again, now to decide the next values to be displayed.
+   * From here, the flow gets split into several branches, one for each HTML element
+   * type supported (SELECT, INPUT, UL, etc). Each HTML element gets rendered accordingly
+   * and events are triggered.
+   *
+   * In the last part of the method, before updating other elements, it checks for
+   * recursive calls. If this parameter references itself, we need to avoid updating
+   * it forever.
+   *
+   * @param avoidRecursion boolean flag to decide whether we want to permit self-reference
+   * parameters or not (default is true)
+   */
+  public update(avoidRecursion: boolean = true): void {
+    const paramElement = this.$element.get(0)
     if (!paramElement) {
       throw new Error(`The cascade parameter ${this.paramName} could not locate the parameter HTML element in the UI (null/undefined).`)
     }

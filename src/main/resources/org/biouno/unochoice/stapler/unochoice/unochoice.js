@@ -56,7 +56,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     /* public */ function CascadeParameter(paramName, paramElement, randomName, proxy) {
         this.paramName = paramName;
-        this.paramElement = paramElement;
+        this.$element = paramElement;
         this.randomName = randomName;
         this.proxy = proxy;
         this.referencedParameters = [];
@@ -538,7 +538,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     /* public */ function ReferencedParameter(paramName, paramElement, cascadeParameter) {
         this.paramName = paramName;
-        this.paramElement = paramElement;
+        this.$element = paramElement;
         this.cascadeParameter = cascadeParameter;
         // Add event listener
         var _self = this;
@@ -578,7 +578,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     /* public */ function DynamicReferenceParameter(paramName, paramElement, proxy) {
         this.paramName = paramName;
-        this.paramElement = paramElement;
+        this.$element = paramElement;
         this.proxy = proxy;
         this.referencedParameters = [];
     }
@@ -677,7 +677,7 @@ var UnoChoice = UnoChoice || (function($) {
      * @param filterLength filter length
      */
     /* public */ function FilterElement(paramElement, filterElement, filterLength) {
-        this.paramElement = paramElement;
+        this.$element = paramElement;
         this.filterElement = filterElement;
         this.filterLength = filterLength;
         this.originalArray = [];

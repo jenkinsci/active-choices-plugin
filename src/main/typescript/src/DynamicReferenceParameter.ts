@@ -26,13 +26,44 @@ import {CascadeParameter} from "./CascadeParameter"
 import {log} from "./utils"
 import {JenkinsProxy} from "./Proxy";
 
+/**
+ * A parameter that is used only as a render mechanism for other referenced parameters.
+ */
 export class DynamicReferenceParameter extends CascadeParameter {
-  constructor(paramName: string, paramElement: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
-    super(paramName, paramElement, randomName, proxy, cascadeParameters)
+
+  /**
+   * @param paramName parameter name
+   * @param $element parameter HTML element
+   * @param randomName randomName given to the parameter
+   * @param proxy Stapler proxy object that references the CascadeChoiceParameter
+   * @param cascadeParameters the list of cascade parameters
+   */
+  constructor(paramName: string, $element: JQuery<HTMLElement>, randomName: string, proxy: JenkinsProxy, cascadeParameters: CascadeParameter[]) {
+    super(paramName, $element, randomName, proxy, cascadeParameters)
   }
 
-  public update(avoidRecursion: boolean = false) {
-    const paramElement = this.paramElement.get(0)
+  /**
+   * Updates the DynamicReferenceParameter object. Debug information goes into the browser
+   * console.
+   *
+   * Once this method gets called, it will call the Java code (using Stapler proxy),
+   * that is responsible for updating the referenced parameter values. The Java method
+   * receives the value of other referenced parameters.
+   *
+   * Then, we call the Java code again, now to decide the next values to be displayed.
+   * From here, the flow gets split into several branches, one for each HTML element
+   * type supported (SELECT, INPUT, UL, etc). Each HTML element gets rendered
+   * accordingly and events are triggered.
+   *
+   * In the last part of the method, before updating other elements, it checks for
+   * recursive calls. If this parameter references itself, we need to avoid updating
+   * it forever.
+   *
+   * @param avoidRecursion boolean flag to decide whether we want to permit self-reference
+   * parameters or not (default is true)
+   */
+  public update(avoidRecursion: boolean = true) {
+    const paramElement = this.$element.get(0)
     if (!paramElement) {
       throw new Error(`The dynamic reference parameter ${this.paramName} could not locate the parameter HTML element in the UI (null/undefined).`)
     }
@@ -45,7 +76,7 @@ export class DynamicReferenceParameter extends CascadeParameter {
     if (paramElement.tagName === 'OL') {
       log('Calling Java server code to update HTML elements...')
       this.proxy.getChoicesForUI((t: XMLHttpRequest) => {
-        jQuery(this.paramElement).empty(); // remove all children elements
+        jQuery(this.$element).empty(); // remove all children elements
         const choices = t.responseText
         log('Values returned from server: ' + choices)
         const data = JSON.parse(choices)
@@ -58,7 +89,7 @@ export class DynamicReferenceParameter extends CascadeParameter {
         }
       })
     } else if (paramElement.tagName === 'UL') {
-      jQuery(this.paramElement).empty(); // remove all children elements
+      jQuery(this.$element).empty(); // remove all children elements
       log('Calling Java server code to update HTML elements...')
       this.proxy.getChoicesForUI((t: XMLHttpRequest) => {
         const choices = t.responseText

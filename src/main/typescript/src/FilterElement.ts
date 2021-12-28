@@ -51,44 +51,44 @@ export class FilterElement {
     if (paramElement.tagName === 'SELECT') { // handle SELECTS
       this.originalArray.concat(...paramElement.children)
     } else if (paramElement.tagName === 'DIV') { // handle CHECKBOXES
-      const jqueryElement = $(paramElement)
-      if (jqueryElement.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
+      const $element = $(paramElement)
+      if ($element.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
         const table = paramElement.children[0]
         const tbody = table.children[0]
         if (paramElement.className === 'dynamic_checkbox') {
-          const trs = $(tbody).find('tr')
-          for (const tr of trs) {
-            const tds = $(tr).find('td')
-            const inputs = $(tds[0]).find('input')
-            const input = inputs[0]
+          const $trs = $(tbody).find('tr')
+          for (const tr of $trs) {
+            const $tds = $(tr).find('td')
+            const $inputs = $($tds[0]).find('input')
+            const input = $inputs[0]
             this.originalArray.push(input)
           }
         } else {
-          const trs = $(tbody).find('tr')
-          for (const tr of trs) {
-            const tds = $(tr).find('td')
-            const inputs = $(tds[0]).find('input')
-            const input = inputs[0]
+          const $trs = $(tbody).find('tr')
+          for (const tr of $trs) {
+            const $tds = $(tr).find('td')
+            const $inputs = $($tds[0]).find('input')
+            const input = $inputs[0]
             this.originalArray.push(input)
           }
         }
       } // if (jqueryElement.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-      if (jqueryElement.children().length > 0 && paramElement.children[0].tagName === 'DIV') {
+      if ($element.children().length > 0 && paramElement.children[0].tagName === 'DIV') {
         const tbody = paramElement.children[0]
         if (paramElement.className === 'dynamic_checkbox') {
-          const trs = $(tbody).find('div')
-          for (const tr of trs) {
-            const tds = $(tr).find('div')
-            const inputs = $(tds[0]).find('input')
-            const input = inputs[0]
+          const $trs = $(tbody).find('div')
+          for (const tr of $trs) {
+            const $tds = $(tr).find('div')
+            const $inputs = $($tds[0]).find('input')
+            const input = $inputs[0]
             this.originalArray.push(input)
           }
         } else {
-          const trs = $(tbody).find('div')
-          for (const tr of trs) {
-            const tds = $(tr).find('div')
-            const inputs = $(tds[0]).find('input')
-            const input = inputs[0]
+          const $trs = $(tbody).find('div')
+          for (const tr of $trs) {
+            const $tds = $(tr).find('div')
+            const $inputs = $($tds[0]).find('input')
+            const input = $inputs[0]
             this.originalArray.push(input)
           }
         }
@@ -96,6 +96,10 @@ export class FilterElement {
     }
   }
 
+  /**
+   * Initiates an event listener for Key Up events. Depending on the element type it will interpret the filter, and
+   * the filtered element, to update its values.
+   */
   private initEventHandler() {
     this.filterElement.onkeyup = (e: KeyboardEvent) => {
       // const filterElement = e.target
@@ -331,11 +335,22 @@ export class FilterElement {
     return element.getAttribute(attribute) || defaultValue
   }
 
+  /**
+   * Sets the array with the original options of the filtered element. Once the array has been
+   * set, it empties the value of the filter input box, thus allowing the user to type in again.
+   *
+   * @param originalArray
+   */
   setOriginalArray(originalArray: any[]): void {
     this.originalArray = originalArray
     this.clearFilterElement()
   }
 
+  /**
+   * Clears the filter input box.
+   *
+   * @since 0.23
+   */
   clearFilterElement() {
     this.filterElement.value = ''
   }

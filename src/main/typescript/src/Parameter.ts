@@ -28,5 +28,5 @@
  */
 export interface Parameter {
   paramName: string
-  paramElement: JQuery<HTMLElement>
+  $element: JQuery<HTMLElement>
 }

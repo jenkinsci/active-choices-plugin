@@ -27,13 +27,24 @@ import {log} from "./utils"
 import {AbstractParameter} from "./AbstractParameter";
 import ChangeEvent = JQuery.ChangeEvent;
 
+/**
+ * A parameter that is referenced by other parameters. Stores a list of cascade parameters, that reference this
+ * parameter.
+ *
+ * Whenever this parameter changes, it will notify each cascade parameter.
+ */
 export class ReferencedParameter extends AbstractParameter {
   cascadeParameter: CascadeParameter
 
-  constructor(paramName: string, paramElement: JQuery<HTMLElement>, cascadeParameter: CascadeParameter) {
-    super(paramName, paramElement)
+  /**
+   * @param paramName parameter name
+   * @param $element parameter HTML element
+   * @param cascadeParameter CascadeParameter
+   */
+  constructor(paramName: string, $element: JQuery<HTMLElement>, cascadeParameter: CascadeParameter) {
+    super(paramName, $element)
     this.cascadeParameter = cascadeParameter
-    jQuery(this.paramElement).on('change', (e: ChangeEvent) => {
+    jQuery(this.$element).on('change', (e: ChangeEvent) => {
       if ((e as any).parameterName === this.paramName) {
         log('Skipping self reference to avoid infinite loop!')
         e.stopImmediatePropagation()
@@ -51,15 +62,15 @@ export class ReferencedParameter extends AbstractParameter {
     cascadeParameter.reference(this)
   }
 
-  getParameterValue(htmlParameter: JQuery<HTMLElement>): string {
+  getParameterValue($element: JQuery<HTMLElement>): string {
     throw new Error("Method not implemented.");
   }
 
-  getElementValue(htmlParameter: JQuery<HTMLElement>): string | string[] {
+  getElementValue($element: JQuery<HTMLElement>): string | string[] {
     throw new Error("Method not implemented.");
   }
 
-  getSelectValues(select: JQuery<HTMLElement>): string[] {
+  getSelectValues($select: JQuery<HTMLSelectElement>): string[] {
     throw new Error("Method not implemented.");
   }
 

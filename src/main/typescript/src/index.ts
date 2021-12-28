@@ -25,6 +25,22 @@ import {CascadeParameter} from "./CascadeParameter"
 import {DynamicReferenceParameter} from "./DynamicReferenceParameter"
 import {ReferencedParameter} from "./ReferencedParameter"
 
+/**
+ * Uno Choice Javascript module.
+ *
+ * This Javascript module is used in Uno-Choice Plug-in, and was created to enable users
+ * to have different types of parameters in Jenkins.
+ *
+ * In Jenkins parameters are used to customize Job variables. However, the range of parameters
+ * and their features is limited. Specially in the UI, as for example, elements that are
+ * updated reacting to changes in other elements (e.g. city and state combo boxes).
+ *
+ * This module depends on JQuery only.
+ *
+ * @author Bruno P. Kinoshita <brunodepaulak@yahoo.com.br>
+ * @since 0.20
+ */
+
 export {
   CascadeParameter, DynamicReferenceParameter, ReferencedParameter
 }
