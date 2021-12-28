@@ -3,13 +3,9 @@ const path = require('path')
 module.exports = {
   mode: "development",
   devtool: "inline-source-map",
+  target: ['web', 'es5'],
   entry: {
     main: "./src/index.ts",
-  },
-  output: {
-    path: path.resolve(__dirname, './dist/org/biouno/unochoice/stapler/unochoice/'),
-    filename: "unochoice.js",
-    libraryTarget: "window",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
@@ -21,11 +17,17 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader"
+        loader: "ts-loader",
+        exclude: /node_modules/,
       }
     ]
   },
+  output: {
+    path: path.resolve(__dirname, './dist/org/biouno/unochoice/stapler/unochoice/'),
+    filename: "unochoice.js",
+    libraryTarget: "window",
+  },
   externals: [
     'jquery'
-  ]
+  ],
 }

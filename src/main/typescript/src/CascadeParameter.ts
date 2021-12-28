@@ -185,8 +185,8 @@ export class CascadeParameter extends AbstractParameter {
           selectElement.setAttribute('size', (newValues.length > 10 ? 10 : newValues.length) + 'px')
         }
         // Update the values for the filtering
-        const originalArray = []
-        for (const optionValue of selectElement.options) {
+        const originalArray: any[] = []
+        for (const optionValue of [].slice.call(selectElement.options)) {
           originalArray.push(optionValue)
         }
         if (this.filterElement) {

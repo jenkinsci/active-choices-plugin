@@ -60,7 +60,7 @@ export function fakeSelectRadioButton (clazzName: string, id: string): void {
     const parent = $element.parentNode
     if (parent) {
       const children = parent.childNodes
-      for (const child of children) {
+      for (const child of [].slice.call(children)) {
         if ((child as any).className === clazzName) {
           (child as any).name = 'value'
         }

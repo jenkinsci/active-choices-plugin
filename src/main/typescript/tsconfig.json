@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "target": "ES5",
+    "module": "es2015",
     "noImplicitReturns": true,
     "noUnusedLocals": false,
     "esModuleInterop": true,
@@ -9,7 +9,6 @@
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "resolveJsonModule": true
   },
   "include": [
     "src"

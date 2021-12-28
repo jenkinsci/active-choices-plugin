@@ -49,7 +49,7 @@ export class FilterElement {
   private initFilter(paramElement: HTMLElement): void {
     // push existing values into originalArray array
     if (paramElement.tagName === 'SELECT') { // handle SELECTS
-      this.originalArray.concat(...paramElement.children)
+      this.originalArray.concat([].slice.call(paramElement.children))
     } else if (paramElement.tagName === 'DIV') { // handle CHECKBOXES
       const $element = $(paramElement)
       if ($element.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
@@ -57,7 +57,7 @@ export class FilterElement {
         const tbody = table.children[0]
         if (paramElement.className === 'dynamic_checkbox') {
           const $trs = $(tbody).find('tr')
-          for (const tr of $trs) {
+          for (const tr of [].slice.call($trs)) {
             const $tds = $(tr).find('td')
             const $inputs = $($tds[0]).find('input')
             const input = $inputs[0]
@@ -65,7 +65,7 @@ export class FilterElement {
           }
         } else {
           const $trs = $(tbody).find('tr')
-          for (const tr of $trs) {
+          for (const tr of [].slice.call($trs)) {
             const $tds = $(tr).find('td')
             const $inputs = $($tds[0]).find('input')
             const input = $inputs[0]
@@ -77,7 +77,7 @@ export class FilterElement {
         const tbody = paramElement.children[0]
         if (paramElement.className === 'dynamic_checkbox') {
           const $trs = $(tbody).find('div')
-          for (const tr of $trs) {
+          for (const tr of [].slice.call($trs)) {
             const $tds = $(tr).find('div')
             const $inputs = $($tds[0]).find('input')
             const input = $inputs[0]
@@ -85,7 +85,7 @@ export class FilterElement {
           }
         } else {
           const $trs = $(tbody).find('div')
-          for (const tr of $trs) {
+          for (const tr of [].slice.call($trs)) {
             const $tds = $(tr).find('div')
             const $inputs = $($tds[0]).find('input')
             const input = $inputs[0]
