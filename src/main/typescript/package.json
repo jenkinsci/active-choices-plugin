@@ -6,7 +6,8 @@
   "license": "MIT",
   "main": "src/index.ts",
   "scripts": {
-    "build": "webpack",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && webpack",
     "compile": "tsc",
     "lint": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"

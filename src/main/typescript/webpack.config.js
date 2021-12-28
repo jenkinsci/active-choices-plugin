@@ -7,7 +7,7 @@ module.exports = {
     main: "./src/index.ts",
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './dist/org/biouno/unochoice/stapler/unochoice/'),
     filename: "unochoice.js"
   },
   resolve: {

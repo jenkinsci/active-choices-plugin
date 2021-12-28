@@ -153,6 +153,7 @@
                 </configuration>
             </plugin>
             -->
+            <!-- Jenkins HPI -->
             <plugin>
                 <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
@@ -162,6 +163,7 @@
                     <minimumJavaVersion>8</minimumJavaVersion>
                 </configuration>
             </plugin>
+            <!-- JavaScript and TypeScript integration, in the generate-sources phase -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -173,6 +175,7 @@
                 <executions>
                     <execution>
                         <id>install node and yarn</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>install-node-and-yarn</goal>
                         </goals>
@@ -183,6 +186,7 @@
                     </execution>
                     <execution>
                         <id>yarn install</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
@@ -192,6 +196,7 @@
                     </execution>
                     <execution>
                         <id>yarn run build</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
@@ -202,6 +207,7 @@
                     <!--
                     <execution>
                         <id>yarn run test:unit</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
@@ -212,6 +218,7 @@
                     </execution>
                     <execution>
                         <id>yarn run test:e2e</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
@@ -221,6 +228,27 @@
                         </configuration>
                     </execution>
                      -->
+                </executions>
+            </plugin>
+            <!-- Adding more sources (js output of above plug-in), in the process-sources phase -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/typescript/dist/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
