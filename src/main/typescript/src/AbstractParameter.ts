@@ -22,9 +22,7 @@
  * THE SOFTWARE.
  */
 
-import $ from "jquery";
 import {Parameter} from "./Parameter";
-import {log} from "./utils";
 
 export abstract class AbstractParameter implements Parameter {
   paramName: string;
@@ -89,11 +87,7 @@ export abstract class AbstractParameter implements Parameter {
     }
 
     if (tagName === 'INPUT' && !['', 'name'].includes(attributeName)) {
-      const value : string | string[] = this.getElementValue($element)
-      if (typeof(value) === 'string') {
-        return value
-      }
-      log(`Incompatible parameter type ${typeof(value)} for an INPUT tag.`)
+      return this.getElementValue($element)
     }
     return ''
   }

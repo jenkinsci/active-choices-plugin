@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 import {log} from "./utils";
+import $ from "jquery";
 
 /**
  * An element that acts as filter for other elements.

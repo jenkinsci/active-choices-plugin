@@ -204,30 +204,16 @@
                             <arguments>run build</arguments>
                         </configuration>
                     </execution>
-                    <!--
                     <execution>
-                        <id>yarn run test:unit</id>
-                        <phase>generate-sources</phase>
+                        <id>yarn run test:unit-coverage</id>
+                        <phase>test</phase>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
-                        <phase>test</phase>
                         <configuration>
-                            <arguments>run test:unit</arguments>
+                            <arguments>run test:unit-coverage</arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>yarn run test:e2e</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <phase>test</phase>
-                        <configuration>
-                            <arguments>run test:e2e</arguments>
-                        </configuration>
-                    </execution>
-                     -->
                 </executions>
             </plugin>
             <!-- Adding more sources (js output of above plug-in), in the process-sources phase -->

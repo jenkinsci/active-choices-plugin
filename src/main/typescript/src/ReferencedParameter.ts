@@ -73,8 +73,4 @@ export class ReferencedParameter extends AbstractParameter {
   getSelectValues($select: JQuery<HTMLSelectElement>): string[] {
     throw new Error("Method not implemented.");
   }
-
-  fakeSelectRadioButton(clazzName: string, id: string): void {
-    throw new Error("Method not implemented.");
-  }
 }

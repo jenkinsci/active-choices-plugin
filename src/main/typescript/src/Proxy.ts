@@ -107,7 +107,7 @@ export const makeStaplerProxy2 = (url, crumb, methods) => {
     }
   };
 
-  for(var mi = 0; mi < methods.length; mi++) {
+  for(let mi = 0; mi < methods.length; mi++) {
     genMethod(methods[mi]);
   }
 
