@@ -221,11 +221,13 @@ describe('CascadeParameter', () => {
   })
   it('updates (circular dependency)', () => {
     // We will use a parameter that returns some letters in lower case
-    const referencedParameterElement = $("<option>", {
-      "name": "value",
-      "selected": "selected",
-      "value": "abc"
-    })
+    const referencedParameterElement = $(`
+      <div id='ref-parameter1'>
+        <div>
+          <option name="value" selected="selected" value="abc" />
+        </div>
+      </div>
+      `)
     const anotherCascadeParameter = new CascadeParameter(
       'ref1',
       referencedParameterElement,
@@ -239,9 +241,60 @@ describe('CascadeParameter', () => {
     UnoChoice.cascadeParameters.push(cascadeParameter)
     UnoChoice.cascadeParameters.push(anotherCascadeParameter)
     cascadeParameter.update(false)
-    const elem = cascadeParameter.$element.get(0)
     // Now abc became ABC
-    expect(elem?.innerHTML).to.include("ABC")
-    // FIXME: XYZ?
+    expect(element.get(0)?.innerHTML).to.include("ABC")
+    expect(referencedParameterElement.get(0)?.innerHTML).to.include("ref1")
+  })
+  it('updates (unknown element)', () => {
+    const anotherCascadeParameter = new CascadeParameter(
+      'ref1',
+      $('.a12345'),
+      'randomName1',
+      proxy
+    )
+    expect(() => anotherCascadeParameter.update()).to.throw(Error)
+  })
+  it('referencesMe true', () => {
+    const referencedParameterElement = $(`
+      <div id='ref-parameter1'>
+        <div>
+          <option name="value" selected="selected" value="abc" />
+        </div>
+      </div>
+      `)
+    const anotherCascadeParameter = new CascadeParameter(
+      'ref1',
+      referencedParameterElement,
+      'randomName1',
+      proxy
+    )
+    // tslint:disable-next-line:no-unused-expression
+    new ReferencedParameter(anotherCascadeParameter.paramName, anotherCascadeParameter.$element, cascadeParameter)
+    // tslint:disable-next-line:no-unused-expression
+    new ReferencedParameter(cascadeParameter.paramName, cascadeParameter.$element, anotherCascadeParameter)
+    UnoChoice.cascadeParameters.push(cascadeParameter)
+    UnoChoice.cascadeParameters.push(anotherCascadeParameter)
+    expect(cascadeParameter.referencesMe(anotherCascadeParameter)).to.equal(true)
+  })
+  it('referencesMe false', () => {
+    const referencedParameterElement = $(`
+      <div id='ref-parameter1'>
+        <div>
+          <option name="value" selected="selected" value="abc" />
+        </div>
+      </div>
+      `)
+    const anotherCascadeParameter = new CascadeParameter(
+      'ref1',
+      referencedParameterElement,
+      'randomName1',
+      proxy
+    )
+    UnoChoice.cascadeParameters.push(cascadeParameter)
+    UnoChoice.cascadeParameters.push(anotherCascadeParameter)
+    expect(cascadeParameter.referencesMe(anotherCascadeParameter)).to.equal(false)
+  })
+  it('referencesMe false (unknown element)', () => {
+    expect(cascadeParameter.referencesMe((null as unknown as CascadeParameter))).to.equal(false)
   })
 })

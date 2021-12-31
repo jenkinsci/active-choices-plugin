@@ -45,8 +45,8 @@ export class ReferencedParameter extends AbstractParameter {
   constructor(paramName: string, $element: JQuery<HTMLElement>, cascadeParameter: CascadeParameter) {
     super(paramName, $element)
     this.cascadeParameter = cascadeParameter
-    jQuery(this.$element).on('change', (e: ChangeEvent) => {
-      if ((e as any).parameterName === this.paramName) {
+    jQuery(this.$element).on('change', (e: ChangeEvent, params: any) => {
+      if (params.parameterName === this.paramName) {
         log('Skipping self reference to avoid infinite loop!')
         e.stopImmediatePropagation()
       } else {
