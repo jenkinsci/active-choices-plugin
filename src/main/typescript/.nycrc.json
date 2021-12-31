@@ -6,7 +6,11 @@
     "src/**/!(*.spec.*).[tj]s?(x)"
   ],
   "exclude": [
-    "src/*.spec.[tj]s?(x)"
+    "src/*.spec.[tj]s?(x)",
+    "src/test-utils.ts",
+    "src/Proxy.ts",
+    "src/index.ts",
+    "src/*.d.ts"
   ],
   "reporter": ["html", "lcov", "text-summary"],
   "report-dir": ".coverage",

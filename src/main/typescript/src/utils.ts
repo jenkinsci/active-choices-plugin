@@ -36,33 +36,32 @@ export const log = (message: string): void => {
  * name with the value as the parameter name. And the other which name is value and
  * with the value as the parameter value. For example:
  *
- * <code>
- * &lt;div name='name' value='parameter1'&gt;
- * &lt;div name='value' value='Sao Paulo'&gt;
- * </code>
+ * <div class='parameter' id='parameter1'>
+ *   <div name='name'  value='parameter1' />
+ *   <div name='value' value='Sao Paulo'  />
+ * </div>
  *
  * This code ensures that only one radio button, in a radio group, contains the name
  * value. Avoiding several values to be submitted.
  *
- * @param clazzName HTML element class name
+ * @param clazzName the HTML class of the radio elements
  * @param id HTML element ID
  * @see issue #21 in GitHub
  */
 export function fakeSelectRadioButton (clazzName: string, id: string): void {
-  const $element = $(`#${id}`).get(0)
-  if ($element != null) {
+  const element = $(`#${id}`).get(0)
+  if (element != null) {
     // deselect all radios with the class=clazzName
-    const $radios = $(`input[class="${clazzName}"]`)
-    for (const input of $radios.get()) {
+    const radios = $(`input[class="${clazzName}"]`).get()
+    for (const input of radios) {
       input.setAttribute('name', '')
     }
     // select the radio with the id=id
-    const parent = $element.parentNode
-    if (parent) {
-      const children = parent.childNodes
-      for (const child of [].slice.call(children)) {
-        if ((child as any).className === clazzName) {
-          (child as any).name = 'value'
+    const parent = element.parentNode
+    if (parent != null) {
+      for (const child of parent.children) {
+        if (child.className === clazzName) {
+          child.setAttribute('name', 'value')
         }
       }
     }

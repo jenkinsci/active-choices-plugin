@@ -23,6 +23,7 @@
  */
 
 import {Parameter} from "./Parameter";
+import JQuery from "jquery"
 
 export abstract class AbstractParameter implements Parameter {
   paramName: string;
@@ -62,14 +63,14 @@ export abstract class AbstractParameter implements Parameter {
     }
 
     if (tagName === 'DIV') {
-      const subElements = $element.find('[name="value"]')
-      if (!subElements) {
+      const $subElements = $element.find('[name="value"]')
+      if ($subElements.length === 0) {
         return ''
       }
       const valueBuffer: any[] = []
-      subElements.each(() => {
-        const tempValue = this.getElementValue($element)
-        if (tempValue)
+      $subElements.each((i, obj) => {
+        const tempValue = this.getElementValue(JQuery(obj))
+        if (tempValue != null)
           valueBuffer.push(tempValue)
       })
       return valueBuffer.toString()
@@ -112,6 +113,7 @@ export abstract class AbstractParameter implements Parameter {
         const value = $element.val()
         return (typeof value === 'string') ? value : ''
       }
+      return ''
     }
     // TODO: log(`Trying to get the element value of a type that is not implemented: ${$element.attr('type')}`)
     const val = $element.val() || ''
@@ -126,9 +128,6 @@ export abstract class AbstractParameter implements Parameter {
    * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
    */
   getSelectValues ($select: JQuery<HTMLSelectElement>): string[] {
-    if ($select === null || $select === undefined) {
-      return []
-    }
     const $options: JQuery<HTMLOptionElement> = $select.children('option:selected') as JQuery<HTMLOptionElement>
     return $options
       .get()

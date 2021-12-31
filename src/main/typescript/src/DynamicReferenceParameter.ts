@@ -24,8 +24,8 @@
 
 import {CascadeParameter} from "./CascadeParameter"
 import {log} from "./utils"
-import {JenkinsProxy} from "./Proxy";
-import {UnoChoice} from "./index";
+import type {JenkinsProxy} from "./Proxy";
+import {UnoChoice} from "./UnoChoice";
 
 /**
  * A parameter that is used only as a render mechanism for other referenced parameters.

@@ -21,11 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import {CascadeParameter} from "./CascadeParameter"
-import {DynamicReferenceParameter} from "./DynamicReferenceParameter"
-import {ReferencedParameter} from "./ReferencedParameter"
-import {FilterElement} from "./FilterElement"
-import {makeStaplerProxy2} from "./Proxy";
+import jQuery from 'jquery';
 
 /**
  * Uno Choice Javascript module.
@@ -50,16 +46,9 @@ import {makeStaplerProxy2} from "./Proxy";
 // - ...
 jQuery.noConflict()
 
-const UnoChoice = {
-  cascadeParameters: [] as CascadeParameter[]
-}
-
-export {
-  UnoChoice,
-  CascadeParameter,
-  DynamicReferenceParameter,
-  ReferencedParameter,
-  FilterElement,
-  makeStaplerProxy2
-}
-
+export {CascadeParameter} from './CascadeParameter'
+export {ReferencedParameter} from './ReferencedParameter'
+export {DynamicReferenceParameter} from './DynamicReferenceParameter'
+export {FilterElement} from './FilterElement'
+export {UnoChoice} from './UnoChoice'
+export {makeStaplerProxy2} from './Proxy'

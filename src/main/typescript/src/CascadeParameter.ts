@@ -28,7 +28,8 @@ import {log} from "./utils";
 import {AbstractParameter} from "./AbstractParameter";
 import {JenkinsProxy} from "./Proxy";
 import {FilterElement} from "./FilterElement";
-import {UnoChoice} from "./index";
+import {UnoChoice} from "./UnoChoice";
+import JQuery from 'jquery'
 
 /**
  * A parameter that references parameters.
@@ -154,6 +155,9 @@ export class CascadeParameter extends AbstractParameter {
       }
       if (this.filterElement) {
         log('Updating values in filter array')
+        // FIXME: hm? Why didn't I continue writing the code here? Previous code was the same way!
+        //        there is another call similar to this one, inside the next blocks... maybe this
+        //        can be safely removed?
       }
       // FIXME
       // http://stackoverflow.com/questions/6364748/change-the-options-array-of-a-select-list
@@ -197,7 +201,7 @@ export class CascadeParameter extends AbstractParameter {
           const table = paramElement.children[0]
           let tbody = table.children[0]
           if (tbody) {
-            jQuery(tbody).empty()
+            JQuery(tbody).empty()
           } else {
             tbody = document.createElement('tbody')
             table.appendChild(tbody)
@@ -284,7 +288,7 @@ export class CascadeParameter extends AbstractParameter {
               input.setAttribute("value", key)
               input.setAttribute("class", " ")
               input.setAttribute("type", "radio")
-              input.setAttribute('onchange', 'UnoChoice.fakeSelectRadioButton("' + this.paramName + '", "' + idValue + '")')
+              input.setAttribute('onchange', 'fakeSelectRadioButton("' + this.paramName + '", "' + idValue + '")')
               input.setAttribute('otherId', idValue)
               label.className = "attach-previous"
               if (typeof(entry) !== 'string') {
@@ -328,7 +332,7 @@ export class CascadeParameter extends AbstractParameter {
         } // if (paramElement.children.length > 0 && paramElement.children[0].tagName === 'TABLE') {
         if (paramElement.children.length > 0 && paramElement.children[0].tagName === 'DIV') {
           const tbody = paramElement.children[0]
-          jQuery(tbody).empty()
+          JQuery(tbody).empty()
           const originalArray = []
           // Check whether it is a radio or checkbox element
           if (paramElement.className === 'dynamic_checkbox') {
@@ -413,7 +417,7 @@ export class CascadeParameter extends AbstractParameter {
               input.setAttribute("value", key)
               input.setAttribute("class", " ")
               input.setAttribute("type", "radio")
-              input.setAttribute('onchange', 'UnoChoice.fakeSelectRadioButton("' + this.paramName + '", "' + idValue + '")')
+              input.setAttribute('onchange', 'fakeSelectRadioButton("' + this.paramName + '", "' + idValue + '")')
               input.setAttribute('otherId', idValue)
               label.className = "attach-previous"
               if (typeof(entry) !== 'string') {
@@ -455,12 +459,12 @@ export class CascadeParameter extends AbstractParameter {
            */
           paramElement.style.height = newValues.length > 10 ? '230px' : 'auto'
         } // if (paramElement.children.length > 0 && paramElement.children[0].tagName === 'DIV') {
-      } // if (paramElement.tagName === 'SELECT') { // } else if (paramElement.tagName === 'DIV') {
+      }
     })
     // propagate change
     // log('Propagating change event from ' + this.getParameterName())
-    // const e = jQuery.Event('change', {parameterName: this.getParameterName()})
-    // jQuery(this.getParameterElement()).trigger(e)
+    // const e = JQuery.Event('change', {parameterName: this.getParameterName()})
+    // JQuery(this.getParameterElement()).trigger(e)
     if (!avoidRecursion) {
       const cascadeParameters = UnoChoice.cascadeParameters
       if (cascadeParameters && cascadeParameters.length > 0) {

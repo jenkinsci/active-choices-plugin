@@ -22,22 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {beforeEach, describe, it} from 'mocha';
-import {expect} from 'chai';
-import {FilterElement} from "./FilterElement";
-import {initializeTestDom} from "./test-utils";
+import type {CascadeParameter} from "./CascadeParameter";
 
-describe('FilterElement', () => {
-  beforeEach (initializeTestDom)
-  it('constructor', () => {
-    const paramElement = document.createElement('div')
-    const filterElement = document.createElement('input')
-    const filter = new FilterElement(paramElement, filterElement, 0)
-    expect(filter.paramElement).to.equal(paramElement)
-    expect(filter.filterElement).to.equal(filterElement)
-    expect(filter.filterLength).to.equal(0)
-  })
-  it('filters selects', () => {
-
-  })
-})
+export const UnoChoice = {
+  cascadeParameters: [] as CascadeParameter[]
+}

@@ -22,10 +22,11 @@
  * THE SOFTWARE.
  */
 
-import {CascadeParameter} from "./CascadeParameter"
+import type {CascadeParameter} from "./CascadeParameter"
 import {log} from "./utils"
 import {AbstractParameter} from "./AbstractParameter";
 import ChangeEvent = JQuery.ChangeEvent;
+import jQuery from 'jquery';
 
 /**
  * A parameter that is referenced by other parameters. Stores a list of cascade parameters, that reference this

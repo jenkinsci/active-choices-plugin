@@ -22,22 +22,19 @@
  * THE SOFTWARE.
  */
 
-import {beforeEach, describe, it} from 'mocha';
-import {expect} from 'chai';
-import {FilterElement} from "./FilterElement";
-import {initializeTestDom} from "./test-utils";
+import {JSDOM} from "jsdom";
+import $ from "jquery";
 
-describe('FilterElement', () => {
-  beforeEach (initializeTestDom)
-  it('constructor', () => {
-    const paramElement = document.createElement('div')
-    const filterElement = document.createElement('input')
-    const filter = new FilterElement(paramElement, filterElement, 0)
-    expect(filter.paramElement).to.equal(paramElement)
-    expect(filter.filterElement).to.equal(filterElement)
-    expect(filter.filterLength).to.equal(0)
-  })
-  it('filters selects', () => {
-
-  })
-})
+/**
+ * Initializes a test DOM, useful for tests that use JQuery.
+ */
+export const initializeTestDom = (): void => {
+  // @ts-ignore
+  const {window}: {any} = new JSDOM('<!doctype html><html lang="en"><body></body></html>');
+  // @ts-ignore
+  (global as any).document = window.document;
+  (global as any).window = global.document.defaultView;
+  global.document.createElement('body')
+  window.$ = $(window);
+  (global as any).$ = window.$;
+}

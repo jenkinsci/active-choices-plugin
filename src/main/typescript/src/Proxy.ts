@@ -26,7 +26,7 @@
 
 import $ from "jquery"
 
-type ProxyAjaxCallback = (t: XMLHttpRequest) => void
+export type ProxyAjaxCallback = (t: XMLHttpRequest) => void
 
 export type JenkinsProxy = {
   doUpdate: (t: string) => void
