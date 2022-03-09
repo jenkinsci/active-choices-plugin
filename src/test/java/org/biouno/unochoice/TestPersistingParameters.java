@@ -27,7 +27,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +50,9 @@ import org.jenkinsci.plugins.scriptler.config.Parameter;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -211,6 +218,56 @@ public class TestPersistingParameters {
                             String scriptText = ((GroovyScript) leScript).getScript().getScript();
                             String fallbackScriptText = ((GroovyScript) choiceParam.getScript()).getFallbackScript()
                                     .getScript();
+                            assertTrue("Found an empty script!", StringUtils.isNotBlank(scriptText));
+                            assertTrue("Found an empty fallback script!", StringUtils.isNotBlank(fallbackScriptText));
+                            assertEquals(SCRIPT_PARAM002, scriptText);
+                            assertEquals(SCRIPT_FALLBACK_PARAM002, fallbackScriptText);
+                        } else {
+                            String scriptText = FileUtils.readFileToString(scriptFile, Charset.defaultCharset());
+                            assertTrue("Found an empty script!", StringUtils.isNotBlank(scriptText));
+                            assertEquals(SCRIPT_PARAM001, scriptText);
+                            assertEquals("Wrong number of parameters for scriptler parameter!", 1, ((ScriptlerScript) leScript).getParameters().size());
+                            assertEquals("Wrong scriptler parameter name!", "arg1", ((ScriptlerScript) leScript).getParameters()
+                                    .keySet().iterator().next());
+                        }
+                    }
+                }
+            }
+        }
+        // We have two parameters before saving. We must have two now.
+        assertEquals("Didn't find all parameters after persisting xml", 2, found);
+    }
+
+    @Test
+    public void testSaveScriptlerParametersFromPipeline() throws Exception {
+        WorkflowJob job = j.createProject(WorkflowJob.class);
+
+        URL pipelinePath = TestPersistingParameters.class.getResource("PipelineWithScriptlerParameters.groovy");
+        assert pipelinePath != null;
+        byte[] contentBytes = Files.readAllBytes(Paths.get(pipelinePath.toURI()));
+        String pipeline = new String(contentBytes, StandardCharsets.UTF_8);
+        job.setDefinition(new CpsFlowDefinition(pipeline, true));
+
+        QueueTaskFuture<WorkflowRun> future = job.scheduleBuild2(0);
+        assert future != null;
+        WorkflowRun run = future.get();
+        assertEquals(Result.SUCCESS, run.getResult());
+
+        XmlFile configXml = job.getConfigFile();
+        WorkflowJob reReadJob = (WorkflowJob) configXml.read();
+        int found = 0;
+        for (JobProperty<? super WorkflowJob> jobProperty : reReadJob.getProperties().values()) {
+            if (jobProperty instanceof ParametersDefinitionProperty) {
+                ParametersDefinitionProperty paramDef = (ParametersDefinitionProperty) jobProperty;
+                List<ParameterDefinition> parameters = paramDef.getParameterDefinitions();
+                for (ParameterDefinition parameter : parameters) {
+                    if (parameter instanceof AbstractScriptableParameter) {
+                        found++;
+                        AbstractScriptableParameter choiceParam = (AbstractScriptableParameter) parameter;
+                        Script leScript = choiceParam.getScript();
+                        if (leScript instanceof GroovyScript) {
+                            String scriptText = ((GroovyScript) leScript).getScript().getScript();
+                            String fallbackScriptText = ((GroovyScript) leScript).getFallbackScript().getScript();
                             assertTrue("Found an empty script!", StringUtils.isNotBlank(scriptText));
                             assertTrue("Found an empty fallback script!", StringUtils.isNotBlank(fallbackScriptText));
                             assertEquals(SCRIPT_PARAM002, scriptText);

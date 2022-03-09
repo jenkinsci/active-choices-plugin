@@ -24,9 +24,7 @@
 
 package org.biouno.unochoice.model;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -38,6 +36,7 @@ import org.jenkinsci.plugins.scriptler.config.Script;
 import org.jenkinsci.plugins.scriptler.util.ScriptHelper;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -95,21 +94,41 @@ public class ScriptlerScript extends AbstractScript {
 
     public Object readResolve() {
         if (scriptlerBuilder == null) {
-            final Parameter[] parameters = this.parameters != null
-                    ? this.parameters
-                        .entrySet()
-                        .stream()
-                        .map(entry -> new Parameter(entry.getKey(), entry.getValue()))
-                        .toArray(Parameter[]::new)
-                    : new Parameter[0];
             scriptlerBuilder = new ScriptlerBuilder(
                     "active-choices",
                     this.scriptlerScriptId,
                     false,
-                    parameters
+                    getParametersFromDeprecatedMap()
                     );
         }
         return this;
+    }
+
+    private Parameter[] getParametersFromDeprecatedMap() {
+        if (parameters == null) {
+            return new Parameter[0];
+        }
+
+        return parameters
+                .entrySet()
+                .stream()
+                .map(entry -> new Parameter(entry.getKey(), entry.getValue()))
+                .toArray(Parameter[]::new);
+    }
+
+    private void initializeFromDeprecatedProperties() {
+        if (scriptlerBuilder == null) {
+            readResolve();
+        } else {
+            String scriptId = scriptlerScriptId == null ? scriptlerBuilder.getScriptId() : scriptlerScriptId;
+            Parameter[] parameters = this.parameters == null ? scriptlerBuilder.getParameters() : getParametersFromDeprecatedMap();
+            scriptlerBuilder = new ScriptlerBuilder(
+                    scriptlerBuilder.getBuilderId(),
+                    scriptId,
+                    scriptlerBuilder.isPropagateParams(),
+                    parameters
+            );
+        }
     }
 
     /**
@@ -126,12 +145,32 @@ public class ScriptlerScript extends AbstractScript {
         return this.scriptlerBuilder.getScriptId();
     }
 
+    @DataBoundSetter
+    public void setScriptlerScriptId(String scriptlerScriptId) {
+        this.scriptlerScriptId = scriptlerScriptId;
+        initializeFromDeprecatedProperties();
+    }
+
     /**
      * @return the parameters
      */
     public Map<String, String> getParameters() {
         return Arrays.stream(this.scriptlerBuilder.getParameters())
                 .collect(Collectors.toMap(Parameter::getName, Parameter::getValue));
+    }
+
+    @DataBoundSetter
+    public void setParameters(List<Map<String, String>> parametersList) {
+        if (parametersList == null) {
+            parameters = Collections.emptyMap();
+        } else {
+            parameters = new LinkedHashMap<>(parametersList
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .filter(map -> map.containsKey("name") && map.containsKey("value"))
+                    .collect(Collectors.toMap(map -> map.get("name"), map -> map.get("value"))));
+        }
+        initializeFromDeprecatedProperties();
     }
 
     /**
