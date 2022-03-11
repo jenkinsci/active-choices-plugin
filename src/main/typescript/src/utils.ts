@@ -59,7 +59,7 @@ export function fakeSelectRadioButton (clazzName: string, id: string): void {
     // select the radio with the id=id
     const parent = element.parentNode
     if (parent != null) {
-      for (const child of parent.children) {
+      for (const child of Array.from(parent.children)) {
         if (child.className === clazzName) {
           child.setAttribute('name', 'value')
         }

@@ -50,50 +50,44 @@ export class FilterElement {
   private initFilter(paramElement: HTMLElement): void {
     // push existing values into originalArray array
     if (paramElement.tagName === 'SELECT') { // handle SELECTS
-      this.originalArray.concat([].slice.call(paramElement.children))
+      this.originalArray.concat(Array.from(paramElement.children))
     } else if (paramElement.tagName === 'DIV') { // handle CHECKBOXES
       const $element = $(paramElement)
-      if ($element.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-        const table = paramElement.children[0]
-        const tbody = table.children[0]
-        if (paramElement.className === 'dynamic_checkbox') {
+      if ($element.children().length === 0) {
+        throw new Error('Failed to init filters for DIV with no children!')
+      }
+      // The child element defines how we will handle it
+      const childTagName = paramElement.children[0].tagName
+      switch (childTagName) {
+        case 'TABLE':
+          const table = paramElement.children[0]
+          const tbody = table.children[0]
           const $trs = $(tbody).find('tr')
-          for (const tr of [].slice.call($trs)) {
+          for (const tr of Array.from($trs)) {
             const $tds = $(tr).find('td')
             const $inputs = $($tds[0]).find('input')
             const input = $inputs[0]
             this.originalArray.push(input)
           }
-        } else {
-          const $trs = $(tbody).find('tr')
-          for (const tr of [].slice.call($trs)) {
-            const $tds = $(tr).find('td')
-            const $inputs = $($tds[0]).find('input')
-            const input = $inputs[0]
+          break
+        case 'DIV':
+          const wrapper = paramElement.children[0]
+          // @ts-ignore
+          const rows = Array.from(wrapper.children).filter((child) => child.tagName === 'DIV')
+          // @ts-ignore
+          for (const row of rows) {
+            // @ts-ignore
+            const entry = row.querySelector('div')
+            // @ts-ignore
+            const item = entry.querySelector('div')
+            // @ts-ignore
+            const input = item.querySelector('input')
             this.originalArray.push(input)
           }
-        }
-      } // if (jqueryElement.children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-      if ($element.children().length > 0 && paramElement.children[0].tagName === 'DIV') {
-        const tbody = paramElement.children[0]
-        if (paramElement.className === 'dynamic_checkbox') {
-          const $trs = $(tbody).find('div')
-          for (const tr of [].slice.call($trs)) {
-            const $tds = $(tr).find('div')
-            const $inputs = $($tds[0]).find('input')
-            const input = $inputs[0]
-            this.originalArray.push(input)
-          }
-        } else {
-          const $trs = $(tbody).find('div')
-          for (const tr of [].slice.call($trs)) {
-            const $tds = $(tr).find('div')
-            const $inputs = $($tds[0]).find('input')
-            const input = $inputs[0]
-            this.originalArray.push(input)
-          }
-        }
-      } // if (jqueryElement.children().length > 0 && paramElement.children[0].tagName === 'DIV') {
+          break
+        default:
+          throw new Error(`Invalid child tag name: ${childTagName}`)
+      }
     }
   }
 
@@ -110,7 +104,7 @@ export class FilterElement {
       if (text.length !== 0 && text.length < this.filterLength) {
         return
       }
-      const newOptions = Array()
+      const newOptions = []
       for (const option of this.originalArray) {
         if (option.tagName === 'INPUT') {
           if (option.getAttribute('alt') && option.getAttribute('alt') !== option.value) {
