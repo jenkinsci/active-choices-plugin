@@ -114,7 +114,7 @@ public class TestPersistingParameters {
         scriptlerHelper.saveScript(fi, true, "dummy.groovy");
 
         scriptler.getConfiguration().getScriptById("dummy.groovy")
-                .setParameters(new Parameter[] { new Parameter("arg1", "v1") });
+                .setParameters(Arrays.asList(new Parameter("arg1", "v1")));
     }
 
     /**

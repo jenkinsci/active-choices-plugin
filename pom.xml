@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.24</version>
+        <version>4.40</version>
         <relativePath />
     </parent>
 
@@ -23,7 +23,7 @@
     <licenses>
         <license>
             <name>The MIT license</name>
-            <url>http://opensource.org/licenses/MIT</url>
+            <url>https://opensource.org/licenses/MIT</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -35,10 +35,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <phantomjs.executable>phantomjs</phantomjs.executable>
-        <jenkins.version>2.263.1</jenkins.version>
-        <java.level>8</java.level>
-        <spotbugs.effort>Max</spotbugs.effort>
+        <jenkins.version>2.332.3</jenkins.version>
+        <spotbugs.effort>Default</spotbugs.effort>
         <spotbugs.failOnError>true</spotbugs.failOnError>
         <spotbugs.threshold>Medium</spotbugs.threshold>
     </properties>
@@ -46,7 +44,7 @@
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/active-choices-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/active-choices-plugin.git</developerConnection>
-        <url>http://github.com/jenkinsci/active-choices-plugin</url>
+        <url>https://github.com/jenkinsci/active-choices-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -66,8 +64,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.222.x</artifactId>
-                <version>23</version>
+                <artifactId>bom-2.332.x</artifactId>
+                <version>1409.v7659b_c072f18</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -79,7 +77,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scriptler</artifactId>
-            <version>3.3</version>
+            <version>3.5</version>
             <optional>true</optional>
         </dependency>
         <!-- JQuery is included only once -->
@@ -103,7 +101,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>antisamy-markup-formatter</artifactId>
-            <version>2.1</version>
+            <version>2.7</version>
         </dependency>
         <!-- testing -->
         <dependency>
@@ -114,13 +112,13 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-auth</artifactId>
-            <version>2.6.8</version>
+            <version>3.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>nodelabelparameter</artifactId>
-            <version>1.9.0</version>
+            <version>1.9.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
