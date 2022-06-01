@@ -1070,7 +1070,7 @@ var UnoChoice = UnoChoice || (function($) {
         var value = '';
         if (e.attr('name') === 'value') {
             value = getElementValue(htmlParameter);
-        }  else if (e.prop('tagName') === 'DIV') {
+        }  else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
             var subElements = e.find('[name="value"]');
             if (subElements) {
                 var valueBuffer = Array();
