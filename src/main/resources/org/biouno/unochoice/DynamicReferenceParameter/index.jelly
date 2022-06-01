@@ -119,7 +119,7 @@
                         if (child.getAttribute('name') === 'value') {
                             parameterElement = child;
                             break;
-                        } else if (child.tagName === 'DIV') {
+                        } else if (child.tagName === 'DIV' || child.tagName === 'SPAN') {
                             var subValues = jQuery(child).find('input[name="value"]');
                             if (subValues &amp;&amp; subValues.get(0)) {
                                 parameterElement = child;
