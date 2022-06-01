@@ -221,7 +221,7 @@ var UnoChoice = UnoChoice || (function($) {
                 if (_self.getFilterElement()) {
                     _self.getFilterElement().setOriginalArray(originalArray);
                 }
-            } else if (parameterElement.tagName === 'DIV') {
+            } else if (parameterElement.tagName === 'DIV' || parameterElement.tagName === 'SPAN') {
                 if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'TABLE') {
                     var table = parameterElement.children[0];
                     var tbody = table.children[0];
@@ -355,7 +355,7 @@ var UnoChoice = UnoChoice || (function($) {
                      */
                     parameterElement.style.height = newValues.length > 10 ? '230px' : 'auto';
                 } // if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'TABLE') {
-                if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'DIV') {
+                if (parameterElement.children.length > 0 && (parameterElement.children[0].tagName === 'DIV' || parameterElement.children[0].tagName === 'SPAN')) {
                     var tbody = parameterElement.children[0];
                     jQuery(tbody).empty();
                     var originalArray = [];
@@ -687,7 +687,7 @@ var UnoChoice = UnoChoice || (function($) {
             for (var i = 0; i < options.length; ++i) {
                 this.originalArray.push(options[i]);
             }
-        } else if (paramElement.tagName === 'DIV') { // handle CHECKBOXES
+        } else if (paramElement.tagName === 'DIV' || paramElement.tagName === 'SPAN') { // handle CHECKBOXES
             if (jQuery(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
                 var table = paramElement.children[0];
                 var tbody = table.children[0];
@@ -709,7 +709,7 @@ var UnoChoice = UnoChoice || (function($) {
                     }
                 }
             } // if (jQuery(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-            if (jQuery(paramElement).children().length > 0 && paramElement.children[0].tagName === 'DIV') {
+            if (jQuery(paramElement).children().length > 0 && (paramElement.children[0].tagName === 'DIV' || paramElement.children[0].tagName === 'SPAN')) {
                 var tbody = paramElement.children[0];
                 if (paramElement.className === 'dynamic_checkbox') {
                     var trs = jQuery(tbody).find('div');
@@ -824,7 +824,7 @@ var UnoChoice = UnoChoice || (function($) {
                    opt.innerHTML = newOptions[i].innerHTML;
                    jQuery(filteredElement).append(opt);
                }
-            } else if (tagName === 'DIV') { // handle CHECKBOXES, RADIOBOXES and other elements (Jenkins renders them as tables)
+            } else if (tagName === 'DIV' || tagName === 'SPAN') { // handle CHECKBOXES, RADIOBOXES and other elements (Jenkins renders them as tables)
                 if (jQuery(filteredElement).children().length > 0 && jQuery(filteredElement).children()[0].tagName === 'TABLE') {
                     var table = filteredElement.children[0];
                     var tbody = table.children[0];
@@ -915,7 +915,7 @@ var UnoChoice = UnoChoice || (function($) {
                         }
                     }
                 } // if (jQuery(filteredElement).children().length > 0 && jQuery(filteredElement).children()[0].tagName === 'TABLE') {
-                if (jQuery(filteredElement).children().length > 0 && jQuery(filteredElement).children()[0].tagName === 'DIV') {
+                if (jQuery(filteredElement).children().length > 0 && (jQuery(filteredElement).children()[0].tagName === 'DIV' || jQuery(filteredElement).children()[0].tagName === 'SPAN')) {
                     var tbody = filteredElement.children[0];
                     jQuery(tbody).empty();
                     if (filteredElement.className === 'dynamic_checkbox') {
