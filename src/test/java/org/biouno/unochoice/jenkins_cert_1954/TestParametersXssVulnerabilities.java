@@ -81,22 +81,23 @@ public class TestParametersXssVulnerabilities {
         project.save();
 
 
-        WebClient wc = j.createWebClient();
-        wc.setThrowExceptionOnFailingStatusCode(false);
-        HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
-        DomNodeList<DomElement> nodes =
-            Objects.requireNonNull(Jenkins.getStoredVersion()).isNewerThanOrEqualTo(TRANSITION_TO_DIV_VERSION) ?
-                configPage.getElementsByTagName("div") : configPage.getElementsByTagName("td");
-        DomElement renderedParameterElement = null;
-        for (DomElement elem : nodes) {
-            if (elem.getAttribute("class").contains("setting-name")) {
-                renderedParameterElement = elem;
-                break;
+        try (WebClient wc = j.createWebClient()) {
+            wc.setThrowExceptionOnFailingStatusCode(false);
+            HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
+            DomNodeList<DomElement> nodes =
+                    Objects.requireNonNull(Jenkins.getStoredVersion()).isNewerThanOrEqualTo(TRANSITION_TO_DIV_VERSION) ?
+                            configPage.getElementsByTagName("div") : configPage.getElementsByTagName("td");
+            DomElement renderedParameterElement = null;
+            for (DomElement elem : nodes) {
+                if (elem.getAttribute("class").contains("setting-name")) {
+                    renderedParameterElement = elem;
+                    break;
+                }
             }
+            assertNotNull("Could not locate rendered parameter element", renderedParameterElement);
+            String renderedText = renderedParameterElement.getFirstChild().asXml();
+            assertNotEquals("XSS string was not escaped!", xssString, renderedText);
+            assertEquals("XSS string was not escaped!", "&lt;img src=x onerror=alert(123)&gt;", renderedText.trim());
         }
-        assertNotNull("Could not locate rendered parameter element", renderedParameterElement);
-        String renderedText = renderedParameterElement.getFirstChild().asXml();
-        assertNotEquals("XSS string was not escaped!", xssString, renderedText);
-        assertEquals("XSS string was not escaped!", "&lt;img src=x onerror=alert(123)&gt;", renderedText.trim());
     }
 }
