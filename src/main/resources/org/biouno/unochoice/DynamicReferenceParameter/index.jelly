@@ -71,7 +71,7 @@
     // find the cascade parameter element
     var parentDiv = jQuery('#${paramName}');
     // if the parameter class has been set to hidden, then we hide it now
-    if (parentDiv.get(0).getAttribute('class') == 'hidden_uno_choice_parameter') {
+    if (parentDiv.get(0).getAttribute('class') === 'hidden_uno_choice_parameter') {
       var parentTbody = jQuery(parentDiv.get(0)).parents('tbody');
       // FIXME: temporary fix to support both TABLE and DIV in the Jenkins UI
       //        remove after most users have migrated to newer versions with DIVs
@@ -85,7 +85,7 @@
     var parameterHtmlElement = null;
     for(var i = 0; i &lt; parentDiv.children().length; i++) {
         var child = parentDiv.children()[i];
-        if (child.getAttribute('name') == 'value' || child.id.indexOf('ecp_') &gt; -1) {
+        if (child.getAttribute('name') === 'value' || child.id.indexOf('ecp_') &gt; -1) {
             parameterHtmlElement = jQuery(child);
             break;
         }
@@ -112,14 +112,14 @@
             for (var j = 0; j &lt; divs.length ; j++) {
                 var div = divs[j];
                 var hiddenNames = jQuery(div).find('input[name="name"]');
-                if (hiddenNames[0].value == referencedParameters[i]) {
+                if (hiddenNames[0].value === referencedParameters[i]) {
                     var children = div.children;
                     for (var k = 0; k &lt; children.length; ++k) {
                         var child = children[k];
-                        if (child.getAttribute('name') == 'value') {
+                        if (child.getAttribute('name') === 'value') {
                             parameterElement = child;
                             break;
-                        } else if (child.tagName == 'DIV') {
+                        } else if (child.tagName === 'DIV') {
                             var subValues = jQuery(child).find('input[name="value"]');
                             if (subValues &amp;&amp; subValues.get(0)) {
                                 parameterElement = child;
@@ -128,7 +128,7 @@
                                 parameterElement = child;
                                 break;
                             }
-                        } else if (child.getAttribute('type') == 'file') {
+                        } else if (child.getAttribute('type') === 'file') {
                             parameterElement = child;
                             break;
                         } else if (child.tagName === 'INPUT' &amp;&amp; !['', 'name'].includes(child.name)) {
