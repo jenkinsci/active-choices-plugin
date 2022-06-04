@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.Objects;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -89,7 +89,7 @@ public class TestParametersXssVulnerabilities {
                             configPage.getElementsByTagName("div") : configPage.getElementsByTagName("td");
             DomElement renderedParameterElement = null;
             for (DomElement elem : nodes) {
-                if (elem.getAttribute("class").contains("setting-name")) {
+                if (elem.getAttribute("class").contains("setting-main")) {
                     renderedParameterElement = elem;
                     break;
                 }
@@ -97,7 +97,7 @@ public class TestParametersXssVulnerabilities {
             assertNotNull("Could not locate rendered parameter element", renderedParameterElement);
             String renderedText = renderedParameterElement.getFirstChild().asXml();
             assertNotEquals("XSS string was not escaped!", xssString, renderedText);
-            assertEquals("XSS string was not escaped!", "&lt;img src=x onerror=alert(123)&gt;", renderedText.trim());
+            assertTrue("XSS string was not escaped!", renderedText.trim().contains("&amp;lt;img src=x onerror=alert(123)&amp;gt;"));
         }
     }
 }

@@ -44,6 +44,7 @@ import org.jvnet.hudson.test.recipes.LocalData;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Collections;
 
 @Issue("63983")
 public class TestSandboxAndApproval {
@@ -64,7 +65,7 @@ public class TestSandboxAndApproval {
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
-        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
         ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
         ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.FALSE);
@@ -88,7 +89,7 @@ public class TestSandboxAndApproval {
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
-        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
         ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
         ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
@@ -114,7 +115,7 @@ public class TestSandboxAndApproval {
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
-        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
         ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
         ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.FALSE);
@@ -140,7 +141,7 @@ public class TestSandboxAndApproval {
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
-        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, null, false);
+        Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
         ScriptlerBuilder scriptlerBuilder = new ScriptlerBuilder("", script.getId(), false, new Parameter[0]);
         ScriptlerScript scriptParam001 = new ScriptlerScript(scriptlerBuilder, Boolean.TRUE);
