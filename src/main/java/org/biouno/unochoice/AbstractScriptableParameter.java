@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -287,15 +288,17 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         }
 
         List<String> defaultValues = new ArrayList<>();
-        List<Object> values = new ArrayList<>(choices.values());
-        for (Object value : values) {
-            String valueText = ObjectUtils.toString(value, "");
+        List<Entry<?, ?>> entries = new ArrayList<>(choices.entrySet());
+        for (Entry<?, ?> entry : entries) {
+            String valueText = ObjectUtils.toString(entry.getValue(), "");
             if (Utils.isSelected(valueText)) {
-                defaultValues.add(Utils.escapeSelectedAndDisabled(valueText));
+                String keyText = ObjectUtils.toString(entry.getKey(), "");
+                defaultValues.add(Utils.escapeSelectedAndDisabled(keyText));
             }
         }
         if (defaultValues.isEmpty()) {
-            return ObjectUtils.toString(values.get(0), null);
+            String keyText = ObjectUtils.toString(entries.get(0).getKey(), "");
+            return ObjectUtils.toString(keyText, "");
         }
 
         StringBuilder defaultValuesText = new StringBuilder();
