@@ -42,7 +42,7 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/active-choices-plugin.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/active-choices-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/active-choices-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/active-choices-plugin</url>
         <tag>HEAD</tag>
