@@ -41,10 +41,11 @@ import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
+import hudson.model.Job;
 import hudson.model.ParameterValue;
 import hudson.model.Project;
+import hudson.model.Run;
 import hudson.model.StringParameterValue;
 import jenkins.model.Jenkins;
 
@@ -131,22 +132,29 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         // Try to get the project name from the current request. In case of being called in some other non-web way,
         // the name will be fetched later via Jenkins.getInstance() and iterating through all items. This is for a
         // performance wise approach first.
-        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
         String projectName = null;
         String projectFullName = null;
+        final AbstractItem parentItem = detectProject();
+        if (parentItem != null) {
+            projectName = parentItem.getName();
+            projectFullName = parentItem.getFullName();
+        }
+        this.projectName = projectName;
+        this.projectFullName = projectFullName;
+    }
+
+    protected AbstractItem detectProject() {
+        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
         if (currentRequest != null) {
             final Ancestor ancestor = currentRequest.findAncestor(AbstractItem.class);
             if (ancestor != null) {
                 final Object o = ancestor.getObject();
                 if (o instanceof AbstractItem) {
-                    final AbstractItem parentItem = (AbstractItem) o;
-                    projectName = parentItem.getName();
-                    projectFullName = parentItem.getFullName();
+                    return (AbstractItem) o;
                 }
             }
         }
-        this.projectName = projectName;
-        this.projectFullName = projectFullName;
+        return null;
     }
 
     /**
@@ -177,13 +185,20 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         final Map<Object, Object> helperParameters = new LinkedHashMap<>();
 
         // First, if the project name is set, we then find the project by its name, and inject into the map
-        Project<?, ?> project = null;
+        Job<?, ?> project = null;
         if (StringUtils.isNotBlank(this.projectFullName)) {
             // First try full name if exists
             project = Jenkins.get().getItemByFullName(this.projectFullName, Project.class);
         } else if (StringUtils.isNotBlank(this.projectName)) {
             // next we try to get the item given its name, which is more efficient
             project = Utils.getProjectByName(this.projectName);
+        } else {
+            // check whether the current thread has enough info to detect project
+            // i.e. it serves a web request to the project build page
+            final AbstractItem parentItem = detectProject();
+            if (parentItem != null) {
+                project = Jenkins.get().getItemByFullName(parentItem.getFullName(), Job.class);
+            }
         }
         // Last chance, if we were unable to get project from name and full name, try uuid
         if (project == null) {
@@ -192,7 +207,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         }
         if (project != null) {
             helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
-            AbstractBuild<?, ?> build = project.getLastBuild();
+            Run<?, ?> build = project.getLastBuild();
             if (build != null && build.getHasArtifacts()) {
                 helperParameters.put(JENKINS_BUILD_VARIABLE_NAME, build);
             }
