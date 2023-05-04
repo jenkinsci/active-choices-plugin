@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
-  <st:adjunct includes="org.kohsuke.stapler.jquery"/>
+  <st:adjunct includes="io.jenkins.plugins.jquery3"/>
   <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
   <j:set var="paramName" value="${h.escape(it.randomName)}" scope="parent" />
   <j:set var="choiceType" value="${it.choiceType}"/>

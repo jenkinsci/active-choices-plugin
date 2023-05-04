@@ -36,7 +36,7 @@
     <properties>
         <revision>2.6.6</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.332.3</jenkins.version>
+        <jenkins.version>2.332.4</jenkins.version>
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
     </properties>
 
@@ -64,7 +64,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.332.x</artifactId>
-                <version>1409.v7659b_c072f18</version>
+                <version>1763.v092b_8980a_f5e</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -81,15 +81,8 @@
         </dependency>
         <!-- JQuery is included only once -->
         <dependency>
-            <groupId>org.kohsuke.stapler</groupId>
-            <artifactId>stapler-adjunct-jquery</artifactId> <!-- TODO why is this not using org.jenkins-ci.plugins:jquery instead?! -->
-            <version>1.12.4-0</version>
-            <exclusions>
-                <exclusion> <!-- TODO INFRA-1310 pending 1.12.4-0 -->
-                    <groupId>org.kohsuke.stapler</groupId>
-                    <artifactId>stapler</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>jquery3-api</artifactId>
         </dependency>
         <!-- script-security plug-in integration -->
         <dependency>
@@ -100,7 +93,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>antisamy-markup-formatter</artifactId>
-            <version>2.7</version>
         </dependency>
         <!-- testing -->
         <dependency>
@@ -111,7 +103,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-auth</artifactId>
-            <version>3.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
