@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.IOException;
 import java.util.List;
 
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlElement;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -40,11 +40,11 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLabel;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlImage;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;

@@ -23,7 +23,7 @@
  */
 package org.biouno.unochoice.issue65235;
 
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSelect;
 import hudson.model.ParametersDefinitionProperty;
 import jenkins.branch.BranchSource;
 import jenkins.model.Jenkins;

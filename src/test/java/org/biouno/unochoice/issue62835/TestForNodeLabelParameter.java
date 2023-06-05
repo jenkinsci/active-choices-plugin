@@ -49,11 +49,11 @@ import org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition;
 import org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 import com.google.common.collect.Lists;
 
 import hudson.model.FreeStyleProject;
