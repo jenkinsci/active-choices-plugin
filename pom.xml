@@ -36,7 +36,7 @@
     <properties>
         <revision>2.6.6</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.332.4</jenkins.version>
+        <jenkins.version>2.387.3</jenkins.version>
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
     </properties>
 
@@ -63,8 +63,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.332.x</artifactId>
-                <version>1763.v092b_8980a_f5e</version>
+                <artifactId>bom-2.387.x</artifactId>
+                <version>2143.ve4c3c9ec790a</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
