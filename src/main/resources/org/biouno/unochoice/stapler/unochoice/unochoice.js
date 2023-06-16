@@ -123,7 +123,7 @@ var UnoChoice = UnoChoice || (function($) {
             var referencedParameter = this.getReferencedParameters()[j];
             var name = referencedParameter.getParameterName();
             var value = getParameterValue(referencedParameter.getParameterElement());
-            parameterValues.push(name + '=' + value);
+            parameterValues.push(`${name}=${value}`);
         }
         return parameterValues.join(SEPARATOR);
     }
@@ -145,7 +145,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     CascadeParameter.prototype.update = function(avoidRecursion) {
         var parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-        console.log('Values retrieved from Referenced Parameters: ' + parametersString);
+        console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the CascadeChoiceParameter Map of parameters
         this.proxy.doUpdate(parametersString);
         // Now we get the updated choices, after the Groovy script is eval'd using the updated Map of parameters
@@ -154,7 +154,7 @@ var UnoChoice = UnoChoice || (function($) {
         console.log('Calling Java server code to update HTML elements...');
         this.proxy.getChoicesForUI(function (t) {
             var choices = t.responseText;
-            console.log('Values returned from server: ' + choices);
+            console.log(`Values returned from server: ${choices}`);
             var data = JSON.parse(choices);
             var newValues = data[0];
             var newKeys = data[1];
@@ -211,7 +211,7 @@ var UnoChoice = UnoChoice || (function($) {
                     parameterElement.add(opt, null);
                 }
                 if (parameterElement.getAttribute('multiple') === 'multiple') {
-                    parameterElement.setAttribute('size', (newValues.length > 10 ? 10 : newValues.length) + 'px');
+                    parameterElement.setAttribute('size', `${newValues.length > 10 ? 10 : newValues.length}px`);
                 }
                 // Update the values for the filtering
                 var originalArray = [];
@@ -239,7 +239,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var key = newKeys[i];
                             // <TR>
                             var tr = document.createElement('tr');
-                            var idValue = 'ecp_' + _self.getRandomName() + '_' + i;
+                            var idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -287,7 +287,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var key = newKeys[i];
                             // <TR>
                             var tr = document.createElement('tr');
-                            var idValue = 'ecp_' + _self.getRandomName() + '_' + i;
+                            var idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             //tr.setAttribute('id', idValue); // will use the ID for the hidden value element
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -313,7 +313,7 @@ var UnoChoice = UnoChoice || (function($) {
                             input.setAttribute("value", key);
                             input.setAttribute("class", " ");
                             input.setAttribute("type", "radio");
-                            input.setAttribute('onchange', 'UnoChoice.fakeSelectRadioButton("'+_self.getParameterName()+'", "'+idValue+'")');
+                            input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
                             input.setAttribute('otherId', idValue);
                             label.className = "attach-previous";
                             if (!entry instanceof String) {
@@ -366,7 +366,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var key = newKeys[i];
                             // <TR>
                             var tr = document.createElement('div');
-                            var idValue = 'ecp_' + _self.getRandomName() + '_' + i;
+                            var idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -415,7 +415,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var key = newKeys[i];
                             // <TR>
                             var tr = document.createElement('div');
-                            var idValue = 'ecp_' + _self.getRandomName() + '_' + i;
+                            var idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             //tr.setAttribute('id', idValue); // will use the ID for the hidden value element
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -442,7 +442,7 @@ var UnoChoice = UnoChoice || (function($) {
                             input.setAttribute("value", key);
                             input.setAttribute("class", " ");
                             input.setAttribute("type", "radio");
-                            input.setAttribute('onchange', 'UnoChoice.fakeSelectRadioButton("'+_self.getParameterName()+'", "'+idValue+'")');
+                            input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
                             input.setAttribute('otherId', idValue);
                             label.className = "attach-previous";
                             if (!entry instanceof String) {
@@ -495,7 +495,7 @@ var UnoChoice = UnoChoice || (function($) {
                 for (var i = 0; i < cascadeParameters.length; i++) {
                     var other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
-                        console.log('Updating ' + other.getParameterName() + ' from ' + this.getParameterName());
+                        console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
                         other.update(true);
                     }
                 }
@@ -547,7 +547,7 @@ var UnoChoice = UnoChoice || (function($) {
                 console.log('Skipping self reference to avoid infinite loop!');
                 e.stopImmediatePropagation();
             } else {
-                console.log('Cascading changes from parameter ' + _self.paramName + '...');
+                console.log(`Cascading changes from parameter ${_self.paramName}...`);
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
@@ -604,7 +604,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     DynamicReferenceParameter.prototype.update = function(avoidRecursion) {
         var parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-        console.log('Values retrieved from Referenced Parameters: ' + parametersString);
+        console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the Map of parameters
         this.proxy.doUpdate(parametersString);
         var parameterElement = this.getParameterElement();
@@ -615,7 +615,7 @@ var UnoChoice = UnoChoice || (function($) {
             this.proxy.getChoicesForUI(function (t) {
                 jQuery3(parameterElement).empty(); // remove all children elements
                 var choices = t.responseText;
-                console.log('Values returned from server: ' + choices);
+                console.log(`Values returned from server: ${choices}`);
                 var data = JSON.parse(choices);
                 var newValues = data[0];
                 // var newKeys = data[1];
@@ -630,7 +630,7 @@ var UnoChoice = UnoChoice || (function($) {
             console.log('Calling Java server code to update HTML elements...');
             this.proxy.getChoicesForUI(function (t) {
                 var choices = t.responseText;
-                console.log('Values returned from server: ' + choices);
+                console.log(`Values returned from server: ${choices}`);
                 var data = JSON.parse(choices);
                 var newValues = data[0];
                 // var newKeys = data[1];
@@ -659,7 +659,7 @@ var UnoChoice = UnoChoice || (function($) {
                 for (var i = 0; i < cascadeParameters.length; i++) {
                     var other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
-                        console.log('Updating ' + other.getParameterName() + ' from ' + this.getParameterName());
+                        console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
                         other.update(true);
                     }
                 }
@@ -834,7 +834,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var entry = newOptions[i];
                             // TR
                             var tr = document.createElement('tr');
-                            var idValue = 'ecp_' + e.target.randomName + '_' + i;
+                            var idValue = `ecp_${e.target.randomName}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -880,10 +880,10 @@ var UnoChoice = UnoChoice || (function($) {
                             var idValue = '';
                             if (!(entry instanceof String)) {
                                 if (entry.tagName === 'INPUT') {
-                                    idValue = 'ecp_' + entry.getAttribute('name') + '_' + i;
+                                    idValue = `ecp_${entry.getAttribute('name')}_${i}`;
                                 }
                             } else {
-                                idValue = 'ecp_' + entry + '_' + i;
+                                idValue = `ecp_${entry}_${i}`;
                             }
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
@@ -923,7 +923,7 @@ var UnoChoice = UnoChoice || (function($) {
                             var entry = newOptions[i];
                             // TR
                             var tr = document.createElement('div');
-                            var idValue = 'ecp_' + e.target.randomName + '_' + i;
+                            var idValue = `ecp_${e.target.randomName}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
                             tr.setAttribute('style', 'white-space:nowrap');
@@ -970,10 +970,10 @@ var UnoChoice = UnoChoice || (function($) {
                             var idValue = '';
                             if (!(entry instanceof String)) {
                                 if (entry.tagName === 'INPUT') {
-                                    idValue = 'ecp_' + entry.getAttribute('name') + '_' + i;
+                                    idValue = `ecp_${entry.getAttribute('name')}_${i}`;
                                 }
                             } else {
-                                idValue = 'ecp_' + entry + '_' + i;
+                                idValue = `ecp_${entry}_${i}`;
                             }
                             idValue = idValue.replace(' ', '_');
                             tr.setAttribute('id', idValue);
@@ -1034,9 +1034,9 @@ var UnoChoice = UnoChoice || (function($) {
      * @see issue #21 in GitHub - github.com/biouno/uno-choice-plugin/issues
      */
      /* public */ function fakeSelectRadioButton(clazzName, id) {
-        var element = jQuery3('#'+id).get(0);
+        var element = jQuery3(`#${id}`).get(0);
         // deselect all radios with the class=clazzName
-        var radios = jQuery3('input[class="'+clazzName+'"]');
+        var radios = jQuery3(`input[class="${clazzName}"]`);
         radios.each(function(index) {
             jQuery3(this).attr('name', '');
         });
@@ -1185,7 +1185,7 @@ var UnoChoice = UnoChoice || (function($) {
                         onSuccess: function(t) {
                             if (callback!==null) {
                                 t.responseObject = function() {
-                                    return eval('('+this.responseText+')');
+                                    return eval(`(${this.responseText})`);
                                 };
                                 callback(t);
                             }
