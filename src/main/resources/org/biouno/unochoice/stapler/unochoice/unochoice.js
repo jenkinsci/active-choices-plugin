@@ -39,7 +39,7 @@ jQuery3.noConflict();
  * @author Bruno P. Kinoshita <brunodepaulak@yahoo.com.br>
  * @since 0.20
  */
-var UnoChoice = UnoChoice || (function($) {
+var UnoChoice = UnoChoice || ($ => {
     // The final public object
     var instance = {};
     var SEPARATOR = '__LESEP__';
@@ -152,7 +152,7 @@ var UnoChoice = UnoChoice || (function($) {
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         var _self = this; // re-reference this to use within the inner function
         console.log('Calling Java server code to update HTML elements...');
-        this.proxy.getChoicesForUI(function (t) {
+        this.proxy.getChoicesForUI(t => {
             var choices = t.responseText;
             console.log(`Values returned from server: ${choices}`);
             var data = JSON.parse(choices);
@@ -542,7 +542,7 @@ var UnoChoice = UnoChoice || (function($) {
         this.cascadeParameter = cascadeParameter;
         // Add event listener
         var _self = this;
-        jQuery3(this.paramElement).change(function (e) {
+        jQuery3(this.paramElement).change(e => {
             if (e.parameterName === _self.paramName) {
                 console.log('Skipping self reference to avoid infinite loop!');
                 e.stopImmediatePropagation();
@@ -551,7 +551,7 @@ var UnoChoice = UnoChoice || (function($) {
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
-                setTimeout(function () {
+                setTimeout(() => {
                    _self.cascadeParameter.update();
                    jQuery3(".behavior-loading").hide();
                 }, 0);
@@ -612,7 +612,7 @@ var UnoChoice = UnoChoice || (function($) {
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName === 'OL') { // handle OL's
             console.log('Calling Java server code to update HTML elements...');
-            this.proxy.getChoicesForUI(function (t) {
+            this.proxy.getChoicesForUI(t => {
                 jQuery3(parameterElement).empty(); // remove all children elements
                 var choices = t.responseText;
                 console.log(`Values returned from server: ${choices}`);
@@ -628,7 +628,7 @@ var UnoChoice = UnoChoice || (function($) {
         } else if (parameterElement.tagName === 'UL') { // handle OL's
             jQuery3(parameterElement).empty(); // remove all children elements
             console.log('Calling Java server code to update HTML elements...');
-            this.proxy.getChoicesForUI(function (t) {
+            this.proxy.getChoicesForUI(t => {
                 var choices = t.responseText;
                 console.log(`Values returned from server: ${choices}`);
                 var data = JSON.parse(choices);
@@ -641,11 +641,11 @@ var UnoChoice = UnoChoice || (function($) {
                 }
             });
         } else if (parameterElement.id.indexOf('inputElement_') > -1) { // handle input text boxes
-            this.proxy.getChoicesAsStringForUI(function (t) {
+            this.proxy.getChoicesAsStringForUI(t => {
                 parameterElement.value = t.responseText;
             });
         } else if (parameterElement.id.indexOf('formattedHtml_') > -1) { // handle formatted HTML
-            this.proxy.getChoicesAsStringForUI(function (t) {
+            this.proxy.getChoicesAsStringForUI(t => {
                 var options = t.responseText;
                 parameterElement.innerHTML = JSON.parse(options);
             });
@@ -787,7 +787,7 @@ var UnoChoice = UnoChoice || (function($) {
      */
     FilterElement.prototype.initEventHandler = function() {
         var _self = this;
-        jQuery3(_self.filterElement).keyup(function(e) {
+        jQuery3(_self.filterElement).keyup(e => {
             //var filterElement = e.target;
             var filterElement = _self.getFilterElement();
             var filteredElement = _self.getParameterElement();
@@ -1144,11 +1144,11 @@ var UnoChoice = UnoChoice || (function($) {
             stringify = Object.toJSON;  // from prototype
         else if (typeof(JSON)=="object" && JSON.stringify)
             stringify = JSON.stringify; // standard
-        var genMethod = function(methodName) {
+        var genMethod = methodName => {
             proxy[methodName] = function() {
                 var args = arguments;
                 // the final argument can be a callback that receives the return value
-                var callback = (function(){
+                var callback = (() => {
                     if (args.length === 0) return null;
                     var tail = args[args.length-1];
                     return (typeof(tail)=='function') ? tail : null;
@@ -1169,9 +1169,7 @@ var UnoChoice = UnoChoice || (function($) {
                         success: function(data, textStatus, jqXHR) {
                             if (callback!==null) {
                                 var t = {};
-                                t.responseObject = function() {
-                                    return data;
-                                };
+                                t.responseObject = () => data;
                                 callback(t);
                             }
                         }
