@@ -226,7 +226,7 @@ var UnoChoice = UnoChoice || ($ => {
                     var table = parameterElement.children[0];
                     var tbody = table.children[0];
                     if (tbody) {
-                        jQuery3(tbody).empty();
+                        $(tbody).empty();
                     } else {
                         tbody = document.createElement('tbody');
                         table.appendChild(tbody);
@@ -357,7 +357,7 @@ var UnoChoice = UnoChoice || ($ => {
                 } // if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'TABLE') {
                 if (parameterElement.children.length > 0 && (parameterElement.children[0].tagName === 'DIV' || parameterElement.children[0].tagName === 'SPAN')) {
                     var tbody = parameterElement.children[0];
-                    jQuery3(tbody).empty();
+                    $(tbody).empty();
                     var originalArray = [];
                     // Check whether it is a radio or checkbox element
                     if (parameterElement.className === 'dynamic_checkbox') {
@@ -488,8 +488,8 @@ var UnoChoice = UnoChoice || ($ => {
         });
         // propagate change
         // console.log('Propagating change event from ' + this.getParameterName());
-        // var e = jQuery3.Event('change', {parameterName: this.getParameterName()});
-        // jQuery3(this.getParameterElement()).trigger(e);
+        // var e = $.Event('change', {parameterName: this.getParameterName()});
+        // $(this.getParameterElement()).trigger(e);
         if (!avoidRecursion) {
             if (cascadeParameters && cascadeParameters.length > 0) {
                 for (var i = 0; i < cascadeParameters.length; i++) {
@@ -542,18 +542,18 @@ var UnoChoice = UnoChoice || ($ => {
         this.cascadeParameter = cascadeParameter;
         // Add event listener
         var _self = this;
-        jQuery3(this.paramElement).change(e => {
+        $(this.paramElement).change(e => {
             if (e.parameterName === _self.paramName) {
                 console.log('Skipping self reference to avoid infinite loop!');
                 e.stopImmediatePropagation();
             } else {
                 console.log(`Cascading changes from parameter ${_self.paramName}...`);
                 //_self.cascadeParameter.loading(true);
-                jQuery3(".behavior-loading").show();
+                $(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
                 setTimeout(() => {
                    _self.cascadeParameter.update();
-                   jQuery3(".behavior-loading").hide();
+                   $(".behavior-loading").hide();
                 }, 0);
             }
         });
@@ -613,7 +613,7 @@ var UnoChoice = UnoChoice || ($ => {
         if (parameterElement.tagName === 'OL') { // handle OL's
             console.log('Calling Java server code to update HTML elements...');
             this.proxy.getChoicesForUI(t => {
-                jQuery3(parameterElement).empty(); // remove all children elements
+                $(parameterElement).empty(); // remove all children elements
                 var choices = t.responseText;
                 console.log(`Values returned from server: ${choices}`);
                 var data = JSON.parse(choices);
@@ -626,7 +626,7 @@ var UnoChoice = UnoChoice || ($ => {
                 }
             });
         } else if (parameterElement.tagName === 'UL') { // handle OL's
-            jQuery3(parameterElement).empty(); // remove all children elements
+            $(parameterElement).empty(); // remove all children elements
             console.log('Calling Java server code to update HTML elements...');
             this.proxy.getChoicesForUI(t => {
                 var choices = t.responseText;
@@ -652,8 +652,8 @@ var UnoChoice = UnoChoice || ($ => {
         }
         // propagate change
         // console.log('Propagating change event from ' + this.getParameterName());
-        // var e = jQuery3.Event('change', {parameterName: this.getParameterName()});
-        // jQuery3(this.getParameterElement()).trigger(e);
+        // var e = $.Event('change', {parameterName: this.getParameterName()});
+        // $(this.getParameterElement()).trigger(e);
         if (!avoidRecursion) {
             if (cascadeParameters && cascadeParameters.length > 0) {
                 for (var i = 0; i < cascadeParameters.length; i++) {
@@ -683,52 +683,52 @@ var UnoChoice = UnoChoice || ($ => {
         this.originalArray = [];
         // push existing values into originalArray array
         if (this.paramElement.tagName === 'SELECT') { // handle SELECTS
-            var options = jQuery3(paramElement).children().toArray();
+            var options = $(paramElement).children().toArray();
             for (var i = 0; i < options.length; ++i) {
                 this.originalArray.push(options[i]);
             }
         } else if (paramElement.tagName === 'DIV' || paramElement.tagName === 'SPAN') { // handle CHECKBOXES
-            if (jQuery3(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
+            if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
                 var table = paramElement.children[0];
                 var tbody = table.children[0];
                 if (paramElement.className === 'dynamic_checkbox') {
-                    var trs = jQuery3(tbody).find('tr');
+                    var trs = $(tbody).find('tr');
                     for (var i = 0; i < trs.length ; ++i) {
-                        var tds = jQuery3(trs[i]).find('td');
-                        var inputs = jQuery3(tds[0]).find('input');
+                        var tds = $(trs[i]).find('td');
+                        var inputs = $(tds[0]).find('input');
                         var input = inputs[0];
                         this.originalArray.push(input);
                     }
                 } else {
-                    var trs = jQuery3(tbody).find('tr');
+                    var trs = $(tbody).find('tr');
                     for (var i = 0; i < trs.length ; ++i) {
-                        var tds = jQuery3(trs[i]).find('td');
-                        var inputs = jQuery3(tds[0]).find('input');
+                        var tds = $(trs[i]).find('td');
+                        var inputs = $(tds[0]).find('input');
                         var input = inputs[0];
                         this.originalArray.push(input);
                     }
                 }
-            } // if (jQuery3(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-            if (jQuery3(paramElement).children().length > 0 && (paramElement.children[0].tagName === 'DIV' || paramElement.children[0].tagName === 'SPAN')) {
+            } // if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
+            if ($(paramElement).children().length > 0 && (paramElement.children[0].tagName === 'DIV' || paramElement.children[0].tagName === 'SPAN')) {
                 var tbody = paramElement.children[0];
                 if (paramElement.className === 'dynamic_checkbox') {
-                    var trs = jQuery3(tbody).find('div');
+                    var trs = $(tbody).find('div');
                     for (var i = 0; i < trs.length ; ++i) {
-                        var tds = jQuery3(trs[i]).find('div');
-                        var inputs = jQuery3(tds[0]).find('input');
+                        var tds = $(trs[i]).find('div');
+                        var inputs = $(tds[0]).find('input');
                         var input = inputs[0];
                         this.originalArray.push(input);
                     }
                 } else {
-                    var trs = jQuery3(tbody).find('div');
+                    var trs = $(tbody).find('div');
                     for (var i = 0; i < trs.length ; ++i) {
-                        var tds = jQuery3(trs[i]).find('div');
-                        var inputs = jQuery3(tds[0]).find('input');
+                        var tds = $(trs[i]).find('div');
+                        var inputs = $(tds[0]).find('input');
                         var input = inputs[0];
                         this.originalArray.push(input);
                     }
                 }
-            } // if (jQuery3(paramElement).children().length > 0 && paramElement.children[0].tagName === 'DIV') {
+            } // if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'DIV') {
         }
         this.initEventHandler();
     }
@@ -787,7 +787,7 @@ var UnoChoice = UnoChoice || ($ => {
      */
     FilterElement.prototype.initEventHandler = function() {
         var _self = this;
-        jQuery3(_self.filterElement).keyup(e => {
+        $(_self.filterElement).keyup(e => {
             //var filterElement = e.target;
             var filterElement = _self.getFilterElement();
             var filteredElement = _self.getParameterElement();
@@ -817,18 +817,18 @@ var UnoChoice = UnoChoice || ($ => {
             }
             var tagName = filteredElement.tagName;
             if (tagName === 'SELECT') { // handle SELECT's
-               jQuery3(filteredElement).children().remove();
+               $(filteredElement).children().remove();
                for (var i = 0; i < newOptions.length ; ++i) {
                    var opt = document.createElement('option');
                    opt.value = newOptions[i].value;
                    opt.innerHTML = newOptions[i].innerHTML;
-                   jQuery3(filteredElement).append(opt);
+                   $(filteredElement).append(opt);
                }
             } else if (tagName === 'DIV' || tagName === 'SPAN') { // handle CHECKBOXES, RADIOBOXES and other elements (Jenkins renders them as tables)
-                if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'TABLE') {
+                if ($(filteredElement).children().length > 0 && $(filteredElement).children()[0].tagName === 'TABLE') {
                     var table = filteredElement.children[0];
                     var tbody = table.children[0];
-                    jQuery3(tbody).empty();
+                    $(tbody).empty();
                     if (filteredElement.className === 'dynamic_checkbox') {
                         for (var i = 0; i < newOptions.length; i++) {
                             var entry = newOptions[i];
@@ -914,10 +914,10 @@ var UnoChoice = UnoChoice || ($ => {
                             tbody.appendChild(tr);
                         }
                     }
-                } // if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'TABLE') {
-                if (jQuery3(filteredElement).children().length > 0 && (jQuery3(filteredElement).children()[0].tagName === 'DIV' || jQuery3(filteredElement).children()[0].tagName === 'SPAN')) {
+                } // if ($(filteredElement).children().length > 0 && $(filteredElement).children()[0].tagName === 'TABLE') {
+                if ($(filteredElement).children().length > 0 && ($(filteredElement).children()[0].tagName === 'DIV' || $(filteredElement).children()[0].tagName === 'SPAN')) {
                     var tbody = filteredElement.children[0];
-                    jQuery3(tbody).empty();
+                    $(tbody).empty();
                     if (filteredElement.className === 'dynamic_checkbox') {
                         for (var i = 0; i < newOptions.length; i++) {
                             var entry = newOptions[i];
@@ -1005,12 +1005,12 @@ var UnoChoice = UnoChoice || ($ => {
                             tbody.appendChild(tr);
                         }
                     }
-                } // if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'DIV') {
+                } // if ($(filteredElement).children().length > 0 && $(filteredElement).children()[0].tagName === 'DIV') {
             } // if (tagName === 'SELECT') { // } else if (tagName === 'DIV') {
             // Propagate the changes made by the filter
             console.log('Propagating change event after filtering');
-            var e = jQuery3.Event('change', {parameterName: 'Filter Element Event'});
-            jQuery3(filteredElement).trigger(e);
+            var e = $.Event('change', {parameterName: 'Filter Element Event'});
+            $(filteredElement).trigger(e);
         });
     }
     // HTML utility methods
@@ -1034,11 +1034,11 @@ var UnoChoice = UnoChoice || ($ => {
      * @see issue #21 in GitHub - github.com/biouno/uno-choice-plugin/issues
      */
      /* public */ function fakeSelectRadioButton(clazzName, id) {
-        var element = jQuery3(`#${id}`).get(0);
+        var element = $(`#${id}`).get(0);
         // deselect all radios with the class=clazzName
-        var radios = jQuery3(`input[class="${clazzName}"]`);
+        var radios = $(`input[class="${clazzName}"]`);
         radios.each(function(index) {
-            jQuery3(this).attr('name', '');
+            $(this).attr('name', '');
         });
         // select the radio with the id=id
         var parent = element.parentNode;
@@ -1066,7 +1066,7 @@ var UnoChoice = UnoChoice || ($ => {
      * @return <code>String</code> the value of the HTML element used as parameter value in Jenkins, as a string
      */
      /* public */ function getParameterValue(htmlParameter) {
-        var e = jQuery3(htmlParameter);
+        var e = $(htmlParameter);
         var value = '';
         if (e.attr('name') === 'value') {
             value = getElementValue(htmlParameter);
@@ -1075,7 +1075,7 @@ var UnoChoice = UnoChoice || ($ => {
             if (subElements) {
                 var valueBuffer = Array();
                 subElements.each(function() {
-                    var tempValue = getElementValue(jQuery3(this));
+                    var tempValue = getElementValue($(this));
                     if (tempValue)
                         valueBuffer.push(tempValue);
                 });
@@ -1101,7 +1101,7 @@ var UnoChoice = UnoChoice || ($ => {
      */
     function getElementValue(htmlParameter) {
         var value = '';
-        var e = jQuery3(htmlParameter);
+        var e = $(htmlParameter);
         if (e.prop('tagName') === 'SELECT') {
             value = getSelectValues(e);
         } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
