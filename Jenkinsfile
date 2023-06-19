@@ -1,1 +1,1 @@
-buildPlugin(failFast: false, platforms: ['linux'])
+buildPlugin(useContainerAgent: true, failFast: false, platforms: ['linux'])
