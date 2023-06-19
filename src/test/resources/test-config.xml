@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+    <actions/>
+    <description/>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <org.biouno.unochoice.ChoiceParameter>
+                    <name>PARAM1</name>
+                    <description/>
+                    <randomName>choice-parameter-128553354589541</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["A", "B", "C"]
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_SINGLE_SELECT</choiceType>
+                </org.biouno.unochoice.ChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter>
+                    <name>PARAM1A</name>
+                    <description/>
+                    <randomName>choice-parameter-128553355257416</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["1", "2", "3"].collect {"${PARAM1}${it}".toString()}.toList()
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_SINGLE_SELECT</choiceType>
+                    <referencedParameters>PARAM1</referencedParameters>
+                    <parameters class="linked-hash-map"/>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+                <org.biouno.unochoice.ChoiceParameter>
+                    <name>PARAM2</name>
+                    <description/>
+                    <randomName>choice-parameter-128553356051041</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["A", "B", "C"]
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_RADIO</choiceType>
+                </org.biouno.unochoice.ChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter>
+                    <name>PARAM2A</name>
+                    <description/>
+                    <randomName>choice-parameter-128553356692125</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["1", "2", "3"].collect {"${PARAM2}${it}".toString()}.toList()
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_RADIO</choiceType>
+                    <referencedParameters>PARAM2</referencedParameters>
+                    <parameters class="linked-hash-map"/>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+                <org.biouno.unochoice.ChoiceParameter>
+                    <name>PARAM3</name>
+                    <description/>
+                    <randomName>choice-parameter-128553357303166</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["A", "B", "C"]
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_CHECKBOX</choiceType>
+                </org.biouno.unochoice.ChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter>
+                    <name>PARAM3A</name>
+                    <description/>
+                    <randomName>choice-parameter-128553357886666</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["1", "2", "3"].collectMany { inner -&gt; PARAM3.split(",").findAll {it}.collect {"${it}${inner}".toString()}}.toList()
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_CHECKBOX</choiceType>
+                    <referencedParameters>PARAM3</referencedParameters>
+                    <parameters class="linked-hash-map"/>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+                <org.biouno.unochoice.ChoiceParameter>
+                    <name>PARAM4</name>
+                    <description/>
+                    <randomName>choice-parameter-128553358826291</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["A", "B", "C"]
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_MULTI_SELECT</choiceType>
+                </org.biouno.unochoice.ChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter>
+                    <name>PARAM4A</name>
+                    <description/>
+                    <randomName>choice-parameter-128553359720750</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <script>
+          return ["1", "2", "3"].collectMany { inner -&gt; PARAM4.split(",").findAll {it}.collect {"${it}${inner}".toString()}}.toList()
+        </script>
+                        <fallbackScript/>
+                    </script>
+                    <filterable>false</filterable>
+                    <choiceType>PT_MULTI_SELECT</choiceType>
+                    <referencedParameters>PARAM4</referencedParameters>
+                    <parameters class="linked-hash-map"/>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <builders/>
+    <publishers/>
+    <buildWrappers/>
+</project>
