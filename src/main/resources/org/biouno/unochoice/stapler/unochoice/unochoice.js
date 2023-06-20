@@ -48,13 +48,12 @@ var UnoChoice = UnoChoice || ($ => {
     // --- Cascade Parameter
     /**
      * A parameter that references parameters.
-     *
-     * @param paramName parameter name
-     * @param paramElement parameter HTML element
-     * @param randomName randomName given to the parameter
+     * @param paramName {String} parameter name
+     * @param paramElement {HTMLElement} parameter HTML element
+     * @param randomName {String} randomName given to the parameter
      * @param proxy Stapler proxy object that references the CascadeChoiceParameter
      */
-    /* public */ function CascadeParameter(paramName, paramElement, randomName, proxy) {
+    function CascadeParameter(paramName, paramElement, randomName, proxy) {
         this.paramName = paramName;
         this.paramElement = paramElement;
         this.randomName = randomName;
@@ -65,7 +64,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the parameter name.
      *
-     * @return <code>String</code> parameter name
+     * @return {string} parameter name
      */
     CascadeParameter.prototype.getParameterName = function() {
         return this.paramName;
@@ -73,7 +72,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the parameter HTML element.
      *
-     * @return HTML element
+     * @return {HTMLElement} HTML element
      */
     CascadeParameter.prototype.getParameterElement = function() {
         return this.paramElement;
@@ -81,7 +80,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the array of referenced parameters.
      *
-     * @return Array of the ReferencedParameter's
+     * @return {Array<ReferencedParameter>} Array of the ReferencedParameter's
      */
     CascadeParameter.prototype.getReferencedParameters = function() {
         return this.referencedParameters;
@@ -89,7 +88,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the parameter random name.
      *
-     * @return String parameter random name
+     * @return {string} parameter random name
      */
     CascadeParameter.prototype.getRandomName = function() {
         return this.randomName;
@@ -97,7 +96,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the filter element.
      *
-     * @return FilterElement
+     * @return {FilterElement}
      */
     CascadeParameter.prototype.getFilterElement = function() {
         return this.filterElement;
@@ -105,7 +104,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Sets the filter element.
      *
-     * @param e FilterElement
+     * @param e {FilterElement}
      */
     CascadeParameter.prototype.setFilterElement = function(e) {
         this.filterElement = e;
@@ -114,7 +113,7 @@ var UnoChoice = UnoChoice || ($ => {
      * Used to create the request string that will update the cascade parameter values. Returns a
      * String, with name=value for each referenced parameter.
      *
-     * @return String with name=value for each referenced parameter
+     * @return {string} String with name=value for each referenced parameter
      */
     CascadeParameter.prototype.getReferencedParametersAsText = function() {
         let parameterValues = [];
@@ -141,7 +140,7 @@ var UnoChoice = UnoChoice || ($ => {
      * <p>In the last part of the method, before updating other elements, it checks for recursive calls. If
      * this parameter references itself, we need to avoid updating it forever.</p>
      *
-     * @param avoidRecursion boolean flag to decide whether we want to permit self-reference parameters or not
+     * @param avoidRecursion {boolean} flag to decide whether we want to permit self-reference parameters or not
      */
     CascadeParameter.prototype.update = function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
@@ -222,139 +221,6 @@ var UnoChoice = UnoChoice || ($ => {
                     _self.getFilterElement().setOriginalArray(originalArray);
                 }
             } else if (parameterElement.tagName === 'DIV' || parameterElement.tagName === 'SPAN') {
-                if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'TABLE') {
-                    let table = parameterElement.children[0];
-                    let tbody = table.children[0];
-                    if (tbody) {
-                        $(tbody).empty();
-                    } else {
-                        tbody = document.createElement('tbody');
-                        table.appendChild(tbody);
-                    }
-                    let originalArray = [];
-                    // Check whether it is a radio or checkbox element
-                    if (parameterElement.className === 'dynamic_checkbox') {
-                        for (let i = 0; i < newValues.length; i++) {
-                            let entry = newValues[i];
-                            let key = newKeys[i];
-                            // <TR>
-                            let tr = document.createElement('tr');
-                            let idValue = `ecp_${_self.getRandomName()}_${i}`;
-                            idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            // <TD>
-                            let td = document.createElement('td');
-                            // <INPUT>
-                            let input = document.createElement('input');
-                            // <LABEL>
-                            let label = document.createElement('label');
-                            if (selectedElements.indexOf(i) >= 0) {
-                                input.setAttribute('checked', 'checked');
-                            }
-                            if (disabledElements.indexOf(i) >= 0) {
-                                input.setAttribute('disabled', 'disabled');
-                            }
-                            input.setAttribute('json', key);
-                            input.setAttribute('name', 'value');
-                            input.setAttribute("value", key);
-                            input.setAttribute("class", " ");
-                            input.setAttribute("type", "checkbox");
-                            label.className = "attach-previous";
-                            if (!entry instanceof String) {
-                                input.setAttribute("title", JSON.stringify(entry));
-                                input.setAttribute("alt", JSON.stringify(entry));
-                                label.innerHTML = JSON.stringify(entry);
-                            } else {
-                                input.setAttribute("title", entry);
-                                input.setAttribute("alt", entry);
-                                label.innerHTML = entry;
-                            }
-                            originalArray.push(input);
-                            // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            tr.appendChild(td);
-                            tbody.appendChild(tr);
-                        }
-                        // Update the values for the filtering
-                        if (_self.getFilterElement()) {
-                            _self.getFilterElement().setOriginalArray(originalArray);
-                        }
-                    } else { // radio
-                         for (let i = 0; i < newValues.length; i++) {
-                            let entry = newValues[i];
-                            let key = newKeys[i];
-                            // <TR>
-                            let tr = document.createElement('tr');
-                            let idValue = `ecp_${_self.getRandomName()}_${i}`;
-                            idValue = idValue.replace(' ', '_');
-                            //tr.setAttribute('id', idValue); // will use the ID for the hidden value element
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            // <TD>
-                            let td = document.createElement('td');
-                            // <INPUT>
-                            let input = document.createElement('input');
-                            // <LABEL>
-                            let label = document.createElement('label');
-                            // <HIDDEN>
-                            let hiddenValue = document.createElement('input');
-                            if (selectedElements.indexOf(i) >= 0) {
-                                input.setAttribute('checked', 'checked');
-                                hiddenValue.setAttribute('name', 'value');
-                            } else {
-                                hiddenValue.setAttribute('name', '');
-                            }
-                            if (disabledElements.indexOf(i) >= 0) {
-                                input.setAttribute('disabled', 'disabled');
-                            }
-                            input.setAttribute('json', key);
-                            input.setAttribute('name', _self.getParameterName());
-                            input.setAttribute("value", key);
-                            input.setAttribute("class", " ");
-                            input.setAttribute("type", "radio");
-                            input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
-                            input.setAttribute('otherId', idValue);
-                            label.className = "attach-previous";
-                            if (!entry instanceof String) {
-                                input.setAttribute('alt', JSON.stringify(entry));
-                                label.innerHTML = JSON.stringify(entry);
-                            } else {
-                                input.setAttribute('alt', entry);
-                                label.innerHTML = entry;
-                            }
-                            hiddenValue.setAttribute('json', key);
-                            hiddenValue.setAttribute("value", key);
-                            hiddenValue.setAttribute("class", _self.getParameterName());
-                            hiddenValue.setAttribute("type", "hidden");
-                            if (!entry instanceof String) {
-                                hiddenValue.setAttribute('title', JSON.stringify(entry));
-                            } else {
-                                hiddenValue.setAttribute('title', entry);
-                            }
-                            hiddenValue.setAttribute('id', idValue);
-                            originalArray.push(input);
-                            // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            td.appendChild(hiddenValue);
-                            tr.appendChild(td);
-                            tbody.appendChild(tr);
-                            let endTr = document.createElement('tr');
-                            endTr.setAttribute('style', 'display: none');
-                            endTr.setAttribute('class', 'radio-block-end');
-                            tbody.appendChild(endTr);
-                        }
-                        // Update the values for the filtering
-                        if (_self.getFilterElement()) {
-                            _self.getFilterElement().setOriginalArray(originalArray);
-                        }
-                    } // if (oldSel.className === 'dynamic_checkbox')
-                    /*
-                     * This height is equivalent to setting the number of rows displayed in a select/multiple
-                     */
-                    parameterElement.style.height = newValues.length > 10 ? '230px' : 'auto';
-                } // if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'TABLE') {
                 if (parameterElement.children.length > 0 && (parameterElement.children[0].tagName === 'DIV' || parameterElement.children[0].tagName === 'SPAN')) {
                     let tbody = parameterElement.children[0];
                     $(tbody).empty();
@@ -364,44 +230,23 @@ var UnoChoice = UnoChoice || ($ => {
                         for (let i = 0; i < newValues.length; i++) {
                             let entry = newValues[i];
                             let key = newKeys[i];
-                            // <TR>
-                            let tr = document.createElement('div');
                             let idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            tr.setAttribute('class', 'tr');
-                            // <TD>
-                            let td = document.createElement('div');
                             // <INPUT>
-                            let input = document.createElement('input');
-                            // <LABEL>
-                            let label = document.createElement('label');
-                            if (selectedElements.indexOf(i) >= 0) {
-                                input.setAttribute('checked', 'checked');
-                            }
-                            if (disabledElements.indexOf(i) >= 0) {
-                                input.setAttribute('disabled', 'disabled');
-                            }
-                            input.setAttribute('json', key);
-                            input.setAttribute('name', 'value');
-                            input.setAttribute("value", key);
-                            input.setAttribute("class", " ");
-                            input.setAttribute("type", "checkbox");
-                            label.className = "attach-previous";
+                            let input = makeCheckbox(key, selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
                             if (!entry instanceof String) {
                                 input.setAttribute("title", JSON.stringify(entry));
                                 input.setAttribute("alt", JSON.stringify(entry));
-                                label.innerHTML = JSON.stringify(entry);
                             } else {
                                 input.setAttribute("title", entry);
                                 input.setAttribute("alt", entry);
-                                label.innerHTML = entry;
                             }
+                            // <LABEL>
+                            let label = makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry);
                             originalArray.push(input);
                             // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
+                            let td = makeTd([input, label]);
+                            let tr = makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
@@ -413,61 +258,25 @@ var UnoChoice = UnoChoice || ($ => {
                          for (let i = 0; i < newValues.length; i++) {
                             let entry = newValues[i];
                             let key = newKeys[i];
-                            // <TR>
-                            let tr = document.createElement('div');
                             let idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
-                            //tr.setAttribute('id', idValue); // will use the ID for the hidden value element
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            tr.setAttribute('class', 'tr');
-                            // <TD>
-                            let td = document.createElement('div');
                             // <INPUT>
-                            let input = document.createElement('input');
-                            // <LABEL>
-                            let label = document.createElement('label');
-                            // <HIDDEN>
-                            let hiddenValue = document.createElement('input');
-                            if (selectedElements.indexOf(i) >= 0) {
-                                input.setAttribute('checked', 'checked');
-                                hiddenValue.setAttribute('name', 'value');
-                            } else {
-                                hiddenValue.setAttribute('name', '');
-                            }
-                            if (disabledElements.indexOf(i) >= 0) {
-                                input.setAttribute('disabled', 'disabled');
-                            }
-                            input.setAttribute('json', key);
-                            input.setAttribute('name', _self.getParameterName());
-                            input.setAttribute("value", key);
-                            input.setAttribute("class", " ");
-                            input.setAttribute("type", "radio");
+                            let input = makeRadio(key, _self.getParameterName(), selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
                             input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
                             input.setAttribute('otherId', idValue);
-                            label.className = "attach-previous";
                             if (!entry instanceof String) {
                                 input.setAttribute('alt', JSON.stringify(entry));
-                                label.innerHTML = JSON.stringify(entry);
                             } else {
                                 input.setAttribute('alt', entry);
-                                label.innerHTML = entry;
                             }
-                            hiddenValue.setAttribute('json', key);
-                            hiddenValue.setAttribute("value", key);
-                            hiddenValue.setAttribute("class", _self.getParameterName());
-                            hiddenValue.setAttribute("type", "hidden");
-                            if (!entry instanceof String) {
-                                hiddenValue.setAttribute('title', JSON.stringify(entry));
-                            } else {
-                                hiddenValue.setAttribute('title', entry);
-                            }
-                            hiddenValue.setAttribute('id', idValue);
+                            // <LABEL>
+                            let label = makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry);
+                             // <HIDDEN>
+                            let hiddenValue = makeHidden(idValue, key, selectedElements.indexOf(i) >= 0 ? 'value' : '', key, _self.getParameterName(), entry instanceof String ? entry : JSON.stringify(entry));
                             originalArray.push(input);
-                            // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            td.appendChild(hiddenValue);
-                            tr.appendChild(td);
+                            let td = makeTd([input, label, hiddenValue]);
+                            let tr = makeTr(undefined)
+                             tr.appendChild(td);
                             tbody.appendChild(tr);
                             let endTr = document.createElement('div');
                             endTr.setAttribute('style', 'display: none');
@@ -510,8 +319,8 @@ var UnoChoice = UnoChoice || ($ => {
      * it returns whether or not the given parameter references this parameter.
      *
      * @since 0.22
-     * @param cascadeParameter a given parameter
-     * @return <code>bool</code> <code>true</code> iff the given parameter references this parameter
+     * @param cascadeParameter {CascadeParameter} a given parameter
+     * @return {boolean} <code>true</code> iff the given parameter references this parameter
      */
     CascadeParameter.prototype.referencesMe = function(cascadeParameter) {
         if (!cascadeParameter ||
@@ -532,11 +341,11 @@ var UnoChoice = UnoChoice || ($ => {
      *
      * <p>Whenever this parameter changes, it will notify each cascade parameter.</p>
      *
-     * @param paramName parameter name
-     * @param paramElement parameter HTML element
-     * @param cascadeParameter CascadeParameter
+     * @param paramName {string} parameter name
+     * @param paramElement {HTMLElement} parameter HTML element
+     * @param cascadeParameter {CascadeParameter}
      */
-    /* public */ function ReferencedParameter(paramName, paramElement, cascadeParameter) {
+    function ReferencedParameter(paramName, paramElement, cascadeParameter) {
         this.paramName = paramName;
         this.paramElement = paramElement;
         this.cascadeParameter = cascadeParameter;
@@ -572,11 +381,11 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * A parameter that is used only as a render mechanism for other referenced parameters.
      *
-     * @param paramName parameter name
-     * @param paramElement parameter HTML element
+     * @param paramName {string} parameter name
+     * @param paramElement {HTMLElement} parameter HTML element
      * @param proxy Stapler proxy object that references the CascadeChoiceParameter
      */
-    /* public */ function DynamicReferenceParameter(paramName, paramElement, proxy) {
+    function DynamicReferenceParameter(paramName, paramElement, proxy) {
         this.paramName = paramName;
         this.paramElement = paramElement;
         this.proxy = proxy;
@@ -600,7 +409,7 @@ var UnoChoice = UnoChoice || ($ => {
      * <p>In the last part of the method, before updating other elements, it checks for recursive calls. If
      * this parameter references itself, we need to avoid updating it forever.</p>
      *
-     * @param avoidRecursion boolean flag to decide whether we want to permit self-reference parameters or not
+     * @param avoidRecursion {boolean} flag to decide whether we want to permit self-reference parameters or not
      */
     DynamicReferenceParameter.prototype.update = function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
@@ -672,11 +481,11 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * An element that acts as filter for other elements.
      *
-     * @param paramElement parameter HTML element being filtered
-     * @param filterElement HTML element where the user enter the filter
-     * @param filterLength filter length
+     * @param paramElement {HTMLElement} HTML element being filtered
+     * @param filterElement {HTMLElement} HTML element where the user enter the filter
+     * @param filterLength {number} filter length
      */
-    /* public */ function FilterElement(paramElement, filterElement, filterLength) {
+    function FilterElement(paramElement, filterElement, filterLength) {
         this.paramElement = paramElement;
         this.filterElement = filterElement;
         this.filterLength = filterLength;
@@ -688,45 +497,14 @@ var UnoChoice = UnoChoice || ($ => {
                 this.originalArray.push(options[i]);
             }
         } else if (paramElement.tagName === 'DIV' || paramElement.tagName === 'SPAN') { // handle CHECKBOXES
-            if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
-                let table = paramElement.children[0];
-                let tbody = table.children[0];
-                if (paramElement.className === 'dynamic_checkbox') {
-                    let trs = $(tbody).find('tr');
-                    for (let i = 0; i < trs.length ; ++i) {
-                        let tds = $(trs[i]).find('td');
-                        let inputs = $(tds[0]).find('input');
-                        let input = inputs[0];
-                        this.originalArray.push(input);
-                    }
-                } else {
-                    let trs = $(tbody).find('tr');
-                    for (let i = 0; i < trs.length ; ++i) {
-                        let tds = $(trs[i]).find('td');
-                        let inputs = $(tds[0]).find('input');
-                        let input = inputs[0];
-                        this.originalArray.push(input);
-                    }
-                }
-            } // if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'TABLE') {
             if ($(paramElement).children().length > 0 && (paramElement.children[0].tagName === 'DIV' || paramElement.children[0].tagName === 'SPAN')) {
                 let tbody = paramElement.children[0];
-                if (paramElement.className === 'dynamic_checkbox') {
-                    let trs = $(tbody).find('div');
-                    for (let i = 0; i < trs.length ; ++i) {
-                        let tds = $(trs[i]).find('div');
-                        let inputs = $(tds[0]).find('input');
-                        let input = inputs[0];
-                        this.originalArray.push(input);
-                    }
-                } else {
-                    let trs = $(tbody).find('div');
-                    for (let i = 0; i < trs.length ; ++i) {
-                        let tds = $(trs[i]).find('div');
-                        let inputs = $(tds[0]).find('input');
-                        let input = inputs[0];
-                        this.originalArray.push(input);
-                    }
+                let trs = $(tbody).find('div');
+                for (let i = 0; i < trs.length ; ++i) {
+                    let tds = $(trs[i]).find('div');
+                    let inputs = $(tds[0]).find('input');
+                    let input = inputs[0];
+                    this.originalArray.push(input);
                 }
             } // if ($(paramElement).children().length > 0 && paramElement.children[0].tagName === 'DIV') {
         }
@@ -735,7 +513,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the parameter HTML element.
      *
-     * @return HTML element
+     * @return {HTMLElement} HTML element
      */
     FilterElement.prototype.getParameterElement = function() {
         return this.paramElement;
@@ -743,7 +521,7 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets the filter element.
      *
-     * @return HTML element
+     * @return {HTMLElement} HTML element
      */
     FilterElement.prototype.getFilterElement = function() {
         return this.filterElement;
@@ -751,14 +529,14 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets an array with the original options of the filtered element. Useful for recreating the initial setting.
      *
-     * @return <code>Array</code> with HTML elements
+     * @return {Array<HTMLElement>} <code>Array</code> with HTML elements
      */
     FilterElement.prototype.getOriginalArray = function() {
         return this.originalArray;
     }
     /**
      * Get the filter length.
-     * @return filter length
+     * @return {number} filter length
      */
     FilterElement.prototype.getFilterLength = function() {
         return this.filterLength;
@@ -816,6 +594,7 @@ var UnoChoice = UnoChoice || ($ => {
                 }
             }
             let tagName = filteredElement.tagName;
+
             if (tagName === 'SELECT') { // handle SELECT's
                $(filteredElement).children().remove();
                for (let i = 0; i < newOptions.length ; ++i) {
@@ -825,148 +604,36 @@ var UnoChoice = UnoChoice || ($ => {
                    $(filteredElement).append(opt);
                }
             } else if (tagName === 'DIV' || tagName === 'SPAN') { // handle CHECKBOXES, RADIOBOXES and other elements (Jenkins renders them as tables)
-                if ($(filteredElement).children().length > 0 && $(filteredElement).children()[0].tagName === 'TABLE') {
-                    let table = filteredElement.children[0];
-                    let tbody = table.children[0];
-                    $(tbody).empty();
-                    if (filteredElement.className === 'dynamic_checkbox') {
-                        for (let i = 0; i < newOptions.length; i++) {
-                            let entry = newOptions[i];
-                            // TR
-                            let tr = document.createElement('tr');
-                            let idValue = `ecp_${e.target.randomName}_${i}`;
-                            idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            // TD
-                            let td = document.createElement('td');
-                            // INPUT
-                            let input = document.createElement('input');
-                            // LABEL
-                            let label = document.createElement('label');
-                            if (!(entry instanceof String)) {
-                                label.className = "attach-previous";
-                                if (entry.tagName === 'INPUT') {
-                                    input = entry;
-                                    label.innerHTML = input.getAttribute('title');
-                                    label.title = input.getAttribute('title');
-                                } else {
-                                    input.setAttribute('json', JSON.stringify(entry.value));
-                                    input.setAttribute('name', 'value');
-                                    input.setAttribute("value", JSON.stringify(entry.value));
-                                    input.setAttribute("type", "radio");
-                                    label.innerHTML = input;
-                                }
-                            } else {
-                                input.setAttribute('json', entry);
-                                input.setAttribute('name', 'value');
-                                input.setAttribute("value", entry);
-                                input.setAttribute("type", "checkbox");
-                                label.className = "attach-previous";
-                                label.title = entry.getAttribute('title');
-                                label.innerHTML = entry.getAttribute('title');
-                            }
-                            // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            tr.appendChild(td);
-                            tbody.appendChild(tr);
-                        }
-                    } else {
-                        for (let i = 0; i < newOptions.length; i++) {
-                            let entry = newOptions[i];
-                            // TR
-                            let tr = document.createElement('tr');
-                            let idValue = '';
-                            if (!(entry instanceof String)) {
-                                if (entry.tagName === 'INPUT') {
-                                    idValue = `ecp_${entry.getAttribute('name')}_${i}`;
-                                }
-                            } else {
-                                idValue = `ecp_${entry}_${i}`;
-                            }
-                            idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            // TD
-                            let td = document.createElement('td');
-                            // INPUTs
-                            let jsonInput = document.createElement('input'); // used to help in the selection
-                            let input = document.createElement('input');
-                            // LABEL
-                            let label = document.createElement('label');
-                            label.className = "attach-previous";
-                            input = entry;
-                            input.checked = false;
-                            jsonInput.setAttribute('id', input.getAttribute('otherid'));
-                            jsonInput.setAttribute('json', input.getAttribute('json'));
-                            jsonInput.setAttribute('name', '');
-                            jsonInput.setAttribute("value", input.getAttribute('value'));
-                            jsonInput.setAttribute("class", input.getAttribute('name'));
-                            jsonInput.setAttribute("type", "hidden");
-                            jsonInput.setAttribute('title', input.getAttribute('alt'));
-                            label.innerHTML = input.getAttribute('alt');
-                            // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            td.appendChild(jsonInput);
-                            tr.appendChild(td);
-                            tbody.appendChild(tr);
-                        }
-                    }
-                } // if ($(filteredElement).children().length > 0 && $(filteredElement).children()[0].tagName === 'TABLE') {
                 if ($(filteredElement).children().length > 0 && ($(filteredElement).children()[0].tagName === 'DIV' || $(filteredElement).children()[0].tagName === 'SPAN')) {
                     let tbody = filteredElement.children[0];
                     $(tbody).empty();
                     if (filteredElement.className === 'dynamic_checkbox') {
                         for (let i = 0; i < newOptions.length; i++) {
                             let entry = newOptions[i];
-                            // TR
-                            let tr = document.createElement('div');
                             let idValue = `ecp_${e.target.randomName}_${i}`;
                             idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            tr.setAttribute('class', 'tr');
-                            // TD
-                            let td = document.createElement('div');
-                            // INPUT
-                            let input = document.createElement('input');
+
+                            let input =
+                                    entry instanceof String ?
+                                            makeCheckbox(entry) :
+                                            entry.tagName === 'INPUT' ?
+                                                    entry :
+                                                    makeRadio(JSON.stringify(entry.value), 'value');
+
                             // LABEL
-                            let label = document.createElement('label');
-                            if (!(entry instanceof String)) {
-                                label.className = "attach-previous";
-                                if (entry.tagName === 'INPUT') {
-                                    input = entry;
-                                    label.innerHTML = input.getAttribute('title');
-                                    label.title = input.getAttribute('title');
-                                } else {
-                                    input.setAttribute('json', JSON.stringify(entry.value));
-                                    input.setAttribute('name', 'value');
-                                    input.setAttribute("value", JSON.stringify(entry.value));
-                                    input.setAttribute("type", "radio");
-                                    label.innerHTML = input;
-                                }
-                            } else {
-                                input.setAttribute('json', entry);
-                                input.setAttribute('name', 'value');
-                                input.setAttribute("value", entry);
-                                input.setAttribute("type", "checkbox");
-                                label.className = "attach-previous";
-                                label.title = entry.getAttribute('title');
-                                label.innerHTML = entry.getAttribute('title');
-                            }
+                            let label = (entry instanceof String || entry.tagName === 'INPUT') ?
+                                    makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
+                                    makeLabel(input);
+
                             // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
+                            let td = makeTd([input, label]);
+                            let tr = makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
                     } else {
                         for (let i = 0; i < newOptions.length; i++) {
                             let entry = newOptions[i];
-                            // TR
-                            let tr = document.createElement('div');
                             let idValue = '';
                             if (!(entry instanceof String)) {
                                 if (entry.tagName === 'INPUT') {
@@ -976,31 +643,16 @@ var UnoChoice = UnoChoice || ($ => {
                                 idValue = `ecp_${entry}_${i}`;
                             }
                             idValue = idValue.replace(' ', '_');
-                            tr.setAttribute('id', idValue);
-                            tr.setAttribute('style', 'white-space:nowrap');
-                            tr.setAttribute('class', 'tr');
-                            // TD
-                            let td = document.createElement('div');
                             // INPUTs
-                            let jsonInput = document.createElement('input'); // used to help in the selection
                             let input = document.createElement('input');
-                            // LABEL
-                            let label = document.createElement('label');
-                            label.className = "attach-previous";
                             input = entry;
                             input.checked = false;
-                            jsonInput.setAttribute('id', input.getAttribute('otherid'));
-                            jsonInput.setAttribute('json', input.getAttribute('json'));
-                            jsonInput.setAttribute('name', '');
-                            jsonInput.setAttribute("value", input.getAttribute('value'));
-                            jsonInput.setAttribute("class", input.getAttribute('name'));
-                            jsonInput.setAttribute("type", "hidden");
-                            jsonInput.setAttribute('title', input.getAttribute('alt'));
-                            label.innerHTML = input.getAttribute('alt');
+                            let jsonInput = makeHidden(input.getAttribute('otherid'), input.getAttribute('json'), '', input.getAttribute('value'), input.getAttribute('name'), input.getAttribute('alt'));
+
+                            let label = makeLabel(input.getAttribute('alt'));
                             // Put everything together
-                            td.appendChild(input);
-                            td.appendChild(label);
-                            td.appendChild(jsonInput);
+                            let td = makeTd([input, label, jsonInput]);
+                            let tr = makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
@@ -1028,12 +680,12 @@ var UnoChoice = UnoChoice || ($ => {
      * <p>This code ensures that only one radio button, in a radio group, contains the name value. Avoiding several
      * values to be submitted.</p>
      *
-     * @param clazzName HTML element class name
-     * @param id HTML element ID
+     * @param clazzName {string} HTML element class name
+     * @param id {string} HTML element ID
      *
      * @see issue #21 in GitHub - github.com/biouno/uno-choice-plugin/issues
      */
-     /* public */ function fakeSelectRadioButton(clazzName, id) {
+     function fakeSelectRadioButton(clazzName, id) {
         let element = $(`#${id}`).get(0);
         // deselect all radios with the class=clazzName
         let radios = $(`input[class="${clazzName}"]`);
@@ -1062,10 +714,10 @@ var UnoChoice = UnoChoice || ($ => {
      * <p>When there are multiple elements as return value, we append all the values to an Array and return its
      * value as string (i.e. toString()).</p>
      *
-     * @param htmlParameter HTML element
-     * @return <code>String</code> the value of the HTML element used as parameter value in Jenkins, as a string
+     * @param htmlParameter {HTMLElement} HTML element
+     * @return {string} the value of the HTML element used as parameter value in Jenkins, as a string
      */
-     /* public */ function getParameterValue(htmlParameter) {
+     function getParameterValue(htmlParameter) {
         let e = $(htmlParameter);
         let value = '';
         if (e.attr('name') === 'value') {
@@ -1096,8 +748,8 @@ var UnoChoice = UnoChoice || ($ => {
      * Gets the value of a HTML element as string. If the returned value is an Array it gets serialized first.
      * Correctly handles SELECT, CHECKBOX, RADIO, and other types.
      *
-     * @param htmlParameter HTML element
-     * @return <code>String</code> the returned value as string. Empty by default.
+     * @param htmlParameter {HTMLElement} HTML element
+     * @return {string} the returned value as string. Empty by default.
      */
     function getElementValue(htmlParameter) {
         let value = '';
@@ -1116,8 +768,8 @@ var UnoChoice = UnoChoice || ($ => {
     /**
      * Gets an array of the selected option values in a HTML select element.
      *
-     * @param select HTML DOM select element
-     * @return <code>Array</code>
+     * @param select {HTMLSelectElement} HTML DOM select element
+     * @return {Array<string>} <code>Array</code>
      *
      * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
      */
@@ -1135,8 +787,12 @@ var UnoChoice = UnoChoice || ($ => {
      * <p>This function is the same as makeStaplerProxy available in Jenkins core, but executes calls
      * <strong>synchronously</strong>. Since many parameters must be filled only after other parameters have been
      * updated, calling Jenkins methods asynchronously causes several unpredictable errors.</p>
+     *
+     * @param url {string} The URL
+     * @param crumb {string} The crumb
+     * @param methods {Array<string>} The methods
      */
-    /* public */ function makeStaplerProxy2(url, crumb, methods) {
+    function makeStaplerProxy2(url, crumb, methods) {
         if (url.substring(url.length - 1) !== '/') url+='/';
         let proxy = {};
         var stringify;
@@ -1197,6 +853,107 @@ var UnoChoice = UnoChoice || ($ => {
         }
         return proxy;
     }
+
+    /**
+     * Creates a table cell with the given elements.
+     * @param innerHTML {string} innerHTML of the cell
+     * @param title {string} title of the cell
+     * @returns {HTMLLabelElement}
+     */
+    function makeLabel(innerHTML, title) {
+        let label = document.createElement('label');
+        label.innerHTML = innerHTML;
+        label.className = "attach-previous";
+        if (title) label.title = title;
+        return label;
+    }
+
+    /**
+     * Creates a table row with the given id.
+     * @param id {string} id of the tr
+     * @returns {HTMLDivElement}
+     */
+    function makeTr(id) {
+        let tr = document.createElement('div');
+        tr.setAttribute('style', 'white-space:nowrap');
+        tr.setAttribute('class', 'tr');
+        if (id) tr.setAttribute('id', id);
+        tr.setAttribute('style', 'white-space:nowrap');
+        return tr
+    }
+
+    /**
+     * Creates a table cell with the given elements.
+     * @param elements {Array<HTMLElement>} elements to be added to the cell
+     * @returns {HTMLDivElement}
+     */
+    function makeTd(elements) {
+        let td = document.createElement('div');
+        for (let i = 0; i < elements.length; i++) {
+            td.appendChild(elements[i]);
+        }
+        return td;
+    }
+
+    /**
+     * Creates a hidden input element.
+     * @param id {string} id of the element
+     * @param json {string} json of the element
+     * @param name {string} name of the element
+     * @param value {string} value of the element
+     * @param clazz {string} class of the element
+     * @param title {string} title of the element
+     * @returns {HTMLInputElement}
+     */
+    function makeHidden(id, json, name, value, clazz, title) {
+        let hidden = document.createElement('input'); // used to help in the selection
+        hidden.setAttribute('id', id);
+        hidden.setAttribute('json', json);
+        hidden.setAttribute('name', name);
+        hidden.setAttribute("value", value);
+        hidden.setAttribute("class", name);
+        hidden.setAttribute("type", "hidden");
+        hidden.setAttribute('title', title);
+        return hidden;
+    }
+
+    /**
+     * Creates a checkbox input element.
+     * @param entry {string} json and value of the element
+     * @param checked {boolean} if true, the checkbox is checked
+     * @param disabled {boolean} if true, the checkbox is disabled
+     * @returns {HTMLInputElement}
+     */
+    function makeCheckbox(entry, checked, disabled ) {
+        let input = document.createElement('input');
+        input.setAttribute('json', entry);
+        input.setAttribute('name', 'value');
+        input.setAttribute("value", entry);
+        input.setAttribute("type", "checkbox");
+        if (checked) input.setAttribute("checked", "checked");
+        if (disabled) input.setAttribute("disabled", "disabled");
+        return input
+    }
+
+    /**
+     * Creates a radio input element.
+     * @param value {string} json and value of the element
+     * @param name {string } name of the element
+     * @param checked {boolean} if true, the radio is checked
+     * @param disabled {boolean} if true, the radio is disabled
+     * @returns {HTMLInputElement}
+     */
+    function makeRadio(value , name, checked, disabled) {
+        let input = document.createElement('input');
+        input.setAttribute('json', value);
+        input.setAttribute('name', name);
+        input.setAttribute("value", value);
+        input.setAttribute("type", "radio");
+        if (checked) input.setAttribute("checked", "checked");
+        if (disabled) input.setAttribute("disabled", "disabled");
+        return input;
+    }
+
     // Deciding on what is exported and returning instance
     instance.fakeSelectRadioButton = fakeSelectRadioButton;
     instance.getParameterValue = getParameterValue;
