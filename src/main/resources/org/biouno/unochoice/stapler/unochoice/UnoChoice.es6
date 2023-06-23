@@ -363,7 +363,7 @@ var UnoChoice = UnoChoice || ($ => {
                 $(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
                 setTimeout(() => {
-                   _self.cascadeParameter.update();
+                   _self.cascadeParameter.update(false);
                    $(".behavior-loading").hide();
                 }, 0);
             }
@@ -818,6 +818,175 @@ var UnoChoice = UnoChoice || ($ => {
         return proxy;
     }
 
+    function renderChoiceParameter(paramName, filterLength) {
+        let parentDiv = $(`#${paramName}`);
+        let parameterHtmlElement = parentDiv.find('DIV');
+        if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
+            console.log('Could not find element by name, perhaps it is a DIV?');
+            parameterHtmlElement = parentDiv.find('*[name="value"]');
+        }
+        if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+            let filterHtmlElement = parentDiv.find('.uno_choice_filter');
+            if (filterHtmlElement && filterHtmlElement.get(0)) {
+                parameterHtmlElement.filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), filterLength); // TBD: not very elegant
+            } else {
+                console.log('Filter error: Missing filter element!');
+            }
+        } else {
+            console.log('Filter error: Missing parameter element!');
+        }
+    }
+
+    function renderCascadeChoiceParameter(parentDivRef, filterable, name, randomName, filterLength, paramName, referencedParameters, cascadeChoiceParameter) {
+        // find the cascade parameter element
+        let parentDiv = jQuery(parentDivRef);
+        let parameterHtmlElement = parentDiv.find('DIV');
+        if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
+            console.log('Could not find element by name, perhaps it is a DIV?');
+            parameterHtmlElement = parentDiv.find('*[name="value"]');
+        }
+        if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+            let cascadeParameter = new UnoChoice.CascadeParameter(name, parameterHtmlElement.get(0), randomName, cascadeChoiceParameter);
+            UnoChoice.cascadeParameters.push(cascadeParameter);
+            // filter
+            if (filterable) {
+                let filterHtmlElement = parentDiv.find('.uno_choice_filter');
+                if (filterHtmlElement && filterHtmlElement.get(0)) {
+                    let filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), filterLength);
+                    cascadeParameter.setFilterElement(filterElement);
+                } else {
+                    console.log('Filter error: Missing filter element!');
+                }
+            }
+
+            for (let i  = 0; i < referencedParameters.length ; ++i) {
+                let parameterElement = null;
+                // FIXME: review the block below
+                let divs = jQuery('div[name="parameter"]');
+                for (let j = 0; j < divs.length ; j++) {
+                    let div = divs[j];
+                    let hiddenNames = jQuery(div).find('input[name="name"]');
+                    if (hiddenNames[0].value === referencedParameters[i]) {
+                        let children = div.children;
+                        for (let k = 0; k < children.length; ++k) {
+                            let child = children[k];
+                            if (child.getAttribute('name') === 'value') {
+                                parameterElement = child;
+                                break;
+                            } else if (child.tagName === 'DIV' || child.tagName === 'SPAN') {
+                                let subValues = jQuery(child).find('input[name="value"]');
+                                if (subValues && subValues.get(0)) {
+                                    parameterElement = child;
+                                    break;
+                                } else {
+                                    parameterElement = child;
+                                    break;
+                                }
+                            } else if (child.getAttribute('type') === 'file') {
+                                parameterElement = child;
+                                break;
+                            } else if (child.tagName === 'INPUT' && !['', 'name'].includes(child.name)) {
+                                parameterElement = child;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
+            }
+
+            // call update methods in Java passing the HTML values
+            console.log('Updating cascade of parameter [', name, '] ...');
+            cascadeParameter.update(false);
+        } else {
+            console.log('Parameter error: Missing parameter [', paramName, '] HTML element!');
+        }
+    }
+    
+    function renderDynamicRenderParameter(parentDivRef, name, paramName, referencedParameters, dynamicReferenceParameter) {
+        // find the cascade parameter element
+        let parentDiv = jQuery(parentDivRef);
+        // if the parameter class has been set to hidden, then we hide it now
+        if (parentDiv.get(0).getAttribute('class') === 'hidden_uno_choice_parameter') {
+            let parentTbody = jQuery(parentDiv.get(0)).parents('tbody');
+            // FIXME: temporary fix to support both TABLE and DIV in the Jenkins UI
+            //        remove after most users have migrated to newer versions with DIVs
+            if (!parentTbody || parentTbody.length === 0) {
+                parentTbody = jQuery(parentDiv.get(0)).parents('div > div.tr');
+            }
+            if (parentTbody && parentTbody.length > 0) {
+                jQuery(parentTbody.get(0)).attr('style', 'visibility:hidden;position:absolute;');
+            }
+        }
+        let parameterHtmlElement = null;
+        for(let i = 0; i < parentDiv.children().length; i++) {
+            let child = parentDiv.children()[i];
+            if (child.getAttribute('name') === 'value' || child.id.indexOf('ecp_') > -1) {
+                parameterHtmlElement = jQuery(child);
+                break;
+            }
+            if (child.id.indexOf('inputElement_') > -1) {
+                parameterHtmlElement = jQuery(child);
+                break;
+            }
+            if (child.id.indexOf('formattedHtml_') > -1) {
+                parameterHtmlElement = jQuery(child);
+                break;
+            }
+            if (child.id.indexOf('imageGallery_') > -1) {
+                parameterHtmlElement = jQuery(child);
+                break;
+            }
+        }
+        if (parameterHtmlElement && parameterHtmlElement.get(0)) {
+            let dynamicParameter = new UnoChoice.DynamicReferenceParameter(name, parameterHtmlElement.get(0), dynamicReferenceParameter);
+            UnoChoice.cascadeParameters.push(dynamicParameter); // TODO review whether it is right or not to add a dynamic parameter here
+            for (let i  = 0; i < referencedParameters.length ; ++i) {
+                let parameterElement = null;
+                // FIXME: review the block below
+                let divs = jQuery('div[name="parameter"]');
+                for (let j = 0; j < divs.length ; j++) {
+                    let div = divs[j];
+                    let hiddenNames = jQuery(div).find('input[name="name"]');
+                    if (hiddenNames[0].value === referencedParameters[i]) {
+                        let children = div.children;
+                        for (let k = 0; k < children.length; ++k) {
+                            let child = children[k];
+                            if (child.getAttribute('name') === 'value') {
+                                parameterElement = child;
+                                break;
+                            } else if (child.tagName === 'DIV' || child.tagName === 'SPAN') {
+                                let subValues = jQuery(child).find('input[name="value"]');
+                                if (subValues && subValues.get(0)) {
+                                    parameterElement = child;
+                                    break;
+                                } else {
+                                    parameterElement = child;
+                                    break;
+                                }
+                            } else if (child.getAttribute('type') === 'file') {
+                                parameterElement = child;
+                                break;
+                            } else if (child.tagName === 'INPUT' && !['', 'name'].includes(child.name)) {
+                                parameterElement = child;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);
+            }
+
+            // call update methods in Java passing the HTML values
+            console.log('Updating cascade of parameter [', name, '] ...');
+            dynamicParameter.update(false);
+        } else {
+            console.log('Parameter error: Missing parameter [', paramName,'] HTML element!');
+        }
+    }
+
     // Deciding on what is exported and returning instance
     instance.fakeSelectRadioButton = fakeSelectRadioButton;
     instance.getParameterValue = getParameterValue;
@@ -827,6 +996,9 @@ var UnoChoice = UnoChoice || ($ => {
     instance.FilterElement = FilterElement;
     instance.makeStaplerProxy2 = makeStaplerProxy2;
     instance.cascadeParameters = cascadeParameters;
+    instance.renderChoiceParameter = renderChoiceParameter;
+    instance.renderCascadeChoiceParameter = renderCascadeChoiceParameter;
+    instance.renderDynamicRenderParameter = renderDynamicRenderParameter;
     return instance;
 })(jQuery3);
 window.UnoChoice = UnoChoice;

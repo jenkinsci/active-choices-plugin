@@ -18,70 +18,7 @@
     if (window.makeStaplerProxy) {
         window.makeStaplerProxy = window.__old__makeStaplerProxy;
     }
-    // find the cascade parameter element
-    var parentDiv = jQuery('#${h.escape(paramName)}');
-    var parameterHtmlElement = parentDiv.find('DIV');
-    if (!parameterHtmlElement || parameterHtmlElement.length == 0) {
-        console.log('Could not find element by name, perhaps it is a DIV?');
-        parameterHtmlElement = parentDiv.find('*[name="value"]');
-    }
-    if (parameterHtmlElement &amp;&amp; parameterHtmlElement.get(0)) {
-        var cascadeParameter = new UnoChoice.CascadeParameter('${h.escape(it.getName())}', parameterHtmlElement.get(0), '${h.escape(it.getRandomName())}', cascadeChoiceParameter);
-        UnoChoice.cascadeParameters.push(cascadeParameter);
-        // filter
-        <j:if test="${it.filterable}">
-        var filterHtmlElement = parentDiv.find('.uno_choice_filter');
-        if (filterHtmlElement &amp;&amp; filterHtmlElement.get(0)) {
-            var filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), ${it.getFilterLength()});
-            cascadeParameter.setFilterElement(filterElement);
-        } else {
-            console.log('Filter error: Missing filter element!');
-        }
-        </j:if>
-
-        for (var i  = 0; i &lt; referencedParameters.length ; ++i) {
-            var parameterElement = null;
-            // FIXME: review the block below
-            var divs = jQuery('div[name="parameter"]');
-            for (var j = 0; j &lt; divs.length ; j++) {
-                var div = divs[j];
-                var hiddenNames = jQuery(div).find('input[name="name"]');
-                if (hiddenNames[0].value == referencedParameters[i]) {
-                    var children = div.children;
-                    for (var k = 0; k &lt; children.length; ++k) {
-                        var child = children[k];
-                        if (child.getAttribute('name') == 'value') {
-                            parameterElement = child;
-                            break;
-                        } else if (child.tagName == 'DIV' || child.tagName == 'SPAN') {
-                            var subValues = jQuery(child).find('input[name="value"]');
-                            if (subValues &amp;&amp; subValues.get(0)) {
-                                parameterElement = child;
-                                break;
-                            } else {
-                                parameterElement = child;
-                                break;
-                            }
-                        } else if (child.getAttribute('type') == 'file') {
-                            parameterElement = child;
-                            break;
-                        } else if (child.tagName === 'INPUT' &amp;&amp; !['', 'name'].includes(child.name)) {
-                            parameterElement = child;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
-        }
-
-        // call update methods in Java passing the HTML values
-        console.log('Updating cascade of parameter [${h.escape(it.getName())}] ...');
-        cascadeParameter.update();
-    } else {
-        console.log('Parameter error: Missing parameter [${h.escape(paramName)}] HTML element!');
-    }
+    UnoChoice.renderCascadeChoiceParameter('#${h.escape(paramName)}', ${it.filterable}, '${h.escape(it.getName())}', '${h.escape(it.getRandomName())}', ${it.getFilterLength()}, '${h.escape(paramName)}', referencedParameters, cascadeChoiceParameter);
 
   </script>
 </j:jelly>
