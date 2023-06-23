@@ -162,6 +162,15 @@
     <build>
         <defaultGoal>clean test install</defaultGoal>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <parallel>all</parallel>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <forkCount>1C</forkCount>
+                </configuration>
+            </plugin>
             <!-- TODO: re-enable, probably with google-chrome headless or qunit/npm instead
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
