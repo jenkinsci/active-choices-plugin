@@ -23,7 +23,7 @@
  */
 package org.biouno.unochoice.jenkins_cert_2219;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import org.htmlunit.CollectingAlertHandler;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
 import org.biouno.unochoice.CascadeChoiceParameter;

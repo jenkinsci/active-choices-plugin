@@ -41,7 +41,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import org.htmlunit.CollectingAlertHandler;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
