@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-'use strict';
+import Util from './Util.ts';
+
 jQuery3.noConflict();
 /**
  * <h2>Uno Choice Javascript module.</h2>
@@ -40,6 +41,7 @@ jQuery3.noConflict();
  * @since 0.20
  */
 var UnoChoice = UnoChoice || ($ => {
+    let util = new Util($);
     // The final public object
     let instance = {};
     let SEPARATOR = '__LESEP__';
@@ -233,7 +235,7 @@ var UnoChoice = UnoChoice || ($ => {
                             let idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             // <INPUT>
-                            let input = makeCheckbox(key, selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
+                            let input = util.makeCheckbox(key, selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
                             if (!entry instanceof String) {
                                 input.setAttribute("title", JSON.stringify(entry));
                                 input.setAttribute("alt", JSON.stringify(entry));
@@ -242,11 +244,11 @@ var UnoChoice = UnoChoice || ($ => {
                                 input.setAttribute("alt", entry);
                             }
                             // <LABEL>
-                            let label = makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry);
+                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
                             originalArray.push(input);
                             // Put everything together
-                            let td = makeTd([input, label]);
-                            let tr = makeTr(idValue)
+                            let td = util.makeTd([input, label]);
+                            let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
@@ -261,7 +263,7 @@ var UnoChoice = UnoChoice || ($ => {
                             let idValue = `ecp_${_self.getRandomName()}_${i}`;
                             idValue = idValue.replace(' ', '_');
                             // <INPUT>
-                            let input = makeRadio(key, _self.getParameterName(), selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
+                            let input = util.makeRadio(key, _self.getParameterName(), selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
                             input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
                             input.setAttribute('otherId', idValue);
                             if (!entry instanceof String) {
@@ -270,12 +272,12 @@ var UnoChoice = UnoChoice || ($ => {
                                 input.setAttribute('alt', entry);
                             }
                             // <LABEL>
-                            let label = makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry);
+                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
                              // <HIDDEN>
-                            let hiddenValue = makeHidden(idValue, key, selectedElements.indexOf(i) >= 0 ? 'value' : '', key, _self.getParameterName(), entry instanceof String ? entry : JSON.stringify(entry));
+                            let hiddenValue = util.makeHidden(idValue, key, selectedElements.indexOf(i) >= 0 ? 'value' : '', key, _self.getParameterName(), entry instanceof String ? entry : JSON.stringify(entry));
                             originalArray.push(input);
-                            let td = makeTd([input, label, hiddenValue]);
-                            let tr = makeTr(undefined)
+                            let td = util.makeTd([input, label, hiddenValue]);
+                            let tr = util.makeTr(undefined)
                              tr.appendChild(td);
                             tbody.appendChild(tr);
                             let endTr = document.createElement('div');
@@ -615,19 +617,19 @@ var UnoChoice = UnoChoice || ($ => {
 
                             let input =
                                     entry instanceof String ?
-                                            makeCheckbox(entry) :
+                                            util.makeCheckbox(entry, undefined, undefined) :
                                             entry.tagName === 'INPUT' ?
                                                     entry :
-                                                    makeRadio(JSON.stringify(entry.value), 'value');
+                                                    util.makeRadio(JSON.stringify(entry.value), 'value', undefined, undefined);
 
                             // LABEL
                             let label = (entry instanceof String || entry.tagName === 'INPUT') ?
-                                    makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
-                                    makeLabel(input);
+                                    util.makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
+                                    util.makeLabel(input, undefined);
 
                             // Put everything together
-                            let td = makeTd([input, label]);
-                            let tr = makeTr(idValue)
+                            let td = util.makeTd([input, label]);
+                            let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
@@ -647,12 +649,12 @@ var UnoChoice = UnoChoice || ($ => {
                             let input = document.createElement('input');
                             input = entry;
                             input.checked = false;
-                            let jsonInput = makeHidden(input.getAttribute('otherid'), input.getAttribute('json'), '', input.getAttribute('value'), input.getAttribute('name'), input.getAttribute('alt'));
+                            let jsonInput = util.makeHidden(input.getAttribute('otherid'), input.getAttribute('json'), '', input.getAttribute('value'), input.getAttribute('name'), input.getAttribute('alt'));
 
-                            let label = makeLabel(input.getAttribute('alt'));
+                            let label = util.makeLabel(input.getAttribute('alt'), undefined);
                             // Put everything together
-                            let td = makeTd([input, label, jsonInput]);
-                            let tr = makeTr(idValue)
+                            let td = util.makeTd([input, label, jsonInput]);
+                            let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
@@ -721,13 +723,13 @@ var UnoChoice = UnoChoice || ($ => {
         let e = $(htmlParameter);
         let value = '';
         if (e.attr('name') === 'value') {
-            value = getElementValue(htmlParameter);
+            value = util.getElementValue(e);
         }  else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
             let subElements = e.find('[name="value"]');
             if (subElements) {
                 let valueBuffer = Array();
                 subElements.each(function() {
-                    let tempValue = getElementValue($(this));
+                    let tempValue = util.getElementValue($(this));
                     if (tempValue)
                         valueBuffer.push(tempValue);
                 });
@@ -740,47 +742,9 @@ var UnoChoice = UnoChoice || ($ => {
                 value = firstFile.name;
             }
         } else if (e.prop('tagName') === 'INPUT' && !['', 'name'].includes(e.attr('name'))) {
-            value = getElementValue(htmlParameter);
+            value = util.getElementValue(e);
         }
         return value;
-    }
-    /**
-     * Gets the value of a HTML element as string. If the returned value is an Array it gets serialized first.
-     * Correctly handles SELECT, CHECKBOX, RADIO, and other types.
-     *
-     * @param htmlParameter {HTMLElement} HTML element
-     * @return {string} the returned value as string. Empty by default.
-     */
-    function getElementValue(htmlParameter) {
-        let value = '';
-        let e = $(htmlParameter);
-        if (e.prop('tagName') === 'SELECT') {
-            value = getSelectValues(e);
-        } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
-            value = e.prop('checked') ? e.val(): '';
-        } else {
-            value = e.val();
-        }
-        if (value instanceof Array)
-            value = value.toString()
-        return value;
-    }
-    /**
-     * Gets an array of the selected option values in a HTML select element.
-     *
-     * @param select {HTMLSelectElement} HTML DOM select element
-     * @return {Array<string>} <code>Array</code>
-     *
-     * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
-     */
-    function getSelectValues(select) {
-        let result = [];
-        let options = select && select.children('option:selected');
-        for (let i = 0; options !== undefined && i < options.length; i++) {
-            let option = options[i];
-            result.push(option.value || option.text);
-        }
-        return result;
     }
     // Hacks in Jenkins core
     /**
@@ -854,106 +818,6 @@ var UnoChoice = UnoChoice || ($ => {
         return proxy;
     }
 
-    /**
-     * Creates a table cell with the given elements.
-     * @param innerHTML {string} innerHTML of the cell
-     * @param title {string} title of the cell
-     * @returns {HTMLLabelElement}
-     */
-    function makeLabel(innerHTML, title) {
-        let label = document.createElement('label');
-        label.innerHTML = innerHTML;
-        label.className = "attach-previous";
-        if (title) label.title = title;
-        return label;
-    }
-
-    /**
-     * Creates a table row with the given id.
-     * @param id {string} id of the tr
-     * @returns {HTMLDivElement}
-     */
-    function makeTr(id) {
-        let tr = document.createElement('div');
-        tr.setAttribute('style', 'white-space:nowrap');
-        tr.setAttribute('class', 'tr');
-        if (id) tr.setAttribute('id', id);
-        tr.setAttribute('style', 'white-space:nowrap');
-        return tr
-    }
-
-    /**
-     * Creates a table cell with the given elements.
-     * @param elements {Array<HTMLElement>} elements to be added to the cell
-     * @returns {HTMLDivElement}
-     */
-    function makeTd(elements) {
-        let td = document.createElement('div');
-        for (let i = 0; i < elements.length; i++) {
-            td.appendChild(elements[i]);
-        }
-        return td;
-    }
-
-    /**
-     * Creates a hidden input element.
-     * @param id {string} id of the element
-     * @param json {string} json of the element
-     * @param name {string} name of the element
-     * @param value {string} value of the element
-     * @param clazz {string} class of the element
-     * @param title {string} title of the element
-     * @returns {HTMLInputElement}
-     */
-    function makeHidden(id, json, name, value, clazz, title) {
-        let hidden = document.createElement('input'); // used to help in the selection
-        hidden.setAttribute('id', id);
-        hidden.setAttribute('json', json);
-        hidden.setAttribute('name', name);
-        hidden.setAttribute("value", value);
-        hidden.setAttribute("class", name);
-        hidden.setAttribute("type", "hidden");
-        hidden.setAttribute('title', title);
-        return hidden;
-    }
-
-    /**
-     * Creates a checkbox input element.
-     * @param entry {string} json and value of the element
-     * @param checked {boolean} if true, the checkbox is checked
-     * @param disabled {boolean} if true, the checkbox is disabled
-     * @returns {HTMLInputElement}
-     */
-    function makeCheckbox(entry, checked, disabled ) {
-        let input = document.createElement('input');
-        input.setAttribute('json', entry);
-        input.setAttribute('name', 'value');
-        input.setAttribute("value", entry);
-        input.setAttribute("type", "checkbox");
-        if (checked) input.setAttribute("checked", "checked");
-        if (disabled) input.setAttribute("disabled", "disabled");
-        return input
-    }
-
-    /**
-     * Creates a radio input element.
-     * @param value {string} json and value of the element
-     * @param name {string } name of the element
-     * @param checked {boolean} if true, the radio is checked
-     * @param disabled {boolean} if true, the radio is disabled
-     * @returns {HTMLInputElement}
-     */
-    function makeRadio(value , name, checked, disabled) {
-        let input = document.createElement('input');
-        input.setAttribute('json', value);
-        input.setAttribute('name', name);
-        input.setAttribute("value", value);
-        input.setAttribute("type", "radio");
-        if (checked) input.setAttribute("checked", "checked");
-        if (disabled) input.setAttribute("disabled", "disabled");
-        return input;
-    }
-
     // Deciding on what is exported and returning instance
     instance.fakeSelectRadioButton = fakeSelectRadioButton;
     instance.getParameterValue = getParameterValue;
@@ -965,3 +829,4 @@ var UnoChoice = UnoChoice || ($ => {
     instance.cascadeParameters = cascadeParameters;
     return instance;
 })(jQuery3);
+window.UnoChoice = UnoChoice;

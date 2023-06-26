@@ -2,9 +2,10 @@ work/
 .idea/
 target/
 test-output/
-.idea/
 .classpath
 .settings/
 .project
 **/*~
 *.iml
+node/
+node_modules/

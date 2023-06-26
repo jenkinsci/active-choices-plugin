@@ -22,5 +22,5 @@ Use it like <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
     align-items: flex-start;
   }
   </style>
-  <script src="${it.packageUrl}/unochoice/unochoice.js" type="text/javascript" />
+  <script src="${it.packageUrl}/unochoice/UnoChoice.js" type="text/javascript" />
 </j:jelly>

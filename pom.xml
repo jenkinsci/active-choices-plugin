@@ -38,6 +38,8 @@
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.375.3</jenkins.version>
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
+        <node.version>18.16.0</node.version>
+        <yarn.version>1.22.19</yarn.version>
     </properties>
 
     <scm>
@@ -202,6 +204,7 @@
                     <compatibleSinceVersion>2.0</compatibleSinceVersion>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
