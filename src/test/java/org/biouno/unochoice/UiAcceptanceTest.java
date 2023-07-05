@@ -1,6 +1,5 @@
 package org.biouno.unochoice;
 
-import hudson.model.FreeStyleProject;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -9,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.recipes.LocalData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,8 +16,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -51,8 +49,6 @@ public class UiAcceptanceTest {
 
     @Before
     public void setUp() throws Exception {
-        FreeStyleProject freeStyleProject = j.createFreeStyleProject("test");
-        freeStyleProject.updateByXml((Source) new StreamSource(getClass().getClassLoader().getResourceAsStream("test-config.xml")));
         if (isCi()) {
             driver = new ChromeDriver(new ChromeOptions().addArguments("--headless", "--disable-dev-shm-usage", "--no-sandbox"));
         } else {
@@ -65,6 +61,7 @@ public class UiAcceptanceTest {
          driver.quit();
     }
 
+    @LocalData
     @Test
     public void test() throws Exception {
         // Load the page
