@@ -133,7 +133,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
     // --- descriptor
 
     @Extension
-    @Symbol({"referenceChoice"})
+    @Symbol({"activeChoiceHtml"})
     public static final class DescriptorImpl extends UnoChoiceParameterDescriptor {
 
         private AbstractProject<?, ?> project;
