@@ -52,7 +52,6 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TestParametersXssVulnerabilities {
 
-    private static final VersionNumber TRANSITION_TO_DIV_VERSION = new VersionNumber("2.264");
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
@@ -84,9 +83,7 @@ public class TestParametersXssVulnerabilities {
         try (WebClient wc = j.createWebClient()) {
             wc.setThrowExceptionOnFailingStatusCode(false);
             HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
-            DomNodeList<DomElement> nodes =
-                    Objects.requireNonNull(Jenkins.getStoredVersion()).isNewerThanOrEqualTo(TRANSITION_TO_DIV_VERSION) ?
-                            configPage.getElementsByTagName("div") : configPage.getElementsByTagName("td");
+            DomNodeList<DomElement> nodes = configPage.getElementsByTagName("div");
             DomElement renderedParameterElement = null;
             for (DomElement elem : nodes) {
                 if (elem.getAttribute("class").contains("setting-main")) {
