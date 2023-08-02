@@ -25,6 +25,7 @@
 package org.biouno.unochoice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -101,6 +102,23 @@ public class TestCascadeChoiceParameter {
         assertEquals(expected, param.getParameters());
 
         assertEquals(Arrays.asList("param001", "param002"), Arrays.asList(param.getReferencedParametersAsArray()));
+    }
+
+    @Test
+    public void testNullFilterable() {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
+                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", null, 5);
+
+        assertEquals("param000", param.getName());
+        assertEquals("description", param.getDescription());
+        assertEquals("some-random-name", param.getRandomName());
+        assertEquals(script, param.getScript());
+        assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
+        assertEquals("param001, param002", param.getReferencedParameters());
+        assertFalse(param.getFilterable());
+        assertEquals(Integer.valueOf(5), param.getFilterLength());
     }
 
 }

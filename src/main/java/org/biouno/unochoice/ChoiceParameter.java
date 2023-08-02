@@ -30,6 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.util.Objects;
+
 /**
  * A parameter that renders its options as a choice (select) HTML component.
  *
@@ -126,8 +128,8 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * Get the filter flag.
      * @return filter flag
      */
-    public Boolean getFilterable() {
-        return filterable;
+    public boolean getFilterable() {
+        return Objects.equals(filterable, Boolean.TRUE);
     }
 
     /**

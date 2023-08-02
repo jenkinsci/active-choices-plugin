@@ -25,6 +25,7 @@
 package org.biouno.unochoice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.biouno.unochoice.model.GroovyScript;
@@ -64,6 +65,22 @@ public class TestDynamicReferenceParameter {
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
         assertTrue(param.getOmitValueField());
+    }
+
+    @Test
+    public void testNullOmitValueField() {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        DynamicReferenceParameter param = new DynamicReferenceParameter("param000", "description", "some-random-name",
+                script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, "param001, param002", null);
+
+        assertEquals("param000", param.getName());
+        assertEquals("description", param.getDescription());
+        assertEquals(script, param.getScript());
+        assertEquals("some-random-name", param.getRandomName());
+        assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
+        assertEquals("param001, param002", param.getReferencedParameters());
+        assertFalse(param.getOmitValueField());
     }
 
 }

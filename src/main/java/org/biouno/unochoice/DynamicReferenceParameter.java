@@ -25,6 +25,7 @@
 package org.biouno.unochoice;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -118,8 +119,8 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
         return this.choiceType;
     }
 
-    public Boolean getOmitValueField() {
-        return omitValueField;
+    public boolean getOmitValueField() {
+        return Objects.equals(omitValueField, Boolean.TRUE);
     }
 
     @JavaScriptMethod

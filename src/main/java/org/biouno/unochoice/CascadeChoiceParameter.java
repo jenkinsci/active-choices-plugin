@@ -30,6 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.util.Objects;
+
 /**
  * <p>A choice parameter, that gets updated when another parameter changes. The simplest
  * use case for this, would be having a list of states, and when the user selected a
@@ -139,8 +141,8 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
      * Get the filter flag.
      * @return filter flag
      */
-    public Boolean getFilterable() {
-        return filterable;
+    public boolean getFilterable() {
+        return Objects.equals(filterable, Boolean.TRUE);
     }
 
     /**

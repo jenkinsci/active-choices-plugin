@@ -25,6 +25,7 @@
 package org.biouno.unochoice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.biouno.unochoice.model.GroovyScript;
@@ -63,6 +64,22 @@ public class TestChoiceParameter {
         assertEquals(script, param.getScript());
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertTrue(param.getFilterable());
+        assertEquals(Integer.valueOf(5), param.getFilterLength());
+    }
+
+    @Test
+    public void testNullFilterable() {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,
+                CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HIDDEN_HTML, false, 5);
+
+        assertEquals("param000", param.getName());
+        assertEquals("description", param.getDescription());
+        assertEquals("some-random-name", param.getRandomName());
+        assertEquals(script, param.getScript());
+        assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
+        assertFalse(param.getFilterable());
         assertEquals(Integer.valueOf(5), param.getFilterLength());
     }
 }
