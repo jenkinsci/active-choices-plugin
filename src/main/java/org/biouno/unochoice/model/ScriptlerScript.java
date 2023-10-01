@@ -122,7 +122,9 @@ public class ScriptlerScript extends AbstractScript {
             readResolve();
         } else {
             String scriptId = scriptlerScriptId == null ? scriptlerBuilder.getScriptId() : scriptlerScriptId;
-            Parameter[] parameters = this.parameters == null ? scriptlerBuilder.getParameters() : getParametersFromDeprecatedMap();
+            Parameter[] parameters = (this.parameters == null || this.parameters.isEmpty())
+                    ? scriptlerBuilder.getParametersList().toArray(new Parameter[0])
+                    : getParametersFromDeprecatedMap();
             scriptlerBuilder = new ScriptlerBuilder(
                     scriptlerBuilder.getBuilderId(),
                     scriptId,
