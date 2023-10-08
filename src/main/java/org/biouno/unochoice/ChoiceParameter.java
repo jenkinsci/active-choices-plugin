@@ -152,6 +152,10 @@ public class ChoiceParameter extends AbstractScriptableParameter {
             return "Active Choices Parameter";
         }
 
+        @Override
+        public String getHelpFile() {
+            return "/plugin/uno-choice/help/parameter/active-choices-choice.html";
+        }
     }
 
 }

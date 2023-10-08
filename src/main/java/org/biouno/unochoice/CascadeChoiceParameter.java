@@ -165,6 +165,10 @@ public class CascadeChoiceParameter extends AbstractCascadableParameter {
             return "Active Choices Reactive Parameter";
         }
 
+        @Override
+        public String getHelpFile() {
+            return "/plugin/uno-choice/help/parameter/active-choices-cascade-choice.html";
+        }
     }
 
 }

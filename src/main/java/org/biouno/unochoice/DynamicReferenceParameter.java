@@ -176,6 +176,11 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
             return FormValidation.ok();
         }
 
+        @Override
+        public String getHelpFile() {
+            return "/plugin/uno-choice/help/parameter/active-choices-dynamic-reference-parameter.html";
+        }
+
     }
 
 }
