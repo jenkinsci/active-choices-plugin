@@ -2,6 +2,7 @@ package org.biouno.unochoice;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.ElementNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -10,11 +11,13 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -26,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UiAcceptanceTest {
@@ -66,11 +70,33 @@ public class UiAcceptanceTest {
             driver = new ChromeDriver(new ChromeOptions());
         }
         wait = new WebDriverWait(driver, MAX_WAIT);
+        driver.manage().window().setSize(new Dimension(1440, 900));
     }
 
     @After
     public void tearDown() {
         driver.quit();
+    }
+
+    @LocalData("test")
+    @Test
+    public void testHelpFiles() throws Exception {
+        // Load the page
+        driver.get(j.getURL().toString() + "job/test/configure");
+
+        // Get the help container div of PARAM1.
+        final WebElement param1ParamDiv = findParamDiv("PARAM1");
+
+        final WebElement helpTextDiv = param1ParamDiv.findElement(By.cssSelector("div.help-area > div.help"));
+        assertFalse(helpTextDiv.isDisplayed());
+
+        final WebElement helpIcon = param1ParamDiv.findElement(By.cssSelector("a.jenkins-help-button"));
+        wait.until(ExpectedConditions.elementToBeClickable(helpIcon));
+        helpIcon.click();
+
+        wait.withMessage(() -> "The help text should have been displayed").until(d -> helpTextDiv.isDisplayed());
+
+        assertTrue(helpTextDiv.getText().startsWith("This is a simple parameter"));
     }
 
     @LocalData
@@ -200,6 +226,21 @@ public class UiAcceptanceTest {
 
     private WebElement findSelect(String paramName) {
         return driver.findElement(By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) > select"));
+    }
+
+    private WebElement findParamDiv(String paramName) {
+        final WebElement paramValueInput = driver.findElement(By.cssSelector("input[name='parameter.name'][value='" + paramName + "']"));
+        // Up to how many parent levels to we want to search for the help button?
+        // At the moment it's 3 levels up, so let's give it some room, use 7.
+        final int parentsLimit = 7;
+        WebElement parentElement = paramValueInput.findElement(By.xpath("./.."));
+        for (int i = 0; i < parentsLimit; i++) {
+            if (parentElement.getAttribute("name") != null && parentElement.getAttribute("name").equals("parameterDefinitions")) {
+                return parentElement;
+            }
+            parentElement = parentElement.findElement(By.xpath("./.."));
+        }
+        throw new ElementNotFoundException("div", "parameterDefinitions", "");
     }
 
     private void checkOptions(Supplier<WebElement> param1Input, String... options) {
