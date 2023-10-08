@@ -1,5 +1,9 @@
 # Active Choices plug-in changelog
 
+## Version 2.8.0 (2023/10/??)
+
+1. [#80](https://github.com/jenkinsci/active-choices-plugin/pull/80): Add `@Symbol` to support declarative pipelines (thanks to @mamh2021, original submitted in #43)
+
 ## Version 2.7.2 (2023/08/17)
 
 1. [#85](https://github.com/jenkinsci/active-choices-plugin/pull/85): fix: When configured using a pipeline, handle null filterable #85, thanks @rahulsom
