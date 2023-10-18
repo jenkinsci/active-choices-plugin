@@ -108,7 +108,7 @@ public class TestPersistingParameters {
         // scriptler setup
         scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
         ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
-        scriptFile = File.createTempFile("uno-choice", "dummy.groovy");
+        scriptFile = Files.createTempFile("uno-choice", "dummy.groovy").toFile();
         FileUtils.writeStringToFile(scriptFile, SCRIPT_PARAM001, Charset.defaultCharset(), false);
         FileItem fi = new FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "dummy.groovy");

@@ -44,6 +44,7 @@ import org.jvnet.hudson.test.recipes.LocalData;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collections;
 
 @Issue("63983")
@@ -61,7 +62,7 @@ public class TestSandboxAndApproval {
         final String scriptText = "import hudson.model.Hudson;\n" +
                 "Hudson.getInstance();\n" +
                 "return \"Got instance!\";";
-        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
@@ -85,7 +86,7 @@ public class TestSandboxAndApproval {
         final String scriptText = "import hudson.model.Hudson;\n" +
                 "Hudson.getInstance();\n" +
                 "return \"Got instance!\";";
-        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
@@ -111,7 +112,7 @@ public class TestSandboxAndApproval {
         final String scriptText = "import hudson.model.Hudson;\n" +
                 "Hudson.getInstance();\n" +
                 "return \"Got instance!\";";
-        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
@@ -137,7 +138,7 @@ public class TestSandboxAndApproval {
         final String scriptText = "import hudson.model.Hudson;\n" +
                 "Hudson.getInstance();\n" +
                 "return \"Got instance!\";";
-        final File scriptFile = File.createTempFile("uno-choice", "63983");
+        final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
         final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
