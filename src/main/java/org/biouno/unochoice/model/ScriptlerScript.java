@@ -269,7 +269,7 @@ public class ScriptlerScript extends AbstractScript {
             if (scriptler != null) {
                 ScriptlerManagement scriptlerManagement = (ScriptlerManagement) scriptler;
                 final Script script = scriptlerManagement.getConfiguration().getScriptById(scriptlerScriptId);
-                if (script != null && script.getParameters() != null) {
+                if (script != null) {
                     return JSONArray.fromObject(script.getParameters());
                 }
             }
