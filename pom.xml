@@ -168,6 +168,18 @@
             <version>4.14.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-aggregator</artifactId>
+            <version>596.v8c21c963d92d</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>job-dsl</artifactId>
+            <version>1.87</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
