@@ -99,7 +99,7 @@ public class ScriptlerScript extends AbstractScript {
                     "active-choices",
                     this.scriptlerScriptId,
                     false,
-                    getParametersFromDeprecatedMap()
+                    Arrays.asList(getParametersFromDeprecatedMap())
                     );
         }
         return this;
@@ -129,7 +129,7 @@ public class ScriptlerScript extends AbstractScript {
                     scriptlerBuilder.getBuilderId(),
                     scriptId,
                     scriptlerBuilder.isPropagateParams(),
-                    parameters
+                    Arrays.asList(parameters)
             );
         }
     }
