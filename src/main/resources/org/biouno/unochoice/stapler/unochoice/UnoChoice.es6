@@ -149,6 +149,22 @@ var UnoChoice = UnoChoice || ($ => {
         console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the CascadeChoiceParameter Map of parameters
         await new Promise((resolve) => this.proxy.doUpdate(parametersString, t => resolve(t)));
+
+        let spinner, rootDiv;
+        if (this.getRandomName()) {
+            let spinnerId = this.getRandomName().split('_').pop();
+            spinner = jQuery(`div#${spinnerId}-spinner`);
+            // Show spinner
+            if (spinner) {
+                spinner.show();
+            }
+            // Disable DIV changes
+            rootDiv = jQuery(`div#${spinnerId}`);
+            if (rootDiv) {
+                rootDiv.css('pointer-events', 'none');
+            }
+        }
+
         // Now we get the updated choices, after the Groovy script is eval'd using the updated Map of parameters
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         let _self = this; // re-reference this to use within the inner function
@@ -314,6 +330,14 @@ var UnoChoice = UnoChoice || ($ => {
         } else {
             console.log('Avoiding infinite loop due to recursion!');
         }
+        // Hide spinner
+        if (spinner) {
+            spinner.hide();
+        }
+        // Activate DIV changes
+        if (rootDiv) {
+            rootDiv.css('pointer-events', 'auto');
+        }
     }
     /**
      * Returns <code>true</code> iff the given parameter is not null, and one of its
@@ -419,6 +443,21 @@ var UnoChoice = UnoChoice || ($ => {
         // Update the Map of parameters
         await new Promise((resolve) => this.proxy.doUpdate(parametersString, t => resolve(t)));
         let parameterElement = this.getParameterElement();
+
+        let spinner, rootDiv;
+        if (parameterElement.id) {
+            let spinnerId = parameterElement.id.split('_').pop();
+            spinner = jQuery(`div#${spinnerId}-spinner`);
+            // Show spinner
+            if (spinner) {
+                spinner.show();
+            }
+            rootDiv = jQuery(`div#${spinnerId}`);
+            // Disable DIV changes
+            if (rootDiv) {
+                rootDiv.css('pointer-events', 'none');
+            }
+        }
         // Here depending on the HTML element we might need to call a method to return a Map of elements,
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName === 'OL') { // handle OL's
@@ -478,6 +517,14 @@ var UnoChoice = UnoChoice || ($ => {
             }
         } else {
             console.log('Avoiding infinite loop due to recursion!');
+        }
+        // Hide spinner
+        if (spinner) {
+            spinner.hide();
+        }
+        // Activate DIV changes
+        if (rootDiv) {
+            rootDiv.css('pointer-events', 'auto');
         }
     }
     // --- Filter Element
@@ -788,7 +835,6 @@ var UnoChoice = UnoChoice || ($ => {
                     console.log('Filter error: Missing filter element!');
                 }
             }
-
             for (let i  = 0; i < referencedParameters.length ; ++i) {
                 let parameterElement = null;
                 // FIXME: review the block below

@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:l="/lib/layout">
   ${it.parameters.clear()}
   <st:adjunct includes="io.jenkins.plugins.jquery3"/>
   <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
@@ -16,6 +16,9 @@
     <j:set var="cssclazz" value="hidden_uno_choice_parameter" />    
   </j:if>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+    <div id='${paramName}-spinner' style="display: none; position: absolute; margin-left: -25px;">
+      <l:spinner />
+    </div>
     <div name="parameter" class="${cssclazz}" id='${paramName}'>
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>
@@ -62,5 +65,15 @@
     </j:forEach>
 
     UnoChoice.renderDynamicRenderParameter('#${paramName}', '${h.escape(it.getName())}', '${h.escape(paramName)}', referencedParameters, dynamicReferenceParameter);
+
+    // update spinner id
+    let rootElmt = document.querySelector('#${paramName}');
+    if (rootElmt) {
+      let divElmt = rootElmt.querySelector('div');
+      if (divElmt) {
+        let spinnerId = divElmt.id.split('_').pop();
+        document.querySelector('#${paramName}-spinner').setAttribute('id', spinnerId + '-spinner');
+      }
+    }
   </script>
 </j:jelly>

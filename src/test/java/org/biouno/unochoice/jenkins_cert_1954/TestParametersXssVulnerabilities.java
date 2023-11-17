@@ -23,9 +23,8 @@
  */
 package org.biouno.unochoice.jenkins_cert_1954;
 
-import org.htmlunit.html.DomElement;
-import org.htmlunit.html.DomNodeList;
-import org.htmlunit.html.HtmlPage;
+import org.apache.commons.io.IOUtils;
+import org.htmlunit.html.*;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.util.VersionNumber;
@@ -39,7 +38,9 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static org.junit.Assert.assertTrue;
@@ -92,7 +93,18 @@ public class TestParametersXssVulnerabilities {
                 }
             }
             assertNotNull("Could not locate rendered parameter element", renderedParameterElement);
-            String renderedText = renderedParameterElement.getFirstChild().asXml();
+
+            DomNode firstChild = null;
+            for (DomNode child : renderedParameterElement.getChildren()) {
+                // Spinner element must be ignored
+                firstChild = child;
+                if (child instanceof HtmlDivision && ((HtmlDivision) child).getAttribute("id").endsWith("-spinner")) {
+                    continue;
+                }
+                break;
+            }
+            assertNotNull("Could not locate first child element", firstChild);
+            String renderedText = firstChild.asXml();
             assertNotEquals("XSS string was not escaped!", xssString, renderedText);
             assertTrue("XSS string was not escaped!", renderedText.trim().contains("&amp;lt;img src=x onerror=alert(123)&amp;gt;"));
         }

@@ -1,11 +1,14 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:l="/lib/layout">
   <st:adjunct includes="io.jenkins.plugins.jquery3"/>
   <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
   <j:set var="paramName" value="${h.escape(it.randomName)}" scope="parent" />
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
+    <div id='${paramName}-spinner' style="display: none; position: absolute; margin-left: -25px;">
+      <l:spinner />
+    </div>
     <div name="parameter" description="${it.formattedDescription}" id='${paramName}' class="active-choice">
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>

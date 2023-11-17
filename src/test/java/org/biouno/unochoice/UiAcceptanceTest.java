@@ -70,7 +70,7 @@ public class UiAcceptanceTest {
             driver = new ChromeDriver(new ChromeOptions());
         }
         wait = new WebDriverWait(driver, MAX_WAIT);
-        driver.manage().window().setSize(new Dimension(1440, 900));
+        driver.manage().window().setSize(new Dimension(2560, 1440));
     }
 
     @After
