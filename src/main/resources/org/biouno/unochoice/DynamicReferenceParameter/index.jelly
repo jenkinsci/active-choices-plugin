@@ -67,11 +67,11 @@
     UnoChoice.renderDynamicRenderParameter('#${paramName}', '${h.escape(it.getName())}', '${h.escape(paramName)}', referencedParameters, dynamicReferenceParameter);
 
     // update spinner id
-    let rootElmt = document.querySelector('#${paramName}');
+    var rootElmt = document.querySelector('#${paramName}');
     if (rootElmt) {
-      let divElmt = rootElmt.querySelector('div');
+      var divElmt = rootElmt.querySelector('div');
       if (divElmt) {
-        let spinnerId = divElmt.id.split('_').pop();
+        var spinnerId = divElmt.id.split('_').pop();
         document.querySelector('#${paramName}-spinner').setAttribute('id', spinnerId + '-spinner');
       }
     }
