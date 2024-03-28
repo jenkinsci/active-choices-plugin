@@ -39,9 +39,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -96,7 +96,7 @@ public class Utils {
      * @param obj parameter value
      * @return escaped parameter value
      */
-    public static @Nonnull String escapeSelected(@Nullable Object obj) {
+    public static @NonNull String escapeSelected(@Nullable Object obj) {
         if (obj == null)
             return "";
         final String text = obj.toString();
@@ -127,7 +127,7 @@ public class Utils {
      * @param obj parameter value
      * @return escaped parameter value
      */
-    public static @Nonnull String escapeDisabled(@Nullable Object obj) {
+    public static @NonNull String escapeDisabled(@Nullable Object obj) {
         if (obj == null)
             return "";
         final String text = obj.toString();
@@ -144,7 +144,7 @@ public class Utils {
      * @param obj parameter value
      * @return escaped parameter value
      */
-    public static @Nonnull String escapeSelectedAndDisabled(@Nullable Object obj) {
+    public static @NonNull String escapeSelectedAndDisabled(@Nullable Object obj) {
         if (obj == null)
             return "";
         final String text = obj.toString();
@@ -162,7 +162,7 @@ public class Utils {
      * @param suffix parameter suffix
      * @return random parameter name
      */
-    public static @Nonnull String createRandomParameterName(@Nullable String prefix, @Nullable String suffix) {
+    public static @NonNull String createRandomParameterName(@Nullable String prefix, @Nullable String suffix) {
         String paramName = "";
         if (StringUtils.isNotBlank(prefix))
             paramName = prefix + "-";
@@ -179,7 +179,7 @@ public class Utils {
      *
      * @return System environment variables as map
      */
-    public static @Nonnull Map<String, String> getSystemEnv() {
+    public static @NonNull Map<String, String> getSystemEnv() {
         return System.getenv();
     }
 
@@ -193,7 +193,7 @@ public class Utils {
      */
     @Deprecated
     @SuppressWarnings("rawtypes")
-    public static @CheckForNull Project<?, ?> getProjectByName(@Nonnull String projectName) {
+    public static @CheckForNull Project<?, ?> getProjectByName(@NonNull String projectName) {
         Authentication auth = Jenkins.getAuthentication();
         for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.getInstance(), Project.class)) {
             if (p.getName().equals(projectName) && p.getACL().hasPermission(auth, Item.READ)) {
@@ -212,7 +212,7 @@ public class Utils {
      * @return {@code null} if the current project cannot be found
      */
     @SuppressWarnings("rawtypes")
-    public static @CheckForNull Project findProjectByParameterUUID(@Nonnull String parameterUUID) {
+    public static @CheckForNull Project findProjectByParameterUUID(@NonNull String parameterUUID) {
         Authentication auth = Jenkins.getAuthentication();
         for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.get(), Project.class)) {
             if (isParameterDefinitionOf(parameterUUID, p) && p.getACL().hasPermission(auth, Item.READ)) {
@@ -231,7 +231,7 @@ public class Utils {
      * @param project the project to search for this parameter definition.
      * @return {@code true} if the project contains this parameter definition.
      */
-    private static boolean isParameterDefinitionOf(@Nonnull String parameterUUID, @Nonnull Project<?, ?> project) {
+    private static boolean isParameterDefinitionOf(@NonNull String parameterUUID, @NonNull Project<?, ?> project) {
         List<ParameterDefinition> parameterDefinitions = new ArrayList<>(getProjectParameterDefinitions(project));
         for (List<ParameterDefinition> params : getBuildWrapperParameterDefinitions(project).values()) {
             parameterDefinitions.addAll(params);
@@ -256,7 +256,7 @@ public class Utils {
      * @param project the project for which the parameter definitions should be found
      * @return parameter definitions or an empty list
      */
-    public static @Nonnull List<ParameterDefinition> getProjectParameterDefinitions(@Nonnull Project<?, ?> project) {
+    public static @NonNull List<ParameterDefinition> getProjectParameterDefinitions(@NonNull Project<?, ?> project) {
         ParametersDefinitionProperty parametersDefinitionProperty = project.getProperty(ParametersDefinitionProperty.class);
         if (parametersDefinitionProperty != null) {
             List<ParameterDefinition> parameterDefinitions = parametersDefinitionProperty.getParameterDefinitions();
@@ -273,7 +273,7 @@ public class Utils {
      * @since 1.6
      * @return map with global node properties
      */
-    public static @Nonnull Map<String, Object> getGlobalNodeProperties() {
+    public static @NonNull Map<String, Object> getGlobalNodeProperties() {
         Map<String, Object> map = new HashMap<>();
         Jenkins instance = Jenkins.get();
         DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = instance.getGlobalNodeProperties();
@@ -293,7 +293,7 @@ public class Utils {
      * @param project the project for which the parameter definitions should be found
      * @return Map
      */
-    public static @Nonnull Map<BuildWrapper, List<ParameterDefinition>> getBuildWrapperParameterDefinitions(@Nonnull Project<?, ?> project) {
+    public static @NonNull Map<BuildWrapper, List<ParameterDefinition>> getBuildWrapperParameterDefinitions(@NonNull Project<?, ?> project) {
         final List<BuildWrapper> buildWrappersList = project.getBuildWrappersList();
 
         final Map<BuildWrapper, List<ParameterDefinition>> result = new LinkedHashMap<>();

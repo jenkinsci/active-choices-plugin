@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.biouno.unochoice.util.SafeHtmlExtendedMarkupFormatter;
 import org.jenkinsci.Symbol;
