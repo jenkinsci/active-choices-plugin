@@ -3,6 +3,7 @@
 ## Version 2.8.3 (2024/03/??)
 
 - Replace EOL JSR 305 annotations with SpotBugs annotations, thanks @basil
+- [JENKINS-72936]: Fix index.jelly for DynamicReferenceParameter, thanks @c3p0-maif
 
 ## Version 2.8.2 (2024/03/26)
 
