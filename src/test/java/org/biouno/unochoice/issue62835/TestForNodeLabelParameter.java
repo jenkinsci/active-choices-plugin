@@ -57,7 +57,6 @@ import org.htmlunit.html.HtmlSelect;
 import com.google.common.collect.Lists;
 
 import hudson.model.FreeStyleProject;
-import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.labels.LabelAtom;
 import hudson.slaves.DumbSlave;
@@ -117,30 +116,31 @@ public class TestForNodeLabelParameter {
                 true,
                 1);
 
-        project.addProperty(new ParametersDefinitionProperty(Arrays.<ParameterDefinition>asList(nodeLabelParameter, reactsToNodeLabelParameter)));
+        project.addProperty(new ParametersDefinitionProperty(Arrays.asList(nodeLabelParameter, reactsToNodeLabelParameter)));
         project.save();
 
-        WebClient wc = j.createWebClient();
-        wc.setThrowExceptionOnFailingStatusCode(false);
-        HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
-        DomElement renderedParameterElement = configPage.getElementById("random-name");
-        HtmlSelect select = null;
-        for (DomNode node: renderedParameterElement.getChildren()) {
-            if (node instanceof HtmlSelect) {
-                select = (HtmlSelect) node;
-                break;
+        try (WebClient wc = j.createWebClient()) {
+            wc.setThrowExceptionOnFailingStatusCode(false);
+            HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
+            DomElement renderedParameterElement = configPage.getElementById("random-name");
+            HtmlSelect select = null;
+            for (DomNode node: renderedParameterElement.getChildren()) {
+                if (node instanceof HtmlSelect) {
+                    select = (HtmlSelect) node;
+                    break;
+                }
             }
+            if (select == null) {
+                fail("Missing cascade parameter select HTML node element!");
+            }
+            List<HtmlOption> htmlOptions = select.getOptions();
+            final List<String> options = htmlOptions
+                    .stream()
+                    .map(HtmlOption::getText)
+                    .collect(Collectors.toList());
+            final List<String> expected = new LinkedList<>(Collections.singletonList(nodeName));
+            assertEquals("Wrong number of HTML options rendered", expected.size(), options.size());
+            assertEquals("Wrong HTML options rendered (or out of order)", expected, options);
         }
-        if (select == null) {
-            fail("Missing cascade parameter select HTML node element!");
-        }
-        List<HtmlOption> htmlOptions = select.getOptions();
-        final List<String> options = htmlOptions
-                .stream()
-                .map(HtmlOption::getText)
-                .collect(Collectors.toList());
-        final List<String> expected = new LinkedList<>(Collections.singletonList(nodeName));
-        assertEquals("Wrong number of HTML options rendered", expected.size(), options.size());
-        assertEquals("Wrong HTML options rendered (or out of order)", expected, options);
     }
 }

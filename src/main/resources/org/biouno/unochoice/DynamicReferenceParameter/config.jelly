@@ -56,11 +56,11 @@
       </j:choose>
     </select>
   </f:entry>
-  <f:entry title="${%Referenced parameters}" field="referencedParameters" help="${rootURL}/../plugin/uno-choice/help-referencedParameters.html">
+  <f:entry title="${%Referenced parameters}" field="referencedParameters" help="/plugin/uno-choice/help-referencedParameters.html">
     <f:textbox name="parameter.referencedParameters" value="${instance.referencedParameters}" />
   </f:entry>
   <f:advanced>
-    <f:entry title="${%Omit value field}" field="omitValueField" help="${rootURL}/../plugin/uno-choice/help-omitValueField.html">
+    <f:entry title="${%Omit value field}" field="omitValueField" help="/plugin/uno-choice/help-omitValueField.html">
         <f:checkbox name="parameter.omitValueField" checked="${instance.omitValueField}" default="false">${%Omit value field}</f:checkbox>
     </f:entry>
   </f:advanced>

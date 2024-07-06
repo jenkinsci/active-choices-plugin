@@ -27,6 +27,7 @@
 - Bump typescript from 5.4.3 to 5.6.2
 - Bump webpack from 5.91.0 to 5.94.0
 - Bump ws from 8.17.0 to 8.17.1
+- Reverted JENKINS-71365, pull request #79, making the Stapler proxy synchronous again, to ensure determinism in parameters resolution, fixing a regression
 - Update pom.xml to switch from node 18.16 to 18.18 (for eslint 9)
 - Update pom.xml to bump Jenkins version to Jenkins 2.462.2 (job-dsl requirement)
 

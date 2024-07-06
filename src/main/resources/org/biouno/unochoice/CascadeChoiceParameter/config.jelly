@@ -48,13 +48,13 @@
       </j:choose>
     </select>
   </f:entry>
-  <f:entry title="${%Referenced parameters}" field="referencedParameters" help="${rootURL}/../plugin/uno-choice/help-referencedParameters.html">
+  <f:entry title="${%Referenced parameters}" field="referencedParameters" help="/plugin/uno-choice/help-referencedParameters.html">
     <f:textbox name="parameter.referencedParameters" value="${instance.referencedParameters}" />
   </f:entry>
-  <f:entry title="${%Enable filters}" field="filterable" help="${rootURL}/../plugin/uno-choice/help-filterableParameters.html">
+  <f:entry title="${%Enable filters}" field="filterable" help="/plugin/uno-choice/help-filterableParameters.html">
     <f:checkbox name="parameter.filterable" checked="${instance.filterable}">${%Filterable}</f:checkbox>
   </f:entry>
-  <f:entry title="${%Filter starts at}" field="filterLength" help="${rootURL}/../plugin/uno-choice/help-filterLengthParameters.html">
+  <f:entry title="${%Filter starts at}" field="filterLength" help="/plugin/uno-choice/help-filterLengthParameters.html">
     <f:textbox name="parameter.filterLength" default="1" value="${instance.filterLength}" />
   </f:entry>
 </j:jelly>

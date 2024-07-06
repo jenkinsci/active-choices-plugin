@@ -113,7 +113,7 @@
               maxCount = ${it.visibleItemCount};
           }
 
-          var refElement = document.getElementById("${id}");
+          var refElement = document.getElementById("ecp_${h.escape(it.randomName)}_0");
           if(maxCount > 0 && refElement && refElement.offsetHeight !=0) {
               for(var i=0; i< maxCount; i++) {
                   height += refElement.offsetHeight + 3;

@@ -7,10 +7,18 @@
     // source, references table
     var referencedParameters = Array();
     <j:forEach var="value" items="${it.getReferencedParametersAsArray()}">
-        // add the element we want to monitor
-        referencedParameters.push("${value}");
+    // add the element we want to monitor
+    referencedParameters.push("${value}");
     </j:forEach>
 
+    if (window.makeStaplerProxy) {
+        window.__old__makeStaplerProxy = window.makeStaplerProxy;
+        window.makeStaplerProxy = UnoChoice.makeStaplerProxy2;
+    }
+    var cascadeChoiceParameter = <st:bind value="${it}"/>; // Create Jenkins proxy
+    if (window.makeStaplerProxy) {
+        window.makeStaplerProxy = window.__old__makeStaplerProxy;
+    }
     UnoChoice.renderCascadeChoiceParameter('#${h.escape(paramName)}', ${it.filterable}, '${h.escape(it.getName())}', '${h.escape(it.getRandomName())}', ${it.getFilterLength()}, '${h.escape(paramName)}', referencedParameters, cascadeChoiceParameter);
 
   </script>

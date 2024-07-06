@@ -3,7 +3,7 @@
   <f:property field="scriptlerBuilder"/>
   <f:entry
      field="isSandboxed"
-     help="${rootURL}/../descriptor/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/help/sandbox"
+     help="/descriptor/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/help/sandbox"
   >
     <f:checkbox
        title="Use Groovy Sandbox"

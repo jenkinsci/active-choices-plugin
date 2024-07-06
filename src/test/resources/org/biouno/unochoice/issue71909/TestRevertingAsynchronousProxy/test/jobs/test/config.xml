@@ -1,0 +1,133 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description/>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <org.biouno.unochoice.ChoiceParameter plugin="uno-choice@2.8.4-SNAPSHOT">
+                    <name>TARGET</name>
+                    <randomName>choice-parameter-19685286034459</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <secureScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script>return [&apos;Item1&apos;, &apos;Item2&apos;, &apos;Item3&apos;]</script>
+                            <sandbox>false</sandbox>
+                        </secureScript>
+                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script></script>
+                            <sandbox>false</sandbox>
+                        </secureFallbackScript>
+                    </script>
+                    <projectName>JENKINS-71909</projectName>
+                    <projectFullName>JENKINS-71909</projectFullName>
+                    <choiceType>PT_SINGLE_SELECT</choiceType>
+                    <filterable>false</filterable>
+                    <filterLength>1</filterLength>
+                </org.biouno.unochoice.ChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.4-SNAPSHOT">
+                    <name>VARIANT</name>
+                    <randomName>choice-parameter-19685291017751</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <secureScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script></script>
+                            <sandbox>false</sandbox>
+                        </secureScript>
+                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script>dynRefParam = &quot;a1:selected a2&quot;
+                                if( TARGET.equals( &quot;Item2&quot; ) )
+                                {
+                                dynRefParam = &quot;a2:selected&quot;
+                                }
+                                return dynRefParam.tokenize()</script>
+                            <sandbox>false</sandbox>
+                        </secureFallbackScript>
+                    </script>
+                    <projectName>JENKINS-71909</projectName>
+                    <projectFullName>JENKINS-71909</projectFullName>
+                    <parameters class="linked-hash-map"/>
+                    <referencedParameters>TARGET</referencedParameters>
+                    <choiceType>PT_RADIO</choiceType>
+                    <filterable>false</filterable>
+                    <filterLength>1</filterLength>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.4-SNAPSHOT">
+                    <name>MACHINES</name>
+                    <randomName>choice-parameter-19685294460278</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <secureScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script>dynRefParam = &quot;unavailable_machines&quot;
+                                if ( VARIANT.equals( &quot;a1&quot; ) )
+                                {
+                                dynRefParam = &quot;server1 server2 server4 server5&quot;
+                                }
+                                if ( TARGET.equals( &quot;Item2&quot; ))
+                                {
+                                if ( VARIANT.equals( &quot;a2&quot; ) )
+                                {
+                                dynRefParam = &quot;server1:selected&quot;
+                                }
+                                } else if ( TARGET.equals( &quot;Item1&quot; ))
+                                {
+                                dynRefParam = &quot;server2:selected server3:selected&quot;
+                                }
+                                return dynRefParam.tokenize()</script>
+                            <sandbox>false</sandbox>
+                        </secureScript>
+                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script></script>
+                            <sandbox>false</sandbox>
+                        </secureFallbackScript>
+                    </script>
+                    <projectName>JENKINS-71909</projectName>
+                    <projectFullName>JENKINS-71909</projectFullName>
+                    <parameters class="linked-hash-map"/>
+                    <referencedParameters>TARGET,VARIANT</referencedParameters>
+                    <choiceType>PT_CHECKBOX</choiceType>
+                    <filterable>false</filterable>
+                    <filterLength>1</filterLength>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+                <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.4-SNAPSHOT">
+                    <name>DOCKER_BASE_IMAGE</name>
+                    <randomName>choice-parameter-19685297716936</randomName>
+                    <visibleItemCount>1</visibleItemCount>
+                    <script class="org.biouno.unochoice.model.GroovyScript">
+                        <secureScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script>dynRefParam =&quot;buster:selected bullseye&quot;
+                                if ( MACHINES.contains( &quot;server1&quot; ) || MACHINES.contains( &quot;server2&quot; ) || MACHINES.contains( &quot;server3&quot; ))
+                                {
+                                dynRefParam =&quot;buster bullseye:selected&quot;
+                                }
+                                return dynRefParam.tokenize()</script>
+                            <sandbox>false</sandbox>
+                        </secureScript>
+                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script></script>
+                            <sandbox>false</sandbox>
+                        </secureFallbackScript>
+                    </script>
+                    <projectName>JENKINS-71909</projectName>
+                    <projectFullName>JENKINS-71909</projectFullName>
+                    <parameters class="linked-hash-map"/>
+                    <referencedParameters>MACHINES</referencedParameters>
+                    <choiceType>PT_RADIO</choiceType>
+                    <filterable>false</filterable>
+                    <filterLength>1</filterLength>
+                </org.biouno.unochoice.CascadeChoiceParameter>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <builders/>
+    <publishers/>
+    <buildWrappers/>
+</project>

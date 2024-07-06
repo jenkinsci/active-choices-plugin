@@ -60,10 +60,18 @@
     // source, references table
     var referencedParameters = Array();
     <j:forEach var="value" items="${it.getReferencedParametersAsArray()}">
-        // add the element we want to monitor
-        referencedParameters.push("${value}");
+    // add the element we want to monitor
+    referencedParameters.push("${value}");
     </j:forEach>
 
+    if (window.makeStaplerProxy) {
+        window.__old__makeStaplerProxy = window.makeStaplerProxy;
+        window.makeStaplerProxy = UnoChoice.makeStaplerProxy2;
+    }
+    var dynamicReferenceParameter = <st:bind value="${it}"/>; // Create Jenkins proxy
+    if (window.makeStaplerProxy) {
+        window.makeStaplerProxy = window.__old__makeStaplerProxy;
+    }
     UnoChoice.renderDynamicRenderParameter('#${paramName}', '${h.escape(it.getName())}', '${h.escape(paramName)}', referencedParameters, dynamicReferenceParameter);
 
     // update spinner id
