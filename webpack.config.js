@@ -18,7 +18,6 @@ module.exports = (env, argv) => ({
     module: {
         rules: [
             {use: "ts-loader", test: /\.ts$/},
-            {use: "babel-loader", test: /\.es6$/},
         ],
     },
     externals: {

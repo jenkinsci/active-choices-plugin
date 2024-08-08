@@ -55,7 +55,6 @@
       </j:choose>
     </div>
   </f:entry>
-  <st:bind value="${it}" var="dynamicReferenceParameter"/>
   <script type="text/javascript">
     // source, references table
     var referencedParameters = Array();
@@ -64,6 +63,14 @@
         referencedParameters.push("${value}");
     </j:forEach>
 
+    if (window.makeStaplerProxy) {
+        window.__old__makeStaplerProxy = window.makeStaplerProxy;
+        window.makeStaplerProxy = UnoChoice.makeStaplerProxy2;
+    }
+    var dynamicReferenceParameter = <st:bind value="${it}"/>; // Create Jenkins proxy
+    if (window.makeStaplerProxy) {
+        window.makeStaplerProxy = window.__old__makeStaplerProxy;
+    }
     UnoChoice.renderDynamicRenderParameter('#${paramName}', '${h.escape(it.getName())}', '${h.escape(paramName)}', referencedParameters, dynamicReferenceParameter);
 
     // update spinner id

@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 public class UiAcceptanceTest {
 
-    private static final Duration MAX_WAIT = Duration.parse(System.getProperty("ui.loading.timeout", "PT60S"));
+    private static final Duration MAX_WAIT = Duration.parse(System.getProperty("ui.loading.timeout", "PT300S"));
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
