@@ -91,7 +91,9 @@ public abstract class BaseUiTest {
 
     @After
     public void tearDown() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     protected static By radios(String paramName) {
