@@ -127,8 +127,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
 
     @JavaScriptMethod
     public String getChoicesAsStringForUI() {
-        String result = getChoicesAsString(getParameters());
-        return result;
+        return getChoicesAsString(getParameters());
     }
 
     // --- descriptor
