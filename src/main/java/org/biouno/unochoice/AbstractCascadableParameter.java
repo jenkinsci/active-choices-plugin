@@ -121,7 +121,7 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
             final String[] nameValue = param.split(EQUALS);
             if (nameValue.length == 1) {
                 final String name = nameValue[0].trim();
-                if (name.length() > 0)
+                if (!name.isEmpty())
                     getParameters().put(name, "");
             } else if (nameValue.length == 2) {
                 final String name = nameValue[0];
