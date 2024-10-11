@@ -36,7 +36,7 @@
     <properties>
         <revision>2.8.5</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.462.2</jenkins.version>
+        <jenkins.version>2.462.3</jenkins.version>
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
         <node.version>18.18.0</node.version>
         <yarn.version>1.22.19</yarn.version>
