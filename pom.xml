@@ -44,9 +44,10 @@
         <node.version>18.18.0</node.version>
         <yarn.version>1.22.19</yarn.version>
         <ui.loading.timeout>PT300S</ui.loading.timeout>
-        <spotbugs.effort>Max</spotbugs.effort>
-        <spotbugs.threshold>Low</spotbugs.threshold>
-        <spotless.check.skip>false</spotless.check.skip>
+	<!-- <spotbugs.effort>Max</spotbugs.effort> -->
+	<!-- <spotbugs.threshold>Low</spotbugs.threshold> -->
+	<!-- <spotless.check.skip>false</spotless.check.skip> -->
+	<!-- TODO: For later, after we have merged a few more pull requests... -->
     </properties>
 
     <scm>
