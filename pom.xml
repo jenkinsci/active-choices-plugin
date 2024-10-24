@@ -36,11 +36,17 @@
     <properties>
         <revision>2.8.5</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.462.3</jenkins.version>
+        <jenkins.baseline>2.462</jenkins.baseline>
+        <!-- <jenkins.version>${jenkins.baseline}.3</jenkins.version> -->
+        <!-- TODO: Remove when 2.479 is available in LTS -->
+        <jenkins.version>2.479</jenkins.version>
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
         <node.version>18.18.0</node.version>
         <yarn.version>1.22.19</yarn.version>
         <ui.loading.timeout>PT300S</ui.loading.timeout>
+        <spotbugs.effort>Max</spotbugs.effort>
+        <spotbugs.threshold>Low</spotbugs.threshold>
+        <spotless.check.skip>false</spotless.check.skip>
     </properties>
 
     <scm>
@@ -49,6 +55,19 @@
         <url>https://github.com/${gitHubRepo}</url>
         <tag>${scmTag}</tag>
     </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>maven.jenkins-ci.org</id>
+            <name>jenkinsci-releases</name>
+            <url>https://repo.jenkins-ci.org/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.jenkins-ci.org</id>
+            <name>jenkinsci-snapshots</name>
+            <url>https://repo.jenkins-ci.org/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <developers>
         <developer>
@@ -65,8 +84,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.462.x</artifactId>
+                <artifactId>bom-${jenkins.baseline}.x</artifactId>
                 <version>3532.v8059503f6b_23</version>
                 <scope>import</scope>
                 <type>pom</type>
