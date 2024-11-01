@@ -2,9 +2,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
   ${it.parameters.clear()}
   <st:include page="/org/biouno/unochoice/common/choiceParameterCommon.jelly"/>
-  <script type="text/javascript">
-    <j:if test="${it.filterable}">
-        UnoChoice.renderChoiceParameter('${paramName}', ${it.getFilterLength()});
-    </j:if>
-  </script>
+  <j:if test="${it.filterable}">
+      <st:adjunct includes="org.biouno.unochoice.ChoiceParameter.render-choice-parameter"/>
+      <span class="choice-parameter-data-holder" data-param-name="${paramName}" data-filter-length="${it.getFilterLength()}"/>
+  </j:if>
 </j:jelly>
