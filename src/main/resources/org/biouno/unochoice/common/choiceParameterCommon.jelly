@@ -22,17 +22,8 @@
           <select name="value" multiple="multiple" size="1" id="${multiple_select_id}">
             <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
           </select>
-          <script type="text/javascript">
-            <![CDATA[
-              (function() {
-                  var f = function() {
-                      var size = ${it.visibleItemCount};
-                      document.getElementById("${multiple_select_id}").size = size;
-                  };
-                  f();
-              })();
-            ]]>
-          </script>
+          <span class="multi-select-data-holder" data-visible-item-count="${it.visibleItemCount}" data-multi-select-id="${multiple_select_id}"/>
+          <st:adjunct includes="org.biouno.unochoice.common.multi-select"/>
         </j:when>
         <j:when test="${choiceType eq 'PT_RADIO'}">
           <st:include page="/org/biouno/unochoice/common/radioContent.jelly"/>
