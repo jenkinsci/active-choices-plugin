@@ -1,7 +1,8 @@
 <?jelly escape-by-default='true' ?>
 <j:jelly xmlns:j="jelly:core"
          xmlns:d="jelly:define"
-         xmlns:transitionWrapper="transitionWrapper">
+         xmlns:transitionWrapper="transitionWrapper"
+         xmlns:st="jelly:stapler">
     <d:taglib uri="transitionWrapper">
       <d:tag name="randomTableIdBlock">
           <j:choose>
@@ -101,29 +102,6 @@
       </j:forEach>
     </transitionWrapper:randomTableIdBlock>
   </div>
-<script type="text/javascript">
-<![CDATA[
-  (function() {
-      var f = function() {
-          var height = 0;
-          var maxCount = ${it.getVisibleItemCount()};
-
-          var refElement = document.getElementById("ecp_${h.escape(it.randomName)}_0");
-          if(maxCount > 0 && refElement && refElement.offsetHeight !=0) {
-              for(var i=0; i< maxCount; i++) {
-                  height += refElement.offsetHeight + 3;
-              }
-          }
-          else {
-              height = maxCount * 25.5;
-          }
-
-          height = Math.floor(height);
-          document.getElementById("ecp_${h.escape(it.randomName)}").style.height = height + "px";
-      };
-
-      f();
-  })();
-]]>
-  </script>
+  <span class="checkbox-content-data-holder" data-max-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}" />
+  <st:adjunct includes="org.biouno.unochoice.common.checkbox-content" />
 </j:jelly>
