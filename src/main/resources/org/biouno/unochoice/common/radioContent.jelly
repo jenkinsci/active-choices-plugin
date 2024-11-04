@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:d="jelly:define" xmlns:transitionWrapper="transitionWrapper">
+<j:jelly xmlns:j="jelly:core" xmlns:d="jelly:define" xmlns:transitionWrapper="transitionWrapper" xmlns:st="jelly:stapler">
   <d:taglib uri="transitionWrapper">
       <d:tag name="randomTableIdBlock">
           <j:choose>
@@ -77,22 +77,22 @@
                 <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
                   <j:arg type="java.lang.Object" value="${escapedKey}" />
                 </j:invokeStatic>
-                <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class="radio-content-radio-input" type="radio" />
                 <label class="attach-previous">${escapedAndDisabledValue}</label>
                 <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedAndDisabledValue}" />
               </j:when>
               <j:when test="${selected}">
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class="radio-content-radio-input" type="radio" />
                 <label class="attach-previous">${escapedValue}</label>
                 <input json="${escapedKey}" name="value" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
               </j:when>
               <j:when test="${disabled}">
-                <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class="radio-content-radio-input" type="radio" />
                 <label class="attach-previous">${escapedDisabledValue}</label>
                 <input disabled="${disabled}" json="${escapedDisabledKey}" name="" value="${escapedDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedDisabledValue}" />
               </j:when>
               <j:otherwise>
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class=" " type="radio" onchange="UnoChoice.fakeSelectRadioButton(&quot;${h.escape(it.name)}&quot;, &quot;${id}&quot;)" />
+                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class="radio-content-radio-input" type="radio" />
                 <label class="attach-previous">${escapedValue}</label>
                 <input json="${escapedKey}" name="" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
               </j:otherwise>
@@ -103,32 +103,6 @@
       </j:forEach>
     </transitionWrapper:randomTableIdBlock>
   </div>
-<script type="text/javascript">
-<![CDATA[
-  (function() {
-      var f = function() {
-          var height = 0;
-          var maxCount = ${it.getVisibleItemCount()};
-          if(maxCount > ${it.visibleItemCount}) {
-              maxCount = ${it.visibleItemCount};
-          }
-
-          var refElement = document.getElementById("ecp_${h.escape(it.randomName)}_0");
-          if(maxCount > 0 && refElement && refElement.offsetHeight !=0) {
-              for(var i=0; i< maxCount; i++) {
-                  height += refElement.offsetHeight + 3;
-              }
-          }
-          else {
-              height = maxCount * 25.5;
-          }
-
-          height = Math.floor(height);
-          document.getElementById("ecp_${h.escape(it.randomName)}").style.height = height + "px";
-      };
-
-      f();
-  })();
-]]>
-</script>
+  <span class="radio-content-data-holder" data-visible-item-count="${it.visibleItemCount}" data-get-visible-item-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}"/>
+  <st:adjunct includes="org.biouno.unochoice.common.radio-content"/>
 </j:jelly>
