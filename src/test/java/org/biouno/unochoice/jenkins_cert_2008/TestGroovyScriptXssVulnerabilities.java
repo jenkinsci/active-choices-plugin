@@ -149,7 +149,7 @@ public class TestGroovyScriptXssVulnerabilities {
                 "random-name",
                 script,
                 DynamicReferenceParameter.ELEMENT_TYPE_FORMATTED_HTML,
-                null,
+                "",
                 false);
         project.addProperty(new ParametersDefinitionProperty(parameter));
         project.save();
