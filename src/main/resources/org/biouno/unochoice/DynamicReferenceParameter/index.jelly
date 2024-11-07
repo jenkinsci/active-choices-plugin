@@ -55,33 +55,12 @@
       </j:choose>
     </div>
   </f:entry>
-  <st:bind value="${it}" var="dynamicReferenceParameter"/>
-  <script type="text/javascript">
-    // source, references table
-    var referencedParameters = Array();
-    <j:forEach var="value" items="${it.getReferencedParametersAsArray()}">
-    // add the element we want to monitor
-    referencedParameters.push("${value}");
-    </j:forEach>
-
-    if (window.makeStaplerProxy) {
-        window.__old__makeStaplerProxy = window.makeStaplerProxy;
-        window.makeStaplerProxy = UnoChoice.makeStaplerProxy2;
-    }
-    var dynamicReferenceParameter = <st:bind value="${it}"/>; // Create Jenkins proxy
-    if (window.makeStaplerProxy) {
-        window.makeStaplerProxy = window.__old__makeStaplerProxy;
-    }
-    UnoChoice.renderDynamicRenderParameter('#${paramName}', '${h.escape(it.getName())}', '${h.escape(paramName)}', referencedParameters, dynamicReferenceParameter);
-
-    // update spinner id
-    var rootElmt = document.querySelector('#${paramName}');
-    if (rootElmt) {
-      var divElmt = rootElmt.querySelector('div');
-      if (divElmt) {
-        var spinnerId = divElmt.id.split('_').pop();
-        document.querySelector('#${paramName}-spinner').setAttribute('id', spinnerId + '-spinner');
-      }
-    }
-  </script>
+  <j:set var="proxyName" value="dynamicReferenceParameter_${h.generateId()}"/>
+  <span class="dynamic-reference-parameter-data-holder"
+          data-proxy-name="${proxyName}"
+          data-referenced-parameters="${it.getReferencedParameters()}"
+          data-param-name="${paramName}"
+          data-name="${h.escape(it.getName())}"/>
+  <st:adjunct includes="org.biouno.unochoice.DynamicReferenceParameter.dynamic-reference-parameter"/>
+  <st:bind value="${it}" var="${proxyName}"/>
 </j:jelly>
