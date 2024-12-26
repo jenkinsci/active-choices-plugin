@@ -24,7 +24,7 @@
 package org.biouno.unochoice.issue63983;
 
 import hudson.model.FileParameterValue;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.biouno.unochoice.model.ScriptlerScript;
 import org.jenkinsci.plugins.scriptler.ScriptlerHelper;
@@ -64,7 +64,7 @@ public class TestSandboxAndApproval {
                 "return \"Got instance!\";";
         final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
-        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        final FileItem<?> fi = new FileParameterValue.FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
@@ -88,7 +88,7 @@ public class TestSandboxAndApproval {
                 "return \"Got instance!\";";
         final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
-        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        final FileItem<?> fi = new FileParameterValue.FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
@@ -114,7 +114,7 @@ public class TestSandboxAndApproval {
                 "return \"Got instance!\";";
         final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
-        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        final FileItem<?> fi = new FileParameterValue.FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);
@@ -140,7 +140,7 @@ public class TestSandboxAndApproval {
                 "return \"Got instance!\";";
         final File scriptFile = Files.createTempFile("uno-choice", "63983").toFile();
         FileUtils.writeStringToFile(scriptFile, scriptText, Charset.defaultCharset(), false);
-        final FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        final FileItem<?> fi = new FileParameterValue.FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "63983");
         Script script = new Script("63983.groovy", "63983.groovy", "A comment.", false, Collections.emptyList(), false);
         ScriptlerConfiguration.getConfiguration().addOrReplace(script);

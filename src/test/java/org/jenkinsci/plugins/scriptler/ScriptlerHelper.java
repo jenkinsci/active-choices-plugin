@@ -23,7 +23,8 @@
  */
 package org.jenkinsci.plugins.scriptler;
 
-import org.apache.commons.fileupload.FileItem;
+
+import org.apache.commons.fileupload2.core.FileItem;
 
 /**
  * @see <a href="https://github.com/jenkinsci/scriptler-plugin/blob/5308c27816ed8da5924eedcc6cb12c5655a7e5b3/src/test/java/org/jenkinsci/plugins/scriptler/ScriptlerManagementHelper.java">

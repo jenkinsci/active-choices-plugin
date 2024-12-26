@@ -33,11 +33,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.GroovyScript;
@@ -66,7 +65,7 @@ import hudson.model.JobPropertyDescriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
-import hudson.model.FileParameterValue.FileItemImpl;
+import hudson.model.FileParameterValue.FileItemImpl2;
 import hudson.model.queue.QueueTaskFuture;
 
 /**
@@ -110,7 +109,7 @@ public class TestPersistingParameters {
         ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
         scriptFile = Files.createTempFile("uno-choice", "dummy.groovy").toFile();
         FileUtils.writeStringToFile(scriptFile, SCRIPT_PARAM001, Charset.defaultCharset(), false);
-        FileItem fi = new FileItemImpl(scriptFile);
+        FileItem<?> fi = new FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "dummy.groovy");
 
         scriptler.getConfiguration().getScriptById("dummy.groovy")

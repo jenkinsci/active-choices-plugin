@@ -30,9 +30,8 @@ import hudson.model.JobPropertyDescriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileUtils;
-import org.biouno.unochoice.AbstractScriptableParameter;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.ScriptlerScript;
 import org.jenkinsci.plugins.scriptler.ScriptlerHelper;
@@ -40,7 +39,6 @@ import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
 import org.jenkinsci.plugins.scriptler.config.Parameter;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Before;
 import org.junit.Rule;
@@ -91,7 +89,7 @@ public class TestJobDslWithScriptlerScriptWithParameters {
         ScriptlerHelper scriptlerHelper = new ScriptlerHelper(scriptler);
         scriptFile = Files.createTempFile("uno-choice", "Cascade.groovy").toFile();
         FileUtils.writeStringToFile(scriptFile, GROOVY_SCRIPT, Charset.defaultCharset(), false);
-        FileItem fi = new FileParameterValue.FileItemImpl(scriptFile);
+        FileItem<?> fi = new FileParameterValue.FileItemImpl2(scriptFile);
         scriptlerHelper.saveScript(fi, true, "Cascade.groovy");
 
         scriptler.getConfiguration()
