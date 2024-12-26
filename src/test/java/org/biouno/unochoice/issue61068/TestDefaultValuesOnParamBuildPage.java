@@ -26,6 +26,7 @@ package org.biouno.unochoice.issue61068;
 
 import static org.junit.Assert.assertEquals;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -54,7 +55,7 @@ public class TestDefaultValuesOnParamBuildPage {
     public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void testReturnEmptyWhenNoElementsAreAvailable() {
+    public void testReturnEmptyWhenNoElementsAreAvailable() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return []"
@@ -67,7 +68,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testReturnEmptyWhenOnlyEmptyElementIsDefined() {
+    public void testReturnEmptyWhenOnlyEmptyElementIsDefined() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['']"
@@ -80,7 +81,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testReturnFirstElementWhenSelectedIsNotSet() {
+    public void testReturnFirstElementWhenSelectedIsNotSet() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', 'C', 'D']"
@@ -93,7 +94,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testReturnSelectedElement() {
+    public void testReturnSelectedElement() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', 'C:selected', 'D', 'E:disabled']"
@@ -106,7 +107,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testReturnSelectedElements() {
+    public void testReturnSelectedElements() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A', 'B:selected', 'C', 'D:selected', 'E:disabled']"
@@ -119,7 +120,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testReturnSelectedEmptyElement() {
+    public void testReturnSelectedEmptyElement() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', ':selected', 'D', 'E:disabled']"
@@ -132,7 +133,7 @@ public class TestDefaultValuesOnParamBuildPage {
     }
 
     @Test
-    public void testAllSuffixesAreTrimmed() {
+    public void testAllSuffixesAreTrimmed() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A:selected:disabled', 'B:disabled:selected', 'C', 'D:selected']"
@@ -144,7 +145,7 @@ public class TestDefaultValuesOnParamBuildPage {
         assertEquals("Invalid parameter value!", "A,B,D", parameterValue.getValue());
     }
 
-    private static final ChoiceParameter createChoiceParameter(String type, String script) {
+    private static final ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
         ScriptApproval.get().preapprove(script, GroovyLanguage.get());
         ScriptApproval.get().preapprove(DEFAULT_FALLBACK_SCRIPT, GroovyLanguage.get());
 

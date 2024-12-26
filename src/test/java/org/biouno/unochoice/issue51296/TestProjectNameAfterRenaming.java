@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -72,7 +73,7 @@ public class TestProjectNameAfterRenaming {
     }
 
     @Test
-    public void testProjectAreDifferent() throws IOException {
+    public void testProjectAreDifferent() throws IOException, Descriptor.FormException {
 
         FreeStyleProject project = j.createProject(FreeStyleProject.class, PROJECT_NAME_BEFORE);
 

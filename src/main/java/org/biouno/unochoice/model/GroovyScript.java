@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.util.SafeHtmlExtendedMarkupFormatter;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -85,7 +86,7 @@ public class GroovyScript extends AbstractScript {
     private SecureGroovyScript secureFallbackScript;
 
     @Deprecated
-    public GroovyScript(String script, String fallbackScript) {
+    public GroovyScript(String script, String fallbackScript) throws Descriptor.FormException {
         this(new SecureGroovyScript(script, false, null), new SecureGroovyScript(fallbackScript, false, null));
     }
 
@@ -102,13 +103,21 @@ public class GroovyScript extends AbstractScript {
     private Object readResolve() {
         if (secureScript == null) {
             if (script != null) {
-                secureScript = new SecureGroovyScript(script, false, null).configuring(ApprovalContext.create());
+                try {
+                    secureScript = new SecureGroovyScript(script, false, null).configuring(ApprovalContext.create());
+                } catch (Descriptor.FormException e) {
+                    throw new RuntimeException("Failed to create SecureGroovyScript", e);
+                }
             }
         }
         if (secureFallbackScript == null) {
             if (fallbackScript != null) {
-                secureFallbackScript = new SecureGroovyScript(fallbackScript, false, null)
-                        .configuring(ApprovalContext.create());
+                try {
+                    secureFallbackScript = new SecureGroovyScript(fallbackScript, false, null)
+                            .configuring(ApprovalContext.create());
+                } catch (Descriptor.FormException e) {
+                    throw new RuntimeException("Failed to create SecureGroovyScript", e);
+                }
             }
         }
         return this;

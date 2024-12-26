@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
@@ -69,7 +70,7 @@ public class TestParameterValuesWithEquals {
     }
 
     @Test
-    public void testEvaluationWorksEvenThoughWeUsedEqualsInParameterValues() throws IOException {
+    public void testEvaluationWorksEvenThoughWeUsedEqualsInParameterValues() throws IOException, Descriptor.FormException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
         GroovyScript listSelectionScript = new GroovyScript(

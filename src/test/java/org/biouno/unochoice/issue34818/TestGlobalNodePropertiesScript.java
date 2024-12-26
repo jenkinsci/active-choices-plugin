@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -64,7 +65,7 @@ public class TestGlobalNodePropertiesScript {
     }
 
     @Test
-    public void testScriptAccessingGlobalProperties() {
+    public void testScriptAccessingGlobalProperties() throws Descriptor.FormException {
         Map<String, String> testMap = new HashMap<>();
         testMap.put("time", "20:13:13");
         EnvironmentVariablesNodeProperty.Entry entry = new EnvironmentVariablesNodeProperty.Entry("NODE_TIME",

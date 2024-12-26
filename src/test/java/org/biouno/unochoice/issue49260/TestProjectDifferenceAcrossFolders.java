@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -75,7 +76,7 @@ public class TestProjectDifferenceAcrossFolders {
     }
 
     @Test
-    public void testProjectsAreDifferent() throws IOException, SAXException {
+    public void testProjectsAreDifferent() throws IOException, SAXException, Descriptor.FormException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
 

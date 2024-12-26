@@ -26,6 +26,7 @@ package org.biouno.unochoice.issue69448;
 
 import static org.junit.Assert.assertEquals;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -53,7 +54,7 @@ public class TestDefaultValuesWithScriptReturningMap {
     public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void testReturnMap() {
+    public void testReturnMap() throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A':'Description for A:selected:disabled', 'B':'Description for B:disabled:selected', 'C':'Description for C', 'D':'Description for D:selected']"
@@ -65,7 +66,7 @@ public class TestDefaultValuesWithScriptReturningMap {
         assertEquals("Invalid parameter value!", "A,B,D", parameterValue.getValue());
     }
 
-    private static final ChoiceParameter createChoiceParameter(String type, String script) {
+    private static final ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
         ScriptApproval.get().preapprove(script, GroovyLanguage.get());
         ScriptApproval.get().preapprove(DEFAULT_FALLBACK_SCRIPT, GroovyLanguage.get());
 

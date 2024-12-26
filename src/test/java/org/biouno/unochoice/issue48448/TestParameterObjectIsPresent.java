@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -66,7 +67,7 @@ public class TestParameterObjectIsPresent {
     }
 
     @Test
-    public void testParameterObjectIsPresent() throws IOException {
+    public void testParameterObjectIsPresent() throws IOException, Descriptor.FormException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
         ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name1", listScript,

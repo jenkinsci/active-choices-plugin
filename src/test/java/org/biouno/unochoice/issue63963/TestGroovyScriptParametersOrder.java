@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -71,7 +72,7 @@ public class TestGroovyScriptParametersOrder {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testGroovyScriptParametersOrder() throws IOException, SAXException {
+    public void testGroovyScriptParametersOrder() throws IOException, SAXException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
 
         StringParameterDefinition teamUid = new StringParameterDefinition("TEAM_UID", "foo", "Team name (UID)");

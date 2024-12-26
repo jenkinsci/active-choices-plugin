@@ -25,6 +25,7 @@ package org.biouno.unochoice.issue62215;
 
 import static org.junit.Assert.assertEquals;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.junit.Rule;
@@ -40,7 +41,7 @@ public class TestMarkupFormatterAllowsRequiredElementsInScriptOutput {
 
 
     @Test
-    public void testInputIsNotRemovedFromGroovySandboxOutput() {
+    public void testInputIsNotRemovedFromGroovySandboxOutput() throws Descriptor.FormException {
         String markup = "<input type=\"text\" name=\"value\" value=\"value\" />";
         GroovyScript script = new GroovyScript(new SecureGroovyScript("return '" + markup + "'", true, null), null);
         String result = (String) script.eval();
@@ -49,7 +50,7 @@ public class TestMarkupFormatterAllowsRequiredElementsInScriptOutput {
     }
 
     @Test
-    public void testTextareaIsNotRemovedFromGroovySandboxOutput() {
+    public void testTextareaIsNotRemovedFromGroovySandboxOutput() throws Descriptor.FormException {
         String markup = "<textarea name=\"value\" placeholder=\"test\"></textarea>";
         GroovyScript script = new GroovyScript(new SecureGroovyScript("return '" + markup + "'", true, null), null);
         String result = (String) script.eval();
@@ -58,7 +59,7 @@ public class TestMarkupFormatterAllowsRequiredElementsInScriptOutput {
     }
 
     @Test
-    public void testSelectIsNotRemovedFromGroovySandboxOutput() {
+    public void testSelectIsNotRemovedFromGroovySandboxOutput() throws Descriptor.FormException {
         String markup = "<select id=\"cars\"><option value=\"volvo\">Volvo</option><option value=\"saab\">Saab</option><option value=\"opel\">Opel</option><option value=\"audi\">Audi</option></select>";
         GroovyScript script = new GroovyScript(new SecureGroovyScript("return '" + markup + "'", true, null), null);
         String result = (String) script.eval();

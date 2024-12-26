@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -52,7 +53,7 @@ public class TestChoiceParameter {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,
@@ -68,7 +69,7 @@ public class TestChoiceParameter {
     }
 
     @Test
-    public void testNullFilterable() {
+    public void testNullFilterable() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,

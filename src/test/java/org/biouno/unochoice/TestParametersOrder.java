@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -54,7 +55,7 @@ public class TestParametersOrder {
     }
 
     @Test
-    public void testParametersOrder() {
+    public void testParametersOrder() throws Descriptor.FormException {
         Map<Object, Object> parameters = new LinkedHashMap<>();
         parameters.put("D", "D");
         parameters.put("C", "C");

@@ -23,6 +23,7 @@
  */
 package org.biouno.unochoice.jenkins_cert_2219;
 
+import hudson.model.Descriptor;
 import org.htmlunit.CollectingAlertHandler;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
@@ -65,7 +66,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoiceParameterXss() throws IOException, SAXException {
+    public void testChoiceParameterXss() throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -99,7 +100,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testCascadeChoiceParameterXss() throws IOException, SAXException {
+    public void testCascadeChoiceParameterXss() throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -134,7 +135,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testDynamicReferenceParameterXss() throws IOException, SAXException {
+    public void testDynamicReferenceParameterXss() throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);

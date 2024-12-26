@@ -26,6 +26,7 @@ package org.biouno.unochoice;
 
 import static org.junit.Assert.assertEquals;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -59,7 +60,7 @@ public class TestAbstractUnoChoiceParameter {
     }
 
     @Test
-    public void testCreateValue() {
+    public void testCreateValue() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("name", "description", "some-random-name", script, "choiceType",

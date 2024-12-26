@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.IOException;
 import java.util.List;
 
+import hudson.model.Descriptor;
 import org.htmlunit.html.HtmlElement;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
@@ -65,7 +66,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException {
+    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return ['%s']", xssString);
@@ -99,7 +100,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXssWithMaps() throws IOException, SAXException {
+    public void testChoicesParameterXssWithMaps() throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return ['%s': '%s']", xssString, xssString);
@@ -137,7 +138,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testReferenceParameterXss() throws IOException, SAXException {
+    public void testReferenceParameterXss() throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return '%s'", xssString);

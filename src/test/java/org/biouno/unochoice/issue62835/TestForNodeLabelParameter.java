@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -85,7 +86,7 @@ public class TestForNodeLabelParameter {
     }
 
     @Test
-    public void testNodeLabelParameterValueFound() throws IOException, SAXException {
+    public void testNodeLabelParameterValueFound() throws IOException, SAXException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
 
         final String nodeName = onlineNode.getNodeName();

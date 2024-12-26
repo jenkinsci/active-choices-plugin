@@ -23,6 +23,7 @@
  */
 package org.biouno.unochoice.jenkins_cert_1954;
 
+import hudson.model.Descriptor;
 import org.apache.commons.io.IOUtils;
 import org.htmlunit.html.*;
 import hudson.model.FreeStyleProject;
@@ -63,7 +64,7 @@ public class TestParametersXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException {
+    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return '%s'", xssString);

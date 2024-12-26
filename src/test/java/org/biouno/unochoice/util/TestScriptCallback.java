@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -56,7 +57,7 @@ public class TestScriptCallback {
     }
 
     @Test
-    public void testScriptCallback() {
+    public void testScriptCallback() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         Map<String, String> parameters = new HashMap<>();

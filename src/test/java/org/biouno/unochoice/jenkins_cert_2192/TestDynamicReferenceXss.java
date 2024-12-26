@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.List;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.AbstractCascadableParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
@@ -66,7 +67,7 @@ public class TestDynamicReferenceXss {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException {
+    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = "return ['OK']";
         SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -100,7 +101,7 @@ public class TestDynamicReferenceXss {
      * Test that the reference parameter value is escaped.
      */
     @Test
-    public void testGetReferencedParametersAsArray() {
+    public void testGetReferencedParametersAsArray() throws Descriptor.FormException {
         String scriptText = "return ['OK']";
         SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
         GroovyScript script = new GroovyScript(secureScript, secureScript);

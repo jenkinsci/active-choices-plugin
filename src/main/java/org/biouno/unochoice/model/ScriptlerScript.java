@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.model.Descriptor;
 import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
@@ -217,9 +218,9 @@ public class ScriptlerScript extends AbstractScript {
     /**
      * Converts this scriptler script to a GroovyScript.
      *
-     * The script will run in the Groovy Sandbox environment by default, unless approved by a
+     * <p>The script will run in the Groovy Sandbox environment by default, unless approved by a
      * Jenkins administrator. In this case it won't use the Groovy Sandbox. This is useful if
-     * the Groovy script needs access to API not available in the Sandbox (e.g. Grapes).
+     * the Groovy script needs access to API not available in the Sandbox (e.g. Grapes).</p>
      *
      * @return a GroovyScript
      */
@@ -228,7 +229,11 @@ public class ScriptlerScript extends AbstractScript {
         if (scriptler == null) {
             throw new RuntimeException("Missing required scriptler!");
         }
-        return new GroovyScript(new SecureGroovyScript(scriptler.script, this.isSandboxed, null), null);
+        try {
+            return new GroovyScript(new SecureGroovyScript(scriptler.script, this.isSandboxed, null), null);
+        } catch (Descriptor.FormException e) {
+            throw new RuntimeException("Failed to create GroovyScript", e);
+        }
     }
 
     // --- descriptor

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -57,7 +58,7 @@ public class TestCascadeChoiceParameter {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
@@ -74,7 +75,7 @@ public class TestCascadeChoiceParameter {
     }
 
     @Test
-    public void testParameters() {
+    public void testParameters() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
@@ -105,7 +106,7 @@ public class TestCascadeChoiceParameter {
     }
 
     @Test
-    public void testNullFilterable() {
+    public void testNullFilterable() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
