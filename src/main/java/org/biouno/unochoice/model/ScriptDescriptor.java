@@ -32,6 +32,6 @@ import hudson.model.Descriptor;
  * @author Bruno P. Kinoshita
  * @since 0.23
  */
-public abstract class ScriptDescriptor extends Descriptor<AbstractScript> {
+public abstract class ScriptDescriptor extends Descriptor<Script> {
 
 }

@@ -27,7 +27,7 @@ package org.biouno.unochoice;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.biouno.unochoice.model.AbstractScript;
+import org.biouno.unochoice.model.Script;
 
 import hudson.model.Descriptor;
 import hudson.model.ParameterDefinition.ParameterDescriptor;
@@ -40,8 +40,8 @@ import hudson.model.ParameterDefinition.ParameterDescriptor;
  */
 public class UnoChoiceParameterDescriptor extends ParameterDescriptor {
 
-    public List<Descriptor<? extends AbstractScript>> getApplicableResultSeekers() {
-        return new LinkedList<>(AbstractScript.all());
+    public List<Descriptor<? extends Script>> getApplicableResultSeekers() {
+        return new LinkedList<>(Script.all());
     }
 
 }

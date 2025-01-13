@@ -24,8 +24,6 @@
 
 package org.biouno.unochoice.model;
 
-import hudson.DescriptorExtensionList;
-import hudson.model.Describable;
 import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 
@@ -35,31 +33,27 @@ import jenkins.model.Jenkins;
  * @author Bruno P. Kinoshita
  * @since 0.23
  */
-public abstract class AbstractScript implements Script, Describable<AbstractScript> {
+public abstract class AbstractScript implements Script {
 
     /*
      * Serial UID.
      */
     private static final long serialVersionUID = 4027103576278802323L;
 
+    // TODO could be pulled up into Script (default method);
+    // in fact this intermediate type could probably be deleted
+    // (assuming there is no Java serialization outside of Remoting,
+    // since such a change would break the stream class description;
+    // XStream should not care about that)
     @Override
     @SuppressWarnings("unchecked")
-    public Descriptor<AbstractScript> getDescriptor() {
+    public Descriptor<Script> getDescriptor() {
         final Jenkins instance = Jenkins.getInstanceOrNull();
-        Descriptor<AbstractScript> descriptor = null;
+        Descriptor<Script> descriptor = null;
         if (instance != null) {
             descriptor = instance.getDescriptor(getClass());
         }
         return descriptor;
-    }
-
-    public static DescriptorExtensionList<AbstractScript, ScriptDescriptor> all() {
-        final Jenkins instance = Jenkins.getInstanceOrNull();
-        DescriptorExtensionList<AbstractScript, ScriptDescriptor> all = null;
-        if (instance != null) {
-            all = instance.getDescriptorList(AbstractScript.class);
-        }
-        return all;
     }
 
 }
