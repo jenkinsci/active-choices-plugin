@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.mockito.Mockito;
 
 import hudson.model.ParameterValue;
@@ -73,7 +73,7 @@ public class TestAbstractUnoChoiceParameter {
         json.put("name", "name");
         json.put("value", "value");
 
-        StaplerRequest request = Mockito.mock(StaplerRequest.class);
+        StaplerRequest2 request = Mockito.mock(StaplerRequest2.class);
         Mockito.when(request.bindJSON(StringParameterValue.class, json)).thenReturn((StringParameterValue) value);
 
         value = param.createValue(request, json);

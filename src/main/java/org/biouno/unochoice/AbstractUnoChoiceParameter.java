@@ -28,12 +28,12 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.util.Utils;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import hudson.DescriptorExtensionList;
 import hudson.model.FileParameterValue;
@@ -142,10 +142,10 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
 
     /*
      * (non-Javadoc)
-     * @see hudson.model.ParameterDefinition#createValue(org.kohsuke.stapler.StaplerRequest, net.sf.json.JSONObject)
+     * @see hudson.model.ParameterDefinition#createValue(org.kohsuke.stapler.StaplerRequest2, net.sf.json.JSONObject)
      */
     @Override
-    public ParameterValue createValue(StaplerRequest request, JSONObject json) {
+    public ParameterValue createValue(StaplerRequest2 request, JSONObject json) {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "createValue", new Object[] {request, json});
         }

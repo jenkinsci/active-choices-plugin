@@ -34,7 +34,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import hudson.Extension;
@@ -143,7 +143,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
          * A bit hacky, probably using another extension point would be a good idea.
          */
         @Override
-        public ParameterDefinition newInstance(StaplerRequest req, JSONObject formData) throws hudson.model.Descriptor.FormException {
+        public ParameterDefinition newInstance(StaplerRequest2 req, JSONObject formData) throws hudson.model.Descriptor.FormException {
             if (req != null) {
                 List<Ancestor> ancestors = req.getAncestors();
                 AbstractProject<?, ?> project = null;

@@ -39,7 +39,7 @@ import org.biouno.unochoice.util.ScriptCallback;
 import org.biouno.unochoice.util.Utils;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import hudson.model.AbstractItem;
 import hudson.model.Job;
@@ -143,7 +143,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
     }
 
     protected AbstractItem detectProject() {
-        final StaplerRequest currentRequest = Stapler.getCurrentRequest();
+        final StaplerRequest2 currentRequest = Stapler.getCurrentRequest2();
         if (currentRequest != null) {
             final Ancestor ancestor = currentRequest.findAncestor(AbstractItem.class);
             if (ancestor != null) {
