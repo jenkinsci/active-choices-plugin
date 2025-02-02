@@ -96,7 +96,7 @@ export default class Util {
      * @param title {string} title of the cell
      * @returns {HTMLLabelElement}
      */
-    public makeLabel(innerHTML: string, title?: string) {
+    public makeLabel(innerHTML: string, title?: string): HTMLLabelElement {
         let label = document.createElement('label');
         label.innerHTML = innerHTML;
         label.className = "attach-previous";
@@ -105,19 +105,19 @@ export default class Util {
     }
 
     /**
-     * Gets an array of the selected option values in a HTML select element.
+     * Gets an array of the selected option values in an HTML select element.
      *
      * @param select {JQuery<HTMLSelectElement>} HTML DOM select element
      * @return {Array<string>} <code>Array</code>
      *
      * @see http://stackoverflow.com/questions/5866169/getting-all-selected-values-of-a-multiple-select-box-when-clicking-on-a-button-u
      */
-    public getSelectValues(select: JQuery<HTMLSelectElement>): string[] {
+    public getSelectValues(select: JQuery<HTMLSelectElement>): string[] | undefined {
         return select.val() as string[];
     }
 
     /**
-     * Gets the value of a HTML element as string. If the returned value is an Array it gets serialized first.
+     * Gets the value of an HTML element as string. If the returned value is an Array it gets serialized first.
      * Correctly handles SELECT, CHECKBOX, RADIO, and other types.
      *
      * @param e {JQuery<HTMLElement>} HTML element
@@ -125,7 +125,12 @@ export default class Util {
      */
     public getElementValue(e: JQuery): string {
         if (e.prop('tagName') === 'SELECT') {
-            return this.getSelectValues(e as JQuery<HTMLSelectElement>).toString();
+            const selectValues = this.getSelectValues(e as JQuery<HTMLSelectElement>)
+            if (selectValues === undefined || selectValues === null) {
+                console.log(`[Util] - getElementValue - select values cannot be found for this parameter`)
+                return ''
+            }
+            return selectValues.toString();
         } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
             return e.prop('checked') ? e.val().toString(): '';
         } else {
