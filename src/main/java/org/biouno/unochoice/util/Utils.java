@@ -60,7 +60,7 @@ import hudson.tasks.BuildWrapper;
 import hudson.util.DescribableList;
 import hudson.util.ReflectionUtils;
 import jenkins.model.Jenkins;
-import org.acegisecurity.Authentication;
+import org.springframework.security.core.Authentication;
 
 /**
  * Utility methods.
@@ -194,9 +194,9 @@ public class Utils {
     @Deprecated
     @SuppressWarnings("rawtypes")
     public static @CheckForNull Project<?, ?> getProjectByName(@NonNull String projectName) {
-        Authentication auth = Jenkins.getAuthentication();
-        for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.getInstance(), Project.class)) {
-            if (p.getName().equals(projectName) && p.getACL().hasPermission(auth, Item.READ)) {
+        Authentication auth = Jenkins.getAuthentication2();
+        for (Project p : Items.allItems2(ACL.SYSTEM2, Jenkins.getInstance(), Project.class)) {
+            if (p.getName().equals(projectName) && p.getACL().hasPermission2(auth, Item.READ)) {
                 return p;
             }
         }
@@ -213,9 +213,9 @@ public class Utils {
      */
     @SuppressWarnings("rawtypes")
     public static @CheckForNull Project findProjectByParameterUUID(@NonNull String parameterUUID) {
-        Authentication auth = Jenkins.getAuthentication();
-        for (Project p : Items.allItems(ACL.SYSTEM, Jenkins.get(), Project.class)) {
-            if (isParameterDefinitionOf(parameterUUID, p) && p.getACL().hasPermission(auth, Item.READ)) {
+        Authentication auth = Jenkins.getAuthentication2();
+        for (Project p : Items.allItems2(ACL.SYSTEM2, Jenkins.get(), Project.class)) {
+            if (isParameterDefinitionOf(parameterUUID, p) && p.getACL().hasPermission2(auth, Item.READ)) {
                 return p;
             }
         }
