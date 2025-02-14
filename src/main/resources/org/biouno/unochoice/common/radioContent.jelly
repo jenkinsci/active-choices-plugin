@@ -4,7 +4,7 @@
       <d:tag name="randomTableIdBlock">
           <j:choose>
               <j:when test="${divBasedFormLayout}">
-                  <div id="tbl_ecp_${h.escape(it.randomName)}">
+                  <div id="tbl_ecp_${h.escape(it.randomName)}" style="display: flex; flex-direction: column; gap: 5px;">
                       <d:invokeBody/>
                   </div>
               </j:when>
@@ -44,7 +44,7 @@
           </j:choose>
       </d:tag>
   </d:taglib>
-  <div id="ecp_${h.escape(it.randomName)}" style="float:left; overflow-y:auto; padding-right:25px">
+  <div id="ecp_${h.escape(it.randomName)}" style="float:left; overflow-y:auto; padding-right:25px;">
     <j:set var="index" value="0"/>
     <transitionWrapper:randomTableIdBlock>
       <j:forEach var="iter" items="${it.getChoices()}" indexVar="indexVar">
@@ -69,34 +69,36 @@
         <j:set var="id" value="ecp_${h.escape(it.randomName)}_${index}" />
         <transitionWrapper:row>
           <transitionWrapper:td>
-            <j:choose>
-              <j:when test="${selected &amp;&amp; disabled}">
-                <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
-                  <j:arg type="java.lang.Object" value="${escapedValue}" />
-                </j:invokeStatic>
-                <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
-                  <j:arg type="java.lang.Object" value="${escapedKey}" />
-                </j:invokeStatic>
-                <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class="radio-content-radio-input" type="radio" />
-                <label class="attach-previous">${escapedAndDisabledValue}</label>
-                <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedAndDisabledValue}" />
-              </j:when>
-              <j:when test="${selected}">
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class="radio-content-radio-input" type="radio" />
-                <label class="attach-previous">${escapedValue}</label>
-                <input json="${escapedKey}" name="value" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
-              </j:when>
-              <j:when test="${disabled}">
-                <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class="radio-content-radio-input" type="radio" />
-                <label class="attach-previous">${escapedDisabledValue}</label>
-                <input disabled="${disabled}" json="${escapedDisabledKey}" name="" value="${escapedDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedDisabledValue}" />
-              </j:when>
-              <j:otherwise>
-                <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class="radio-content-radio-input" type="radio" />
-                <label class="attach-previous">${escapedValue}</label>
-                <input json="${escapedKey}" name="" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
-              </j:otherwise>
-            </j:choose>
+            <div class="jenkins-radio">
+              <j:choose>
+                <j:when test="${selected &amp;&amp; disabled}">
+                  <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
+                    <j:arg type="java.lang.Object" value="${escapedValue}" />
+                  </j:invokeStatic>
+                  <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
+                    <j:arg type="java.lang.Object" value="${escapedKey}" />
+                  </j:invokeStatic>
+                  <input disabled="${disabled}" json="${escapedAndDisabledKey}" alt="${escapedAndDisabledValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedAndDisabledKey}" class="jenkins-radio__input radio-content-radio-input" type="radio" />
+                  <label class="jenkins-radio__label attach-previous">${escapedAndDisabledValue}</label>
+                  <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedAndDisabledValue}" />
+                </j:when>
+                <j:when test="${selected}">
+                  <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" checked="checked" name="${h.escape(it.name)}" value="${escapedKey}" class="jenkins-radio__input radio-content-radio-input" type="radio" />
+                  <label class="jenkins-radio__label attach-previous">${escapedValue}</label>
+                  <input json="${escapedKey}" name="value" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
+                </j:when>
+                <j:when test="${disabled}">
+                  <input disabled="${disabled}" json="${escapedDisabledKey}" alt="${escapedDisabledValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedDisabledKey}" class="jenkins-radio__input radio-content-radio-input" type="radio" />
+                  <label class="jenkins-radio__label attach-previous">${escapedDisabledValue}</label>
+                  <input disabled="${disabled}" json="${escapedDisabledKey}" name="" value="${escapedDisabledKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedDisabledValue}" />
+                </j:when>
+                <j:otherwise>
+                  <input json="${escapedKey}" alt="${escapedValue}" otherid="${id}" name="${h.escape(it.name)}" value="${escapedKey}" class="jenkins-radio__input radio-content-radio-input" type="radio" />
+                  <label class="jenkins-radio__label attach-previous">${escapedValue}</label>
+                  <input json="${escapedKey}" name="" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
+                </j:otherwise>
+              </j:choose>
+            </div>
           </transitionWrapper:td>
         </transitionWrapper:row>
         <j:set var="index" value="${index + 1}"/>

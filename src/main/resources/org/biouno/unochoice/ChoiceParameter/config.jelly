@@ -13,40 +13,42 @@
     <f:textarea name="parameter.description" value="${instance.description}" />
   </f:entry>
   <f:entry title="${%Choice Type}" field="choiceType">
-    <select name="parameter.choiceType">
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'PT_SINGLE_SELECT'}">
-          <option value="PT_SINGLE_SELECT" selected="selected">${%Single Select}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="PT_SINGLE_SELECT">${%Single Select}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'PT_MULTI_SELECT'}">
-          <option value="PT_MULTI_SELECT" selected="selected">${%Multi Select}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="PT_MULTI_SELECT">${%Multi Select}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'PT_RADIO'}">
-          <option value="PT_RADIO" selected="selected">${%Radio Buttons}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="PT_RADIO">${%Radio Buttons}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'PT_CHECKBOX'}">
-          <option value="PT_CHECKBOX" selected="selected">${%Check Boxes}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="PT_CHECKBOX">${%Check Boxes}</option>
-        </j:otherwise>
-      </j:choose>
-    </select>
+    <div class="jenkins-select">
+      <select name="parameter.choiceType" class="jenkins-select__input">
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'PT_SINGLE_SELECT'}">
+            <option value="PT_SINGLE_SELECT" selected="selected">${%Single Select}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="PT_SINGLE_SELECT">${%Single Select}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'PT_MULTI_SELECT'}">
+            <option value="PT_MULTI_SELECT" selected="selected">${%Multi Select}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="PT_MULTI_SELECT">${%Multi Select}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'PT_RADIO'}">
+            <option value="PT_RADIO" selected="selected">${%Radio Buttons}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="PT_RADIO">${%Radio Buttons}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'PT_CHECKBOX'}">
+            <option value="PT_CHECKBOX" selected="selected">${%Check Boxes}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="PT_CHECKBOX">${%Check Boxes}</option>
+          </j:otherwise>
+        </j:choose>
+      </select>
+    </div>
   </f:entry>
   <f:entry title="${%Enable filters}" field="filterable" help="/plugin/uno-choice/help-filterableParameters.html">
     <f:checkbox name="parameter.filterable" checked="${instance.filterable}">${%Filterable}</f:checkbox>

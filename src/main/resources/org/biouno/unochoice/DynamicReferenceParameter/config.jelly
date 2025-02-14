@@ -13,48 +13,50 @@
     <f:textarea name="parameter.description" value="${instance.description}" />
   </f:entry>
   <f:entry title="${%Choice Type}" field="choiceType">
-    <select name="parameter.choiceType">
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'ET_TEXT_BOX'}">
-          <option value="ET_TEXT_BOX" selected="selected">${%Input text box}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="ET_TEXT_BOX">${%Input text box}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'ET_ORDERED_LIST'}">
-          <option value="ET_ORDERED_LIST" selected="selected">${%Numbered list}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="ET_ORDERED_LIST">${%Numbered list}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'ET_UNORDERED_LIST'}">
-          <option value="ET_UNORDERED_LIST" selected="selected">${%Bullet items list}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="ET_UNORDERED_LIST">${%Bullet items list}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'ET_FORMATTED_HTML'}">
-          <option value="ET_FORMATTED_HTML" selected="selected">${%Formatted HTML}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="ET_FORMATTED_HTML">${%Formatted HTML}</option>
-        </j:otherwise>
-      </j:choose>
-      <j:choose>
-        <j:when test="${instance.choiceType eq 'ET_FORMATTED_HIDDEN_HTML'}">
-          <option value="ET_FORMATTED_HIDDEN_HTML" selected="selected">${%Formatted Hidden HTML}</option>
-        </j:when>
-        <j:otherwise>
-          <option value="ET_FORMATTED_HIDDEN_HTML">${%Formatted Hidden HTML}</option>
-        </j:otherwise>
-      </j:choose>
-    </select>
+    <div class="jenkins-select">
+      <select name="parameter.choiceType" class="jenkins-select__input">
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'ET_TEXT_BOX'}">
+            <option value="ET_TEXT_BOX" selected="selected">${%Input text box}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="ET_TEXT_BOX">${%Input text box}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'ET_ORDERED_LIST'}">
+            <option value="ET_ORDERED_LIST" selected="selected">${%Numbered list}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="ET_ORDERED_LIST">${%Numbered list}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'ET_UNORDERED_LIST'}">
+            <option value="ET_UNORDERED_LIST" selected="selected">${%Bullet items list}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="ET_UNORDERED_LIST">${%Bullet items list}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'ET_FORMATTED_HTML'}">
+            <option value="ET_FORMATTED_HTML" selected="selected">${%Formatted HTML}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="ET_FORMATTED_HTML">${%Formatted HTML}</option>
+          </j:otherwise>
+        </j:choose>
+        <j:choose>
+          <j:when test="${instance.choiceType eq 'ET_FORMATTED_HIDDEN_HTML'}">
+            <option value="ET_FORMATTED_HIDDEN_HTML" selected="selected">${%Formatted Hidden HTML}</option>
+          </j:when>
+          <j:otherwise>
+            <option value="ET_FORMATTED_HIDDEN_HTML">${%Formatted Hidden HTML}</option>
+          </j:otherwise>
+        </j:choose>
+      </select>
+    </div>
   </f:entry>
   <f:entry title="${%Referenced parameters}" field="referencedParameters" help="/plugin/uno-choice/help-referencedParameters.html">
     <f:textbox name="parameter.referencedParameters" value="${instance.referencedParameters}" />

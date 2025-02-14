@@ -9,9 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         var refElement = document.getElementById(`ecp_${randomName}_0`);
         if (maxCount > 0 && refElement && refElement.offsetHeight != 0) {
-            for (var i = 0; i < maxCount; i++) {
-                height += refElement.offsetHeight + 3;
-            }
+            height = refElement.offsetHeight * maxCount + (maxCount - 1) * 5;
         }
         else {
             height = maxCount * 25.5;

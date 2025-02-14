@@ -13,15 +13,19 @@
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>
         <j:when test="${choiceType eq 'PT_SINGLE_SELECT'}">
-          <select name="value">
-            <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
-          </select>
+          <div class="jenkins-select">
+            <select name="value" class="jenkins-select__input">
+              <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
+            </select>
+          </div>
         </j:when>
         <j:when test="${choiceType eq 'PT_MULTI_SELECT'}">
           <j:set var="multiple_select_id" value="multiple_select_${h.escape(it.randomName)}_${index}" />
-          <select name="value" multiple="multiple" size="1" id="${multiple_select_id}">
-            <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
-          </select>
+          <div class="jenkins-select__input ac-select__input">
+            <select name="value" multiple="multiple" size="1" id="${multiple_select_id}" class="ac-select">
+              <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
+            </select>
+          </div>
           <span class="multi-select-data-holder" data-visible-item-count="${it.visibleItemCount}" data-multi-select-id="${multiple_select_id}"/>
           <st:adjunct includes="org.biouno.unochoice.common.multi-select"/>
         </j:when>
