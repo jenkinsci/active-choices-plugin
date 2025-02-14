@@ -22,6 +22,7 @@ export default class Util {
         input.setAttribute("type", "radio");
         if (checked) input.setAttribute("checked", "checked");
         if (disabled) input.setAttribute("disabled", "disabled");
+        input.classList.add("jenkins-radio__input");
         return input;
     }
 
@@ -69,10 +70,13 @@ export default class Util {
      * @param elements {Array<HTMLElement>} elements to be added to the cell
      * @returns {HTMLDivElement}
      */
-    public makeTd(elements: Array<HTMLElement>): HTMLDivElement {
+    public makeTd(elements: Array<HTMLElement>, clazz?: string): HTMLDivElement {
         let td = document.createElement('div');
         for (let i = 0; i < elements.length; i++) {
             td.appendChild(elements[i]);
+        }
+        if (clazz) {
+            td.classList.add(clazz);
         }
         return td;
     }
@@ -96,11 +100,14 @@ export default class Util {
      * @param title {string} title of the cell
      * @returns {HTMLLabelElement}
      */
-    public makeLabel(innerHTML: string, title?: string): HTMLLabelElement {
+    public makeLabel(innerHTML: string, title?: string, clazz?: string): HTMLLabelElement {
         let label = document.createElement('label');
         label.innerHTML = innerHTML;
         label.className = "attach-previous";
         if (title) label.title = title;
+        if (clazz) {
+          label.classList.add(clazz);
+        }
         return label;
     }
 

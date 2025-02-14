@@ -10,8 +10,52 @@
 
   border-radius: inherit;
 }
+
 .active-choice {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.uno_choice_filter {
+  width: 200px;
+}
+
+.ac-spinner {
+  display: none;
+  position: absolute;
+  margin-left: -22px;
+  margin-top: 10px;
+}
+
+.ac-container__wrapper {
+  padding-right: 25px
+}
+
+.ac-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ac-select {
+  overflow-y: auto;
+  border: 0;
+  width: 100%;
+}
+
+.ac-select:focus-visible {
+  outline: 0;
+}
+
+.ac-select__input {
+  padding: 0;
+  overflow: hidden;
+  transition: none;
+}
+
+.ac-select__input:has(>select:focus) {
+  border-color: var(--focus-input-border);
+  box-shadow: var(--form-input-glow--focus);
+  outline: none;
 }

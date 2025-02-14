@@ -93,7 +93,7 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
             assertEquals(2, findRadios("DOCKER_BASE_IMAGE").size());
         } catch (StaleElementReferenceException e) {
             List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
-            wait.until(ExpectedConditions.elementToBeClickable(dockerBaseImageParam.get(0)));
+            wait.until(ExpectedConditions.elementToBeClickable(getLabel(dockerBaseImageParam.get(0))));
             assertEquals(2, dockerBaseImageParam.size());
         }
 
@@ -109,10 +109,10 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
 
         try {
             assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
-            findCheckboxes("MACHINES").get(1).click();
+            getLabel((findCheckboxes("MACHINES").get(1))).click();
         } catch (StaleElementReferenceException e) {
             assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
-            findCheckboxes("MACHINES").get(1).click();
+            getLabel(findCheckboxes("MACHINES").get(1)).click();
         }
 
         waitLoadingMessage();

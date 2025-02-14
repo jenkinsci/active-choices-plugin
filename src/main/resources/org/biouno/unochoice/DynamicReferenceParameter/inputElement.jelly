@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true' ?>
 <j:jelly xmlns:j="jelly:core">
-  <input id='inputElement_${h.escape(paramName)}' type="text" value="${it.getChoicesAsString()}" readonly="readonly" disabled="disabled" />
+  <input id='inputElement_${h.escape(paramName)}' type="text" value="${it.getChoicesAsString()}" readonly="readonly" disabled="disabled" class="jenkins-input"/>
 </j:jelly>

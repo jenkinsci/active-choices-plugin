@@ -338,4 +338,9 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         return Math.min(visibleItemCount, DEFAULT_MAX_VISIBLE_ITEM_COUNT);
     }
 
+    public int getItemCount() {
+        if (visibleItemCount <= 0)
+            visibleItemCount = 1;
+        return visibleItemCount;
+    }
 }

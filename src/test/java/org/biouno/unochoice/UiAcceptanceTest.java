@@ -100,16 +100,16 @@ class UiAcceptanceTest extends BaseUiTest {
         // this is until something is selected
         checkRadios(() -> findRadios("PARAM2A"), "1", "2", "3");
 
-        param2Choices.get(0).click();
+        clickRadio(param2Choices.get(0));
         checkRadios(() -> findRadios("PARAM2A"), "A1", "A2", "A3");
 
-        param2Choices.get(1).click();
+        clickRadio(param2Choices.get(1));
         checkRadios(() -> findRadios("PARAM2A"), "B1", "B2", "B3");
 
-        param2Choices.get(2).click();
+        clickRadio(param2Choices.get(2));
         checkRadios(() -> findRadios("PARAM2A"), "C1", "C2", "C3");
 
-        param2Choices.get(0).click();
+        clickRadio(param2Choices.get(0));
         checkRadios(() -> findRadios("PARAM2A"), "A1", "A2", "A3");
 
         /*
@@ -121,28 +121,28 @@ class UiAcceptanceTest extends BaseUiTest {
         // this is until something is selected
         checkRadios(() -> findCheckboxes("PARAM3A"));
 
-        param3Choices.get(0).click();
+        clickRadio(param3Choices.get(0));
         checkRadios(() -> findCheckboxes("PARAM3A"), "A1", "A2", "A3");
 
-        param3Choices.get(1).click();
+        clickRadio(param3Choices.get(1));
         checkRadios(() -> findCheckboxes("PARAM3A"), "A1", "B1", "A2", "B2", "A3", "B3");
 
-        param3Choices.get(2).click();
+        clickRadio(param3Choices.get(2));
         checkRadios(() -> findCheckboxes("PARAM3A"), "A1", "B1", "C1", "A2", "B2", "C2", "A3", "B3", "C3");
 
-        param3Choices.get(0).click();
+        clickRadio(param3Choices.get(0));
         checkRadios(() -> findCheckboxes("PARAM3A"), "B1", "C1", "B2", "C2", "B3", "C3");
 
-        param3Choices.get(1).click();
+        clickRadio(param3Choices.get(1));
         checkRadios(() -> findCheckboxes("PARAM3A"), "C1", "C2", "C3");
 
-        param3Choices.get(0).click();
+        clickRadio(param3Choices.get(0));
         checkRadios(() -> findCheckboxes("PARAM3A"), "A1", "C1", "A2", "C2", "A3", "C3");
 
-        param3Choices.get(2).click();
+        clickRadio(param3Choices.get(2));
         checkRadios(() -> findCheckboxes("PARAM3A"), "A1", "A2", "A3");
 
-        param3Choices.get(0).click();
+        clickRadio(param3Choices.get(0));
         checkRadios(() -> findCheckboxes("PARAM3A"));
 
         /*
