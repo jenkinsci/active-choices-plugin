@@ -8,8 +8,11 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         var refElement = document.getElementById(`ecp_${randomName}_0`);
+        if (refElement) {
+          refElement = refElement.parentElement;
+        }
         if (maxCount > 0 && refElement && refElement.offsetHeight != 0) {
-            height = refElement.offsetHeight * maxCount + (maxCount - 1) * 5;
+            height = refElement.offsetHeight * maxCount + (maxCount - 1) * 6;
         }
         else {
             height = maxCount * 25.5;

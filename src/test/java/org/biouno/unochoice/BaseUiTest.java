@@ -108,6 +108,10 @@ public abstract class BaseUiTest {
         return driver.findElements(radios(paramName));
     }
 
+    protected void clickRadio(WebElement element) {
+        element.findElement(By.xpath("following-sibling::*")).click();
+    }
+
     protected static By checkboxes(String paramName) {
         return By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) input[type='checkbox']");
     }

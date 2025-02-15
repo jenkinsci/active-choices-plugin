@@ -262,7 +262,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
                             originalArray.push(input);
                             // Put everything together
-                            let td = util.makeTd([input, label]);
+                            let td = util.makeTd([input, label], "jenkins-checkbox");
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -287,11 +287,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 input.setAttribute('alt', entry);
                             }
                             // <LABEL>
-                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
+                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined, "jenkins-radio__label");
                             // <HIDDEN>
                             let hiddenValue = util.makeHidden(idValue, key, selectedElements.indexOf(i) >= 0 ? 'value' : '', key, _self.getParameterName(), entry instanceof String ? entry : JSON.stringify(entry));
                             originalArray.push(input);
-                            let td = util.makeTd([input, label, hiddenValue]);
+                            let td = util.makeTd([input, label, hiddenValue], "jenkins-radio");
                             let tr = util.makeTr(undefined)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -308,7 +308,14 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     /*
                      * This height is equivalent to setting the number of rows displayed in a select/multiple
                      */
-                    parameterElement.style.height = newValues.length > 10 ? '230px' : 'auto';
+                    if (newValues.length > 10) {
+                        parameterElement.style.height = "255px";
+                    }  else {
+                        parameterElement.style.overflowY = "unset";
+                        parameterElement.style.height = "unset";
+                    }
+                    Behaviour.applySubtree(parameterElement);
+
                 } // if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'DIV') {
             } // if (parameterElement.tagName === 'SELECT') { // } else if (parameterElement.tagName === 'DIV') {
         });

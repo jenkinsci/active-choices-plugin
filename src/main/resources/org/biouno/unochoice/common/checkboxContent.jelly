@@ -35,7 +35,7 @@
       <d:tag name="td">
           <j:choose>
               <j:when test="${divBasedFormLayout}">
-                  <div>
+                  <div class="jenkins-checkbox">
                       <d:invokeBody/>
                   </div>
               </j:when>
@@ -72,32 +72,30 @@
         <j:set var="id" value="ecp_${h.escape(it.randomName)}_${index}" />
         <transitionWrapper:row>
           <transitionWrapper:td>
-            <span class="jenkins-checkbox">
-              <j:choose>
-                <j:when test="${selected &amp;&amp; disabled}">
-                  <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
-                    <j:arg type="java.lang.Object" value="${escapedValue}" />
-                  </j:invokeStatic>
-                  <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
-                    <j:arg type="java.lang.Object" value="${escapedKey}" />
-                  </j:invokeStatic>
-                  <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class=" " type="checkbox" title="${escapedAndDisabledValue}" alt="${escapedAndDisabledValue}" checked="true" />
-                  <label class="attach-previous" title="${escapedAndDisabledValue}">${escapedAndDisabledValue}</label>
-                </j:when>
-                <j:when test="${selected}">
-                  <input json="${escapedKey}" name="value" value="${escapedKey}" class=" " type="checkbox" title="${escapedValue}" alt="${escapedValue}" checked="true" />
-                  <label class="attach-previous" title="${escapedValue}">${escapedValue}</label>
-                </j:when>
-                <j:when test="${disabled}">
-                  <input disabled="${disabled}" json="${escapedDisabledKey}" name="value" value="${escapedDisabledKey}" class=" " type="checkbox" title="${escapedDisabledValue}" alt="${escapedDisabledValue}"  />
-                  <label class="attach-previous" title="${escapedDisabledValue}">${escapedDisabledValue}</label>
-                </j:when>
-                <j:otherwise>
-                  <input json="${escapedKey}" name="value" value="${escapedKey}" class=" " type="checkbox" title="${escapedValue}" alt="${escapedValue}"  />
-                  <label class="attach-previous" title="${escapedValue}">${escapedValue}</label>
-                </j:otherwise>
-              </j:choose>
-            </span>
+            <j:choose>
+              <j:when test="${selected &amp;&amp; disabled}">
+                <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
+                  <j:arg type="java.lang.Object" value="${escapedValue}" />
+                </j:invokeStatic>
+                <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledKey">
+                  <j:arg type="java.lang.Object" value="${escapedKey}" />
+                </j:invokeStatic>
+                <input disabled="${disabled}" json="${escapedAndDisabledKey}" name="value" value="${escapedAndDisabledKey}" class=" " type="checkbox" title="${escapedAndDisabledValue}" alt="${escapedAndDisabledValue}" checked="true" />
+                <label class="attach-previous" title="${escapedAndDisabledValue}">${escapedAndDisabledValue}</label>
+              </j:when>
+              <j:when test="${selected}">
+                <input json="${escapedKey}" name="value" value="${escapedKey}" class=" " type="checkbox" title="${escapedValue}" alt="${escapedValue}" checked="true" />
+                <label class="attach-previous" title="${escapedValue}">${escapedValue}</label>
+              </j:when>
+              <j:when test="${disabled}">
+                <input disabled="${disabled}" json="${escapedDisabledKey}" name="value" value="${escapedDisabledKey}" class=" " type="checkbox" title="${escapedDisabledValue}" alt="${escapedDisabledValue}"  />
+                <label class="attach-previous" title="${escapedDisabledValue}">${escapedDisabledValue}</label>
+              </j:when>
+              <j:otherwise>
+                <input json="${escapedKey}" name="value" value="${escapedKey}" class=" " type="checkbox" title="${escapedValue}" alt="${escapedValue}"  />
+                <label class="attach-previous" title="${escapedValue}">${escapedValue}</label>
+              </j:otherwise>
+            </j:choose>
           </transitionWrapper:td>
         </transitionWrapper:row>
         <j:set var="index" value="${index + 1}"/>
