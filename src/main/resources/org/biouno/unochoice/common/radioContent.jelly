@@ -69,7 +69,7 @@
         <j:set var="id" value="ecp_${h.escape(it.randomName)}_${index}" />
         <transitionWrapper:row>
           <transitionWrapper:td>
-            <div class="jenkins-radio">
+            <div class="jenkins-radio ac-ignore">
               <j:choose>
                 <j:when test="${selected &amp;&amp; disabled}">
                   <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">

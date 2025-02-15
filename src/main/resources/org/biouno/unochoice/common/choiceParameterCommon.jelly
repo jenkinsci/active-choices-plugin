@@ -13,7 +13,7 @@
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>
         <j:when test="${choiceType eq 'PT_SINGLE_SELECT'}">
-          <div class="jenkins-select">
+          <div class="jenkins-select ac-ignore">
             <select name="value" class="jenkins-select__input">
               <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
             </select>
@@ -21,7 +21,7 @@
         </j:when>
         <j:when test="${choiceType eq 'PT_MULTI_SELECT'}">
           <j:set var="multiple_select_id" value="multiple_select_${h.escape(it.randomName)}_${index}" />
-          <div class="jenkins-select__input ac-select__input">
+          <div class="jenkins-select__input ac-select__input ac-ignore">
             <select name="value" multiple="multiple" size="1" id="${multiple_select_id}" class="ac-select">
               <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
             </select>

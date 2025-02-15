@@ -885,7 +885,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
     function renderChoiceParameter(paramName, filterLength) {
         let parentDiv = jQuery3(`#${paramName}`);
-        let parameterHtmlElement = parentDiv.find('DIV');
+        let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
             console.log('Could not find element by name, perhaps it is a DIV?');
             parameterHtmlElement = parentDiv.find('*[name="value"]');
@@ -905,7 +905,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     async function renderCascadeChoiceParameter(parentDivRef, filterable, name, randomName, filterLength, paramName, referencedParameters, cascadeChoiceParameter) {
         // find the cascade parameter element
         let parentDiv = jQuery3(parentDivRef);
-        let parameterHtmlElement = parentDiv.find('DIV');
+        let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
             console.log('Could not find element by name, perhaps it is a DIV?');
             parameterHtmlElement = parentDiv.find('*[name="value"]');
