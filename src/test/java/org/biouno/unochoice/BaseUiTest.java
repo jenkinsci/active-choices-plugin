@@ -117,7 +117,7 @@ public abstract class BaseUiTest {
     }
 
     protected static By selects(String paramName) {
-        return By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) > select");
+        return By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) select");
     }
 
     protected WebElement findSelect(String paramName) {

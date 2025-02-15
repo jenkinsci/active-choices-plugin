@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlElement;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.junit.After;
 import org.junit.Before;
@@ -125,11 +127,9 @@ public class TestForNodeLabelParameter {
             HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
             DomElement renderedParameterElement = configPage.getElementById("random-name");
             HtmlSelect select = null;
-            for (DomNode node: renderedParameterElement.getChildren()) {
-                if (node instanceof HtmlSelect) {
-                    select = (HtmlSelect) node;
-                    break;
-                }
+            DomNodeList<HtmlElement> selects = renderedParameterElement.getElementsByTagName("select");
+            if (!selects.isEmpty()) {
+                select = (HtmlSelect) selects.get(0);
             }
             if (select == null) {
                 fail("Missing cascade parameter select HTML node element!");
