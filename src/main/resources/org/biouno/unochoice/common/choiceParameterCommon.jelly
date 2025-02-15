@@ -40,7 +40,7 @@
         </j:otherwise>
       </j:choose>
       <j:if test="${it.filterable}">
-        <input class='uno_choice_filter' type='text' value='' name='test' placeholder='Filter' />
+        <input class='uno_choice_filter jenkins-input jenkins-!-margin-top-1' type='text' value='' name='test' placeholder='Filter' style="width: 200px"/>
       </j:if>
     </div>
   </f:entry>

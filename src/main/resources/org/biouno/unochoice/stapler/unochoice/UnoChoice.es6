@@ -665,6 +665,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             let idValue = `ecp_${e.target.randomName}_${i}`;
                             idValue = idValue.replace(' ', '_');
 
+                            let tdClass =
+                                    (entry instanceof String || entry.tagName === 'INPUT') ?
+                                                    "jenkins-checkbox" :
+                                                    "jenkins-radio";
                             let input =
                                     entry instanceof String ?
                                             util.makeCheckbox(entry, undefined, undefined) :
@@ -675,10 +679,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             // LABEL
                             let label = (entry instanceof String || entry.tagName === 'INPUT') ?
                                     util.makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
-                                    util.makeLabel(input, undefined);
+                                    util.makeLabel(input, undefined, "jenkins-radio__label");
 
                             // Put everything together
-                            let td = util.makeTd([input, label]);
+                            let td = util.makeTd([input, label], tdClass);
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -701,14 +705,15 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             input.checked = false;
                             let jsonInput = util.makeHidden(input.getAttribute('otherid'), input.getAttribute('json'), '', input.getAttribute('value'), input.getAttribute('name'), input.getAttribute('alt'));
 
-                            let label = util.makeLabel(input.getAttribute('alt'), undefined);
+                            let label = util.makeLabel(input.getAttribute('alt'), undefined, "jenkins-radio__label");
                             // Put everything together
-                            let td = util.makeTd([input, label, jsonInput]);
+                            let td = util.makeTd([input, label, jsonInput], "jenkins-radio");
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
                     }
+                    Behaviour.applySubtree(filteredElement);
                 } // if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'DIV') {
             } // if (tagName === 'SELECT') { // } else if (tagName === 'DIV') {
             // Propagate the changes made by the filter
