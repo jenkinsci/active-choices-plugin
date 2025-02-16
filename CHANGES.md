@@ -20,6 +20,7 @@
 - Bump webpack-cli from 5.1.4 to 6.0.1
 - Migrate from EE 8 to EE 9 (thanks @basil)
 - Migrate from Acegi to Spring Security (thanks, again, @basil)
+- move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
 
 ## Version 2.8.6 (2024/11/23)
 

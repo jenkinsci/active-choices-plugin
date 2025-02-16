@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:l="/lib/layout">
   <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-  <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
+  <st:include page="/org/biouno/unochoice/stapler/unochoice.jelly"/>
   <j:set var="paramName" value="${h.escape(it.randomName)}" scope="parent" />
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
