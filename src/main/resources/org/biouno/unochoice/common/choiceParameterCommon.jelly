@@ -6,7 +6,7 @@
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
-    <div id='${paramName}-spinner' style="display: none; position: absolute; margin-left: -25px;">
+    <div id='${paramName}-spinner' class="ac-spinner">
       <l:spinner />
     </div>
     <div name="parameter" description="${it.formattedDescription}" id='${paramName}' class="active-choice">
@@ -40,7 +40,7 @@
         </j:otherwise>
       </j:choose>
       <j:if test="${it.filterable}">
-        <input class='uno_choice_filter jenkins-input jenkins-!-margin-top-1' type='text' value='' name='test' placeholder='Filter' style="width: 200px"/>
+        <input class='uno_choice_filter jenkins-input jenkins-!-margin-top-1' type='text' value='' name='test' placeholder='Filter'/>
       </j:if>
     </div>
   </f:entry>

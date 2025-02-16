@@ -1,52 +1,8 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core" xmlns:d="jelly:define" xmlns:transitionWrapper="transitionWrapper" xmlns:st="jelly:stapler">
-  <d:taglib uri="transitionWrapper">
-      <d:tag name="randomTableIdBlock">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div id="tbl_ecp_${h.escape(it.randomName)}" style="display: flex; flex-direction: column; gap: 5px;">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <table id="tbl_ecp_${h.escape(it.randomName)}">
-                      <d:invokeBody/>
-                  </table>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-      <d:tag name="row">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div id="tbl_tr_ecp_${h.escape(it.randomName)}" class="tr" style="white-space:nowrap">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <tr id="tbl_tr_ecp_${h.escape(it.randomName)}" style="white-space:nowrap">
-                      <d:invokeBody/>
-                  </tr>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-      <d:tag name="td">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div class="jenkins-radio">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <td>
-                      <d:invokeBody/>
-                  </td>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-  </d:taglib>
-  <div id="ecp_${h.escape(it.randomName)}" style="float:left; overflow-y:auto; padding-right:25px;">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <div id="ecp_${h.escape(it.randomName)}" class="ac-container__wrapper">
     <j:set var="index" value="0"/>
-    <transitionWrapper:randomTableIdBlock>
+    <div id="tbl_ecp_${h.escape(it.randomName)}" class="ac-container">
       <j:forEach var="iter" items="${it.getChoices()}" indexVar="indexVar">
         <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="isSelected" var="selected">
           <j:arg type="java.lang.Object" value="${iter.value}" />
@@ -67,8 +23,8 @@
           <j:arg type="java.lang.Object" value="${iter.key}" />
         </j:invokeStatic>
         <j:set var="id" value="ecp_${h.escape(it.randomName)}_${index}" />
-        <transitionWrapper:row>
-          <transitionWrapper:td>
+        <div id="tbl_tr_ecp_${h.escape(it.randomName)}">
+          <div class="jenkins-radio">
             <j:choose>
               <j:when test="${selected &amp;&amp; disabled}">
                 <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
@@ -97,11 +53,11 @@
                 <input json="${escapedKey}" name="" value="${escapedKey}" class="${h.escape(it.name)}" type="hidden" id="${id}" title="${escapedValue}" />
               </j:otherwise>
             </j:choose>
-          </transitionWrapper:td>
-        </transitionWrapper:row>
+          </div>
+        </div>
         <j:set var="index" value="${index + 1}"/>
       </j:forEach>
-    </transitionWrapper:randomTableIdBlock>
+    </div>
   </div>
   <span class="radio-content-data-holder" data-visible-item-count="${it.visibleItemCount}" data-get-visible-item-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}"/>
   <st:adjunct includes="org.biouno.unochoice.common.radio-content"/>
