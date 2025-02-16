@@ -1,26 +1,10 @@
 <?jelly escape-by-default='true' ?>
 <!--
-Use it like <st:adjunct includes="org.biouno.unochoice.stapler.unochoice"/>
+Use it like <st:include page="/org/biouno/unochoice/stapler/unochoice.jelly"/>
 -->
-<j:jelly xmlns:j="jelly:core">
-  <style type="text/css">
-  .js-loading-overlay {
-    position:absolute;
-    top:0; bottom:0;
-    left:0; right:0;
-
-    z-index:199;
-
-    background:#fff;
-    opacity:0.5;
-
-    border-radius: inherit;
-  }
-  .active-choice {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  </style>
-  <script src="${it.packageUrl}/unochoice/UnoChoice.js" type="text/javascript" />
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:once>
+    <script src="${resURL}/plugin/uno-choice/js/UnoChoice.js" type="text/javascript"/>
+    <link rel="stylesheet" href="${resURL}/plugin/uno-choice/css/unochoice.css" type="text/css"/>
+  </st:once>
 </j:jelly>

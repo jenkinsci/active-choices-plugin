@@ -4,14 +4,14 @@ module.exports = (env, argv) => ({
     mode: "development",
     entry: {
         "UnoChoice": [
-            path.join(__dirname, "src/main/resources/org/biouno/unochoice/stapler/unochoice/UnoChoice.es6"),
+            path.join(__dirname, "src/main/js/UnoChoice.es6"),
         ],
         "Util": [
-            path.join(__dirname, "src/main/resources/org/biouno/unochoice/stapler/unochoice/Util.ts"),
+            path.join(__dirname, "src/main/js/Util.ts"),
         ],
     },
     output: {
-        path: path.join(__dirname, "target/classes/org/biouno/unochoice/stapler/unochoice"),
+        path: path.join(__dirname, "src/main/webapp/js"),
         iife: false,
     },
     devtool: argv.mode === "production" ? "source-map" : "inline-cheap-module-source-map",

@@ -1,5 +1,5 @@
 import {describe, test} from '@jest/globals';
-import Util from '../../main/resources/org/biouno/unochoice/stapler/unochoice/Util.ts';
+import Util from '../../main/js/Util.ts';
 import expect from "expect";
 import jQuery from "jquery";
 
