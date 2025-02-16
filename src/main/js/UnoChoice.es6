@@ -310,6 +310,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                      */
                     if (newValues.length > 10) {
                         parameterElement.style.height = "255px";
+                        parameterElement.style.overflowY = "auto";
                     }  else {
                         parameterElement.style.overflowY = "unset";
                         parameterElement.style.height = "unset";

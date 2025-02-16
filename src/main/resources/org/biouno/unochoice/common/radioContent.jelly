@@ -59,6 +59,6 @@
       </j:forEach>
     </div>
   </div>
-  <span class="radio-content-data-holder" data-visible-item-count="${it.visibleItemCount}" data-get-visible-item-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}"/>
+  <span class="radio-content-data-holder" data-item-count="${it.itemCount}" data-max-count="${it.visibleItemCount}" data-random-name="${h.escape(it.randomName)}"/>
   <st:adjunct includes="org.biouno.unochoice.common.radio-content"/>
 </j:jelly>

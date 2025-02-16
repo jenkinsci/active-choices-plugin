@@ -29,8 +29,6 @@
 }
 
 .ac-container__wrapper {
-  float: left;
-  overflow-y: auto;
   padding-right: 25px
 }
 

@@ -1,25 +1,11 @@
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".radio-content-data-holder").forEach((dataHolder) => {
-        const { getVisibleItemCount, visibleItemCount, randomName } = dataHolder.dataset;
-        var height = 0;
-        var maxCount = getVisibleItemCount;
-        if (maxCount > visibleItemCount) {
-            maxCount = visibleItemCount;
-        }
+        const { itemCount, maxCount, randomName } = dataHolder.dataset;
 
-        var refElement = document.getElementById(`ecp_${randomName}_0`);
-        if (refElement) {
-          refElement = refElement.parentElement;
+        if (itemCount > maxCount) {
+          document.getElementById(`ecp_${randomName}`).style.height = "255px";
+          document.getElementById(`ecp_${randomName}`).style.overflowY = "auto";
         }
-        if (maxCount > 0 && refElement && refElement.offsetHeight != 0) {
-            height = refElement.offsetHeight * maxCount + (maxCount - 1) * 6;
-        }
-        else {
-            height = maxCount * 25.5;
-        }
-
-        height = Math.floor(height);
-        document.getElementById(`ecp_${randomName}`).style.height = height + "px";
     });
 
     document.querySelectorAll(".radio-content-radio-input").forEach((radioInput) => {

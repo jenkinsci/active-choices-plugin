@@ -55,6 +55,6 @@
       </j:forEach>
     </div>
   </div>
-  <span class="checkbox-content-data-holder" data-max-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}" />
+  <span class="checkbox-content-data-holder" data-item-count="${it.itemCount}" data-max-count="${it.visibleItemCount}" data-random-name="${h.escape(it.randomName)}" />
   <st:adjunct includes="org.biouno.unochoice.common.checkbox-content" />
 </j:jelly>
