@@ -243,7 +243,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     jQuery3(tbody).empty();
                     let originalArray = [];
                     // Check whether it is a radio or checkbox element
-                    if (parameterElement.className === 'dynamic_checkbox') {
+                    if (parameterElement.classList.contains('dynamic_checkbox')) {
                         for (let i = 0; i < newValues.length; i++) {
                             let entry = newValues[i];
                             let key = newKeys[i];
@@ -304,7 +304,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                         if (_self.getFilterElement()) {
                             _self.getFilterElement().setOriginalArray(originalArray);
                         }
-                    } // if (oldSel.className === 'dynamic_checkbox')
+                    } // if (parameterElement.classList.contains('dynamic_checkbox'))
                     /*
                      * This height is equivalent to setting the number of rows displayed in a select/multiple
                      */
@@ -660,7 +660,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 if (jQuery3(filteredElement).children().length > 0 && (jQuery3(filteredElement).children()[0].tagName === 'DIV' || jQuery3(filteredElement).children()[0].tagName === 'SPAN')) {
                     let tbody = filteredElement.children[0];
                     jQuery3(tbody).empty();
-                    if (filteredElement.className === 'dynamic_checkbox') {
+                    if (filteredElement.classList.contains('dynamic_checkbox')) {
                         for (let i = 0; i < newOptions.length; i++) {
                             let entry = newOptions[i];
                             let idValue = `ecp_${e.target.randomName}_${i}`;
