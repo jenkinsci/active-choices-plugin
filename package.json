@@ -28,7 +28,7 @@
         "jest-junit": "^16.0.0",
         "jquery": "^3.7.1",
         "jsdom": "^26.0.0",
-        "prettier": "^3.5.1",
+        "prettier": "^3.5.2",
         "ts-loader": "^9.5.2",
         "typescript": "^5.7.3",
         "webpack": "^5.98.0",
