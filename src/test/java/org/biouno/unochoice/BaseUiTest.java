@@ -26,11 +26,11 @@ package org.biouno.unochoice;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
 import org.htmlunit.ElementNotFoundException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -46,12 +46,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+@WithJenkins
 public abstract class BaseUiTest {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+    protected JenkinsRule j;
 
     protected WebDriver driver;
     protected WebDriverWait wait;
@@ -62,7 +61,7 @@ public abstract class BaseUiTest {
 
     protected static final Duration MAX_WAIT = Duration.parse(System.getProperty("ui.loading.timeout", "PT300S"));
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         if (isCi()) {
             // The browserVersion needs to match what is provided by the Jenkins Infrastructure
@@ -78,8 +77,9 @@ public abstract class BaseUiTest {
         }
     }
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp(JenkinsRule j) {
+        this.j = j;
         if (isCi()) {
             driver = new ChromeDriver(new ChromeOptions().addArguments("--headless", "--disable-dev-shm-usage", "--no-sandbox"));
         } else {
@@ -89,7 +89,7 @@ public abstract class BaseUiTest {
         driver.manage().window().setSize(new Dimension(2560, 1440));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (driver != null) {
             driver.quit();
@@ -101,10 +101,6 @@ public abstract class BaseUiTest {
     }
 
     protected List<WebElement> findRadios(String paramName) {
-        return findRadios(paramName, null);
-    }
-
-    protected List<WebElement> findRadios(String paramName, Map<String, String> attributes) {
         return driver.findElements(radios(paramName));
     }
 
@@ -131,7 +127,7 @@ public abstract class BaseUiTest {
         final int parentsLimit = 7;
         WebElement parentElement = paramValueInput.findElement(By.xpath("./.."));
         for (int i = 0; i < parentsLimit; i++) {
-            if (parentElement.getAttribute("name") != null && parentElement.getAttribute("name").equals("parameterDefinitions")) {
+            if (parentElement.getDomAttribute("name") != null && parentElement.getDomAttribute("name").equals("parameterDefinitions")) {
                 return parentElement;
             }
             parentElement = parentElement.findElement(By.xpath("./.."));
@@ -142,13 +138,13 @@ public abstract class BaseUiTest {
     protected void checkOptions(Supplier<WebElement> param1Input, String... options) {
         wait.withMessage(() -> {
                     List<WebElement> optionElements = param1Input.get().findElements(By.cssSelector("option"));
-                    List<String> optionValues = optionElements.stream().map(WebElement::getText).collect(Collectors.toList());
+                    List<String> optionValues = optionElements.stream().map(WebElement::getText).toList();
                     return MessageFormat.format("{0} should have had {1}. Had {2}", param1Input, Arrays.asList(options), optionValues);
                 })
                 .until(d -> {
                     try {
                         List<WebElement> optionElements = param1Input.get().findElements(By.cssSelector("option"));
-                        List<String> optionValues = optionElements.stream().map(WebElement::getText).collect(Collectors.toList());
+                        List<String> optionValues = optionElements.stream().map(WebElement::getText).toList();
                         return optionValues.equals(Arrays.asList(options));
                     } catch (StaleElementReferenceException e) {
                         return false;
@@ -166,13 +162,13 @@ public abstract class BaseUiTest {
     protected void checkRadios(By selector, String... options) {
         wait.withMessage(() -> {
                     final List<WebElement> radios = driver.findElements(selector);
-                    List<String> optionValues = radios.stream().map(it -> it.getAttribute("value")).collect(Collectors.toList());
+                    List<String> optionValues = radios.stream().map(it -> it.getDomAttribute("value")).toList();
                     return MessageFormat.format("{0} should have had {1}. Had {2}", radios, Arrays.asList(options), optionValues);
                 })
                 .until(d -> {
                     try {
                         final List<WebElement> radios = driver.findElements(selector);
-                        List<String> optionValues = radios.stream().map(it -> it.getAttribute("value")).collect(Collectors.toList());
+                        List<String> optionValues = radios.stream().map(it -> it.getDomAttribute("value")).toList();
                         return optionValues.equals(Arrays.asList(options));
                     } catch (StaleElementReferenceException e) {
                         return false;
@@ -182,12 +178,12 @@ public abstract class BaseUiTest {
 
     protected void checkRadios(Supplier<List<WebElement>> radios, String... options) {
         wait.withMessage(() -> {
-                    List<String> optionValues = radios.get().stream().map(it -> it.getAttribute("value")).collect(Collectors.toList());
+                    List<String> optionValues = radios.get().stream().map(it -> it.getDomAttribute("value")).toList();
                     return MessageFormat.format("{0} should have had {1}. Had {2}", radios, Arrays.asList(options), optionValues);
                 })
                 .until(d -> {
                     try {
-                        List<String> optionValues = radios.get().stream().map(it -> it.getAttribute("value")).collect(Collectors.toList());
+                        List<String> optionValues = radios.get().stream().map(it -> it.getDomAttribute("value")).toList();
                         return optionValues.equals(Arrays.asList(options));
                     } catch (StaleElementReferenceException e) {
                         return false;

@@ -24,8 +24,9 @@
 package org.biouno.unochoice.issue71909;
 
 import org.biouno.unochoice.BaseUiTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -34,8 +35,8 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * See JENKINS-71909.
@@ -53,11 +54,12 @@ import static org.junit.Assert.assertTrue;
  * @since 2.8.4
  */
 @Issue("JENKINS-71909")
-public class TestRevertingAsynchronousProxy extends BaseUiTest {
+@WithJenkins
+class TestRevertingAsynchronousProxy extends BaseUiTest {
 
     @LocalData("test")
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         // Load the page
         driver.get(j.getURL().toString() + "job/test/build");
 
@@ -81,7 +83,7 @@ public class TestRevertingAsynchronousProxy extends BaseUiTest {
 
         checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
 
-        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getAttribute("value"));
-        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getAttribute("checked"));
+        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("value"));
+        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("checked"));
     }
 }

@@ -23,6 +23,8 @@
  */
 package org.biouno.unochoice.issue65235;
 
+import jenkins.plugins.git.traits.BranchDiscoveryTrait;
+import jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait;
 import org.htmlunit.html.HtmlSelect;
 import hudson.model.ParametersDefinitionProperty;
 import jenkins.branch.BranchSource;
@@ -40,9 +42,9 @@ import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 import org.junit.*;
-import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.*;
-import java.util.Arrays;
+
+import java.util.List;
 
 import static org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectTest.scheduleAndFindBranchProject;
 import static org.junit.Assert.*;
@@ -57,17 +59,16 @@ public class TestProjectObjectIsPresentOnMultibranchWorkflow {
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+
     @ClassRule public static BuildWatcher buildWatcher = new BuildWatcher();
     @Rule public GitSampleRepoRule sampleRepo = new GitSampleRepoRule();
 
     // LIST script
-    private final String SCRIPT_LIST = "return ['A', 'B', jenkinsProject.fullName, 'C']";
-    private final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
+    private static final String SCRIPT_LIST = "return ['A', 'B', jenkinsProject.fullName, 'C']";
+    private static final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         ScriptApproval.get()
                 .preapprove(SCRIPT_LIST, GroovyLanguage.get());
@@ -89,7 +90,9 @@ public class TestProjectObjectIsPresentOnMultibranchWorkflow {
         sampleRepo.git("commit", "--all", "--message=flow");
         // create a multibranch workflow from git repo
         WorkflowMultiBranchProject mp = j.createProject(WorkflowMultiBranchProject.class, "gitprj");
-        mp.getSourcesList().add(new BranchSource(new GitSCMSource(null, sampleRepo.toString(), "", "*", "", false)));
+        GitSCMSource gitSCMSource = new GitSCMSource(sampleRepo.toString());
+        gitSCMSource.setTraits(List.of(new BranchDiscoveryTrait(), new WildcardSCMHeadFilterTrait("*", "")));
+        mp.getSourcesList().add(new BranchSource(gitSCMSource));
         WorkflowJob gitprj = scheduleAndFindBranchProject(mp, "master");
         assertEquals(new GitBranchSCMHead("master"), SCMHead.HeadByItem.findHead(gitprj));
         assertEquals(1, mp.getItems().size());
@@ -101,7 +104,7 @@ public class TestProjectObjectIsPresentOnMultibranchWorkflow {
         ChoiceParameter param001 = new ChoiceParameter("param001", "param001 description", "random-name",
                 scriptParam001, AbstractUnoChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, true, 1);
         gitprj.addProperty(new ParametersDefinitionProperty(
-                Arrays.asList(param001)));
+                List.of(param001)));
         gitprj.save();
         j.waitUntilNoActivity();
 

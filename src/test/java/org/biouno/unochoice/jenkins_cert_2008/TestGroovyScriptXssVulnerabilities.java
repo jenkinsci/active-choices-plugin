@@ -23,8 +23,8 @@
  */
 package org.biouno.unochoice.jenkins_cert_2008;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,10 +35,10 @@ import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import org.htmlunit.html.DomElement;
@@ -54,10 +54,8 @@ import hudson.model.ParametersDefinitionProperty;
  * Tests against XSS. See SECURITY-1954, and SECURITY-2008.
  * @since 2.5
  */
-public class TestGroovyScriptXssVulnerabilities {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestGroovyScriptXssVulnerabilities {
 
     /**
      * Tests that a {@code ChoiceParameter} using a Groovy script has its output value sanitized against XSS when
@@ -66,7 +64,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testChoicesParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return ['%s']", xssString);
@@ -89,8 +87,8 @@ public class TestGroovyScriptXssVulnerabilities {
         DomElement renderedParameterElement = configPage.getElementById("ecp_random-name_0");
         HtmlLabel renderedParameterLabel = (HtmlLabel) renderedParameterElement.getElementsByTagName("label").get(0);
         String renderedText = renderedParameterLabel.getTextContent();
-        assertNotEquals("XSS string was not escaped!", xssString, renderedText);
-        assertEquals("XSS string was not escaped!", "<img src=\"x\" />", renderedText);
+        assertNotEquals(xssString, renderedText, "XSS string was not escaped!");
+        assertEquals("<img src=\"x\" />", renderedText, "XSS string was not escaped!");
     }
 
     /**
@@ -100,7 +98,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXssWithMaps() throws IOException, SAXException, Descriptor.FormException {
+    void testChoicesParameterXssWithMaps(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return ['%s': '%s']", xssString, xssString);
@@ -123,12 +121,12 @@ public class TestGroovyScriptXssVulnerabilities {
         DomElement renderedParameterElement = configPage.getElementById("tbl_tr_ecp_random-name");
         HtmlInput renderedParameterInput = (HtmlInput) renderedParameterElement.getElementsByTagName("input").get(0);
         String renderedText = renderedParameterInput.getAttribute("value");
-        assertNotEquals("XSS string was not escaped in map key!", xssString, renderedText);
-        assertEquals("XSS string was not escaped in map key!", "<img src=\"x\" />", renderedText);
+        assertNotEquals(xssString, renderedText, "XSS string was not escaped in map key!");
+        assertEquals("<img src=\"x\" />", renderedText, "XSS string was not escaped in map key!");
         HtmlLabel renderedParameterLabel = (HtmlLabel) renderedParameterElement.getElementsByTagName("label").get(0);
         renderedText = renderedParameterLabel.getTextContent();
-        assertNotEquals("XSS string was not escaped in map key!", xssString, renderedText);
-        assertEquals("XSS string was not escaped in map key!", "<img src=\"x\" />", renderedText);
+        assertNotEquals(xssString, renderedText, "XSS string was not escaped in map key!");
+        assertEquals("<img src=\"x\" />", renderedText, "XSS string was not escaped in map key!");
     }
 
     /**
@@ -138,7 +136,7 @@ public class TestGroovyScriptXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testReferenceParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testReferenceParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return '%s'", xssString);
@@ -161,8 +159,8 @@ public class TestGroovyScriptXssVulnerabilities {
         List<HtmlElement> renderedParameterElement = configPage.getByXPath("//*[@class='setting-main']");
         HtmlImage renderedParameterLabel = (HtmlImage) renderedParameterElement.get(0).getElementsByTagName("img").get(0);
         String renderedText = renderedParameterLabel.asXml();
-        assertNotEquals("XSS string was not escaped!", xssString, renderedText);
-        assertEquals("XSS string was not escaped!", "<img src=\"x\"/>", renderedText.trim());
+        assertNotEquals(xssString, renderedText, "XSS string was not escaped!");
+        assertEquals("<img src=\"x\"/>", renderedText.trim(), "XSS string was not escaped!");
     }
 
 }
