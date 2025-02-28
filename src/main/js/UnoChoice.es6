@@ -63,12 +63,13 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         this.referencedParameters = [];
         this.filterElement = null;
     }
+
     /**
      * Gets the parameter name.
      *
      * @return {string} parameter name
      */
-    CascadeParameter.prototype.getParameterName = function() {
+    CascadeParameter.prototype.getParameterName = function () {
         return this.paramName;
     }
     /**
@@ -76,7 +77,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {HTMLElement} HTML element
      */
-    CascadeParameter.prototype.getParameterElement = function() {
+    CascadeParameter.prototype.getParameterElement = function () {
         return this.paramElement;
     }
     /**
@@ -84,7 +85,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {Array<ReferencedParameter>} Array of the ReferencedParameter's
      */
-    CascadeParameter.prototype.getReferencedParameters = function() {
+    CascadeParameter.prototype.getReferencedParameters = function () {
         return this.referencedParameters;
     }
     /**
@@ -92,7 +93,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {string} parameter random name
      */
-    CascadeParameter.prototype.getRandomName = function() {
+    CascadeParameter.prototype.getRandomName = function () {
         return this.randomName;
     }
     /**
@@ -100,7 +101,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {FilterElement}
      */
-    CascadeParameter.prototype.getFilterElement = function() {
+    CascadeParameter.prototype.getFilterElement = function () {
         return this.filterElement;
     }
     /**
@@ -108,7 +109,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @param e {FilterElement}
      */
-    CascadeParameter.prototype.setFilterElement = function(e) {
+    CascadeParameter.prototype.setFilterElement = function (e) {
         this.filterElement = e;
     }
     /**
@@ -117,7 +118,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {string} String with name=value for each referenced parameter
      */
-    CascadeParameter.prototype.getReferencedParametersAsText = function() {
+    CascadeParameter.prototype.getReferencedParametersAsText = function () {
         let parameterValues = [];
         // get the parameters' values
         for (let j = 0; j < this.getReferencedParameters().length; j++) {
@@ -144,7 +145,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @param avoidRecursion {boolean} flag to decide whether we want to permit self-reference parameters or not
      */
-    CascadeParameter.prototype.update = async function(avoidRecursion) {
+    CascadeParameter.prototype.update = async function (avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
         console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the CascadeChoiceParameter Map of parameters
@@ -183,18 +184,18 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 let newValue = String(newValues[i]);
                 if (newValue && (newValue.endsWith(':selected') || newValue.endsWith(':selected:disabled'))) {
                     selectedElements.push(i);
-                    newValues[i] = newValues[i].replace(/:selected$/,'').replace(/:selected:disabled$/, ':disabled');
+                    newValues[i] = newValues[i].replace(/:selected$/, '').replace(/:selected:disabled$/, ':disabled');
                 }
                 if (newValue && (newValue.endsWith(':disabled') || newValue.endsWith(':disabled:selected'))) {
                     disabledElements.push(i);
-                    newValues[i] = newValues[i].replace(/:disabled$/,'').replace(/:disabled:selected$/, ':selected');
+                    newValues[i] = newValues[i].replace(/:disabled$/, '').replace(/:disabled:selected$/, ':selected');
                 }
                 let newKey = String(newKeys[i]);
                 if (newKey && typeof newKey === "string" && (newKey.endsWith(':selected') || newKey.endsWith(':selected:disabled'))) {
-                    newKeys[i] = newKeys[i].replace(/:selected$/,'').replace(/:selected:disabled$/,':disabled');
+                    newKeys[i] = newKeys[i].replace(/:selected$/, '').replace(/:selected:disabled$/, ':disabled');
                 }
                 if (newKey && typeof newKey === "string" && (newKey.endsWith(':disabled') || newKey.endsWith(':disabled:selected'))) {
-                    newKeys[i] = newKeys[i].replace(/:disabled$/,'').replace(/:disabled:selected$/,':selected');
+                    newKeys[i] = newKeys[i].replace(/:disabled$/, '').replace(/:disabled:selected$/, ':selected');
                 }
             }
             if (_self.getFilterElement()) {
@@ -347,10 +348,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      * @param cascadeParameter {CascadeParameter} a given parameter
      * @return {boolean} <code>true</code> iff the given parameter references this parameter
      */
-    CascadeParameter.prototype.referencesMe = function(cascadeParameter) {
+    CascadeParameter.prototype.referencesMe = function (cascadeParameter) {
         if (!cascadeParameter ||
-            !cascadeParameter.getReferencedParameters() ||
-            cascadeParameter.getReferencedParameters().length === 0)
+                !cascadeParameter.getReferencedParameters() ||
+                cascadeParameter.getReferencedParameters().length === 0)
             return false;
         for (let i = 0; i < cascadeParameter.getReferencedParameters().length; i++) {
             let referencedParameter = cascadeParameter.getReferencedParameters()[i];
@@ -359,6 +360,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         }
         return false;
     }
+
     // --- Referenced Parameter
     /**
      * <p>A parameter that is referenced by other parameters. Stores a list of cascade parameters, that reference this
@@ -374,34 +376,45 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         this.paramName = paramName;
         this.paramElement = paramElement;
         this.cascadeParameter = cascadeParameter;
+        console.log(`ReferencedParameter: ${paramName}`);
         // Add event listener
         let _self = this;
-        jQuery3(this.paramElement).change(e => {
+        jQuery3(this.paramElement).on('change', e => {
             if (e.parameterName === _self.paramName) {
                 console.log('Skipping self reference to avoid infinite loop!');
                 e.stopImmediatePropagation();
             } else {
                 console.log(`Cascading changes from parameter ${_self.paramName}...`);
+                console.log(`Cascade Parameter: ${_self.cascadeParameter.getParameterName()}`);
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
                 setTimeout(async () => {
-                   await _self.cascadeParameter.update(false);
-                   jQuery3(".behavior-loading").hide();
+                    await _self.cascadeParameter.update(false);
+                    for (let i = 0; i < cascadeParameters.length; i++) {
+                        let other = cascadeParameters[i];
+                        if (_self.cascadeParameter.referencesMe(other)) {
+                            console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
+                            await other.update(true);
+                        }
+                    }
+                    jQuery3(".behavior-loading").hide();
                 }, 0);
             }
         });
         cascadeParameter.getReferencedParameters().push(this);
     }
-    ReferencedParameter.prototype.getParameterName = function() {
+
+    ReferencedParameter.prototype.getParameterName = function () {
         return this.paramName;
     }
-    ReferencedParameter.prototype.getParameterElement = function() {
+    ReferencedParameter.prototype.getParameterElement = function () {
         return this.paramElement;
     }
-    ReferencedParameter.prototype.getCascadeParameter = function() {
+    ReferencedParameter.prototype.getCascadeParameter = function () {
         return this.cascadeParameter;
     }
+
     // --- Dynamic Reference Parameter
     /**
      * A parameter that is used only as a render mechanism for other referenced parameters.
@@ -416,6 +429,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         this.proxy = proxy;
         this.referencedParameters = [];
     }
+
     /**
      * Extend the cascade parameter.
      */
@@ -436,7 +450,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @param avoidRecursion {boolean} flag to decide whether we want to permit self-reference parameters or not
      */
-    DynamicReferenceParameter.prototype.update = async function(avoidRecursion) {
+    DynamicReferenceParameter.prototype.update = async function (avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
         console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the Map of parameters
@@ -522,6 +536,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             rootDiv.css('pointer-events', 'auto');
         }
     }
+
     // --- Filter Element
     /**
      * An element that acts as filter for other elements.
@@ -545,7 +560,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             if (jQuery3(paramElement).children().length > 0 && (paramElement.children[0].tagName === 'DIV' || paramElement.children[0].tagName === 'SPAN')) {
                 let tbody = paramElement.children[0];
                 let trs = jQuery3(tbody).find('div');
-                for (let i = 0; i < trs.length ; ++i) {
+                for (let i = 0; i < trs.length; ++i) {
                     let tds = jQuery3(trs[i]).find('div');
                     let inputs = jQuery3(tds[0]).find('input');
                     let input = inputs[0];
@@ -555,12 +570,13 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         }
         this.initEventHandler();
     }
+
     /**
      * Gets the parameter HTML element.
      *
      * @return {HTMLElement} HTML element
      */
-    FilterElement.prototype.getParameterElement = function() {
+    FilterElement.prototype.getParameterElement = function () {
         return this.paramElement;
     }
     /**
@@ -568,7 +584,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {HTMLElement} HTML element
      */
-    FilterElement.prototype.getFilterElement = function() {
+    FilterElement.prototype.getFilterElement = function () {
         return this.filterElement;
     }
     /**
@@ -576,14 +592,14 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @return {Array<HTMLElement>} <code>Array</code> with HTML elements
      */
-    FilterElement.prototype.getOriginalArray = function() {
+    FilterElement.prototype.getOriginalArray = function () {
         return this.originalArray;
     }
     /**
      * Get the filter length.
      * @return {number} filter length
      */
-    FilterElement.prototype.getFilterLength = function() {
+    FilterElement.prototype.getFilterLength = function () {
         return this.filterLength;
     }
     /**
@@ -592,7 +608,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @param originalArray
      */
-    FilterElement.prototype.setOriginalArray = function(originalArray) {
+    FilterElement.prototype.setOriginalArray = function (originalArray) {
         this.originalArray = originalArray;
         this.clearFilterElement();
     }
@@ -601,14 +617,14 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      *
      * @since 0.23
      */
-    FilterElement.prototype.clearFilterElement = function() {
+    FilterElement.prototype.clearFilterElement = function () {
         this.getFilterElement().value = '';
     }
     /**
      * Initiates an event listener for Key Up events. Depending on the element type it will interpret the filter, and
      * the filtered element, to update its values.
      */
-    FilterElement.prototype.initEventHandler = function() {
+    FilterElement.prototype.initEventHandler = function () {
         let _self = this;
         jQuery3(_self.filterElement).keyup(e => {
             //let filterElement = e.target;
@@ -622,7 +638,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             let options = _self.originalArray;
             let newOptions = Array();
             for (let i = 0; i < options.length; i++) {
-                if (typeof options[i] !== 'undefined' && options[i].tagName === 'INPUT' ) {
+                if (typeof options[i] !== 'undefined' && options[i].tagName === 'INPUT') {
                     if (options[i].getAttribute('alt') && options[i].getAttribute('alt') !== options[i].value) {
                         if (options[i].getAttribute('alt').toLowerCase().match(text)) {
                             newOptions.push(options[i]);
@@ -641,13 +657,13 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             let tagName = filteredElement.tagName;
 
             if (tagName === 'SELECT') { // handle SELECT's
-               jQuery3(filteredElement).children().remove();
-               for (let i = 0; i < newOptions.length ; ++i) {
-                   let opt = document.createElement('option');
-                   opt.value = newOptions[i].value;
-                   opt.innerHTML = newOptions[i].innerHTML;
-                   jQuery3(filteredElement).append(opt);
-               }
+                jQuery3(filteredElement).children().remove();
+                for (let i = 0; i < newOptions.length; ++i) {
+                    let opt = document.createElement('option');
+                    opt.value = newOptions[i].value;
+                    opt.innerHTML = newOptions[i].innerHTML;
+                    jQuery3(filteredElement).append(opt);
+                }
             } else if (tagName === 'DIV' || tagName === 'SPAN') { // handle CHECKBOXES, RADIOBOXES and other elements (Jenkins renders them as tables)
                 if (jQuery3(filteredElement).children().length > 0 && (jQuery3(filteredElement).children()[0].tagName === 'DIV' || jQuery3(filteredElement).children()[0].tagName === 'SPAN')) {
                     let tbody = filteredElement.children[0];
@@ -710,6 +726,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             jQuery3(filteredElement).trigger(e1);
         });
     }
+
     // HTML utility methods
     /**
      * <p>Fake selects a radio button.</p>
@@ -734,7 +751,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let element = jQuery3(`#${id}`).get(0);
         // deselect all radios with the class=clazzName
         let radios = jQuery3(`input[class="${clazzName}"]`);
-        radios.each(function(index) {
+        radios.each(function (index) {
             jQuery3(this).attr('name', '');
         });
         // select the radio with the id=id
@@ -747,6 +764,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
         }
     }
+
     /**
      * <p>Gets the value of a HTML element to use it as value in a parameter in Jenkins.</p>
      *
@@ -767,11 +785,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let value = '';
         if (e.attr('name') === 'value') {
             value = util.getElementValue(e);
-        }  else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
+        } else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
             let subElements = e.find('[name="value"]');
             if (subElements) {
                 let valueBuffer = Array();
-                subElements.each(function() {
+                subElements.each(function () {
                     let tempValue = util.getElementValue(jQuery3(this));
                     if (tempValue)
                         valueBuffer.push(tempValue);
@@ -805,25 +823,25 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      * @param methods {Array<string>} The methods
      */
     function makeStaplerProxy2(url, staplerCrumb, methods) {
-        if (url.substring(url.length - 1) !== '/') url+='/';
+        if (url.substring(url.length - 1) !== '/') url += '/';
         let proxy = {};
         let stringify;
         if (Object.toJSON) // needs to use Prototype.js if it's present. See commit comment for discussion
             stringify = Object.toJSON;  // from prototype
-        else if (typeof(JSON)=="object" && JSON.stringify)
+        else if (typeof (JSON) == "object" && JSON.stringify)
             stringify = JSON.stringify; // standard
         let genMethod = methodName => {
-            proxy[methodName] = async function() {
+            proxy[methodName] = async function () {
                 let args = arguments;
                 // the final argument can be a callback that receives the return value
                 let callback = (() => {
                     if (args.length === 0) return null;
-                    let tail = args[args.length-1];
-                    return (typeof(tail)=='function') ? tail : null;
+                    let tail = args[args.length - 1];
+                    return (typeof (tail) == 'function') ? tail : null;
                 })();
                 // 'arguments' is not an array, so we convert it into an array
                 let a = [];
-                for (let i=0; i<args.length-(callback!=null?1:0); i++)
+                for (let i = 0; i < args.length - (callback != null ? 1 : 0); i++)
                     a.push(args[i]);
                 let headers = {
                     'Content-Type': 'application/x-stapler-method-invocation;charset=UTF-8',
@@ -849,35 +867,35 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     headers: headers,
                     body: stringify(a),
                 })
-                .then(function(response) {
-                    if (response.ok) {
-                        const t = {
-                            status: response.status,
-                            statusText: response.statusText,
-                        };
-                        if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
-                            response.json().then(function (responseObject) {
-                                t.responseObject = function () {
-                                    return responseObject;
+                        .then(function (response) {
+                            if (response.ok) {
+                                const t = {
+                                    status: response.status,
+                                    statusText: response.statusText,
                                 };
-                                t.responseJSON = responseObject;
-                                if (callback != null) {
-                                    callback(t);
+                                if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
+                                    response.json().then(function (responseObject) {
+                                        t.responseObject = function () {
+                                            return responseObject;
+                                        };
+                                        t.responseJSON = responseObject;
+                                        if (callback != null) {
+                                            callback(t);
+                                        }
+                                    });
+                                } else {
+                                    response.text().then(function (responseText) {
+                                        t.responseText = responseText;
+                                        if (callback != null) {
+                                            callback(t);
+                                        }
+                                    });
                                 }
-                            });
-                        } else {
-                            response.text().then(function (responseText) {
-                                t.responseText = responseText;
-                                if (callback != null) {
-                                    callback(t);
-                                }
-                            });
-                        }
-                    }
-                })
+                            }
+                        })
             }
         };
-        for(let mi = 0; mi < methods.length; mi++) {
+        for (let mi = 0; mi < methods.length; mi++) {
             genMethod(methods[mi]);
         }
         return proxy;
@@ -902,6 +920,29 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         }
     }
 
+
+    /**
+     * Renders a cascade choice parameter by dynamically binding the parameter to its referenced
+     * parameters and applying filters if necessary.
+     *
+     * @async
+     * @function renderCascadeChoiceParameter
+     * @param {HTMLElement} parentDivRef - The parent element reference containing the parameter element.
+     * @param {boolean} filterable - Determines whether this parameter supports filtering.
+     * @param {string} name - The name of the cascade choice parameter.
+     * @param {string} randomName - A randomly generated name for parameter identification.
+     * @param {number} filterLength - The length of the filter applied to this parameter.
+     * @param {string} paramName - The parameter name used for identification in the UI.
+     * @param {string[]} referencedParameters - The set of parameters referenced by this item.
+     * @param {object} cascadeChoiceParameter - A JavaScript object representing the cascade choice parameter.
+     *
+     * @description
+     * Finds and wires up the cascade parameter to its referenced parameters. If the parameter supports
+     * filtering, it adds a filter element. The function ensures the parameter relationships and filters
+     * are correctly configured and updates the parameter state.
+     *
+     * Logs appropriate warnings if parameter elements or filter elements are missing in the DOM.
+     */
     async function renderCascadeChoiceParameter(parentDivRef, filterable, name, randomName, filterLength, paramName, referencedParameters, cascadeChoiceParameter) {
         // find the cascade parameter element
         let parentDiv = jQuery3(parentDivRef);
@@ -923,11 +964,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     console.log('Filter error: Missing filter element!');
                 }
             }
-            for (let i  = 0; i < referencedParameters.length ; ++i) {
+            for (let i = 0; i < referencedParameters.length; ++i) {
                 let parameterElement = null;
                 // FIXME: review the block below
                 let divs = jQuery3('div[name="parameter"]');
-                for (let j = 0; j < divs.length ; j++) {
+                for (let j = 0; j < divs.length; j++) {
                     let div = divs[j];
                     let hiddenNames = jQuery3(div).find('input[name="name"]');
                     if (hiddenNames[0].value === referencedParameters[i]) {
@@ -984,7 +1025,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
         }
         let parameterHtmlElement = null;
-        for(let i = 0; i < parentDiv.children().length; i++) {
+        for (let i = 0; i < parentDiv.children().length; i++) {
             let child = parentDiv.children()[i];
             if (child.getAttribute('name') === 'value' || child.id.indexOf('ecp_') > -1) {
                 parameterHtmlElement = jQuery3(child);
@@ -1006,11 +1047,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         if (parameterHtmlElement && parameterHtmlElement.get(0)) {
             let dynamicParameter = new UnoChoice.DynamicReferenceParameter(name, parameterHtmlElement.get(0), dynamicReferenceParameter);
             UnoChoice.cascadeParameters.push(dynamicParameter); // TODO review whether it is right or not to add a dynamic parameter here
-            for (let i  = 0; i < referencedParameters.length ; ++i) {
+            for (let i = 0; i < referencedParameters.length; ++i) {
                 let parameterElement = null;
                 // FIXME: review the block below
                 let divs = jQuery3('div[name="parameter"]');
-                for (let j = 0; j < divs.length ; j++) {
+                for (let j = 0; j < divs.length; j++) {
                     let div = divs[j];
                     let hiddenNames = jQuery3(div).find('input[name="name"]');
                     if (hiddenNames[0].value === referencedParameters[i]) {
@@ -1047,7 +1088,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             console.log('Updating cascade of parameter [', name, '] ...');
             await dynamicParameter.update(false);
         } else {
-            console.log('Parameter error: Missing parameter [', paramName,'] HTML element!');
+            console.log('Parameter error: Missing parameter [', paramName, '] HTML element!');
         }
     }
 
