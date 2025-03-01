@@ -16,7 +16,7 @@
     <j:set var="cssclazz" value="hidden_uno_choice_parameter" />    
   </j:if>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
-    <div id='${paramName}-spinner' style="display: none; position: absolute; margin-left: -25px;">
+    <div id='${paramName}-spinner' class="ac-spinner">
       <l:spinner />
     </div>
     <div name="parameter" class="${cssclazz}" id='${paramName}'>
@@ -25,31 +25,31 @@
         <j:when test="${choiceType eq 'ET_TEXT_BOX'}">
           <st:include page="inputElement.jelly"/>
           <j:if test="${!omitValueField}">
-            <input type="text" name="value" value="" style="visibility: hidden; position: absolute;" />
+            <input type="text" name="value" value="" class="jenkins-hidden" />
           </j:if>
         </j:when>
         <j:when test="${choiceType eq 'ET_ORDERED_LIST'}">
           <st:include page="orderedList.jelly"/>
           <j:if test="${!omitValueField}">
-            <input type="text" name="value" value="" style="visibility: hidden; position: absolute;" />
+            <input type="text" name="value" value="" class="jenkins-hidden" />
           </j:if>
         </j:when>
         <j:when test="${choiceType eq 'ET_UNORDERED_LIST'}">
           <st:include page="unorderedList.jelly"/>
           <j:if test="${!omitValueField}">
-            <input type="text" name="value" value="" style="visibility: hidden; position: absolute;" />
+            <input type="text" name="value" value="" class="jenkins-hidden" />
           </j:if>
         </j:when>
         <j:when test="${choiceType eq 'ET_FORMATTED_HTML'}">
           <st:include page="formattedHtml.jelly"/>
           <j:if test="${!omitValueField}">
-            <input type="text" name="value" value="" style="visibility: hidden; position: absolute;" />
+            <input type="text" name="value" value="" class="jenkins-hidden" />
           </j:if>
         </j:when>
         <j:when test="${choiceType eq 'ET_FORMATTED_HIDDEN_HTML'}">
           <st:include page="formattedHtml.jelly"/>
           <j:if test="${!omitValueField}">
-            <input type="text" name="value" value="" style="visibility: hidden; position: absolute;" />
+            <input type="text" name="value" value="" class="jenkins-hidden" />
           </j:if>
         </j:when>
       </j:choose>

@@ -243,7 +243,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     jQuery3(tbody).empty();
                     let originalArray = [];
                     // Check whether it is a radio or checkbox element
-                    if (parameterElement.className === 'dynamic_checkbox') {
+                    if (parameterElement.classList.contains('dynamic_checkbox')) {
                         for (let i = 0; i < newValues.length; i++) {
                             let entry = newValues[i];
                             let key = newKeys[i];
@@ -262,7 +262,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
                             originalArray.push(input);
                             // Put everything together
-                            let td = util.makeTd([input, label]);
+                            let td = util.makeTd([input, label], "jenkins-checkbox");
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -287,11 +287,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 input.setAttribute('alt', entry);
                             }
                             // <LABEL>
-                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined);
+                            let label = util.makeLabel(!entry instanceof String ? JSON.stringify(entry) : entry, undefined, "jenkins-radio__label");
                             // <HIDDEN>
                             let hiddenValue = util.makeHidden(idValue, key, selectedElements.indexOf(i) >= 0 ? 'value' : '', key, _self.getParameterName(), entry instanceof String ? entry : JSON.stringify(entry));
                             originalArray.push(input);
-                            let td = util.makeTd([input, label, hiddenValue]);
+                            let td = util.makeTd([input, label, hiddenValue], "jenkins-radio");
                             let tr = util.makeTr(undefined)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -304,11 +304,19 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                         if (_self.getFilterElement()) {
                             _self.getFilterElement().setOriginalArray(originalArray);
                         }
-                    } // if (oldSel.className === 'dynamic_checkbox')
+                    } // if (parameterElement.classList.contains('dynamic_checkbox'))
                     /*
                      * This height is equivalent to setting the number of rows displayed in a select/multiple
                      */
-                    parameterElement.style.height = newValues.length > 10 ? '230px' : 'auto';
+                    if (newValues.length > 10) {
+                        parameterElement.style.height = "255px";
+                        parameterElement.style.overflowY = "auto";
+                    }  else {
+                        parameterElement.style.overflowY = "unset";
+                        parameterElement.style.height = "unset";
+                    }
+                    Behaviour.applySubtree(parameterElement);
+
                 } // if (parameterElement.children.length > 0 && parameterElement.children[0].tagName === 'DIV') {
             } // if (parameterElement.tagName === 'SELECT') { // } else if (parameterElement.tagName === 'DIV') {
         });
@@ -652,12 +660,16 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 if (jQuery3(filteredElement).children().length > 0 && (jQuery3(filteredElement).children()[0].tagName === 'DIV' || jQuery3(filteredElement).children()[0].tagName === 'SPAN')) {
                     let tbody = filteredElement.children[0];
                     jQuery3(tbody).empty();
-                    if (filteredElement.className === 'dynamic_checkbox') {
+                    if (filteredElement.classList.contains('dynamic_checkbox')) {
                         for (let i = 0; i < newOptions.length; i++) {
                             let entry = newOptions[i];
                             let idValue = `ecp_${e.target.randomName}_${i}`;
                             idValue = idValue.replace(' ', '_');
 
+                            let tdClass =
+                                    (entry instanceof String || entry.tagName === 'INPUT') ?
+                                                    "jenkins-checkbox" :
+                                                    "jenkins-radio";
                             let input =
                                     entry instanceof String ?
                                             util.makeCheckbox(entry, undefined, undefined) :
@@ -668,10 +680,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             // LABEL
                             let label = (entry instanceof String || entry.tagName === 'INPUT') ?
                                     util.makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
-                                    util.makeLabel(input, undefined);
+                                    util.makeLabel(input, undefined, "jenkins-radio__label");
 
                             // Put everything together
-                            let td = util.makeTd([input, label]);
+                            let td = util.makeTd([input, label], tdClass);
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
@@ -694,14 +706,15 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             input.checked = false;
                             let jsonInput = util.makeHidden(input.getAttribute('otherid'), input.getAttribute('json'), '', input.getAttribute('value'), input.getAttribute('name'), input.getAttribute('alt'));
 
-                            let label = util.makeLabel(input.getAttribute('alt'), undefined);
+                            let label = util.makeLabel(input.getAttribute('alt'), undefined, "jenkins-radio__label");
                             // Put everything together
-                            let td = util.makeTd([input, label, jsonInput]);
+                            let td = util.makeTd([input, label, jsonInput], "jenkins-radio");
                             let tr = util.makeTr(idValue)
                             tr.appendChild(td);
                             tbody.appendChild(tr);
                         }
                     }
+                    Behaviour.applySubtree(filteredElement);
                 } // if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'DIV') {
             } // if (tagName === 'SELECT') { // } else if (tagName === 'DIV') {
             // Propagate the changes made by the filter
@@ -885,7 +898,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
     function renderChoiceParameter(paramName, filterLength) {
         let parentDiv = jQuery3(`#${paramName}`);
-        let parameterHtmlElement = parentDiv.find('DIV');
+        let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
             console.log('Could not find element by name, perhaps it is a DIV?');
             parameterHtmlElement = parentDiv.find('*[name="value"]');
@@ -905,7 +918,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     async function renderCascadeChoiceParameter(parentDivRef, filterable, name, randomName, filterLength, paramName, referencedParameters, cascadeChoiceParameter) {
         // find the cascade parameter element
         let parentDiv = jQuery3(parentDivRef);
-        let parameterHtmlElement = parentDiv.find('DIV');
+        let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
             console.log('Could not find element by name, perhaps it is a DIV?');
             parameterHtmlElement = parentDiv.find('*[name="value"]');
