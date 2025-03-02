@@ -128,6 +128,8 @@ export default class Util {
             return this.getSelectValues(e as JQuery<HTMLSelectElement>).toString();
         } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
             return e.prop('checked') ? e.val().toString(): '';
+        } else if (e.prop('tagName') === 'INPUT' && e.attr('type') === 'text'){
+            return e.html()
         } else {
             return e.val().toString();
         }
