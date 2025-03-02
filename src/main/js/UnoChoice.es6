@@ -1097,5 +1097,4 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     instance.renderDynamicRenderParameter = renderDynamicRenderParameter;
     return instance;
 })(jQuery3);
-
-
+window.UnoChoice = UnoChoice;
