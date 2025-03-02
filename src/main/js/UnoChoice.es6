@@ -128,6 +128,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
             console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
             // Update the CascadeChoiceParameter Map of parameters
+            console.log('Updating '+this.getParameterName())
             await this.proxy.doUpdate(parametersString);
 
             let spinner, rootDiv;
@@ -398,6 +399,19 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         getCascadeParameter() {
             return this.cascadeParameter;
         }
+
+        referencesMe(cascadeParameter) {
+            if (!cascadeParameter ||
+                    !cascadeParameter.getReferencedParameters() ||
+                    cascadeParameter.getReferencedParameters().length === 0)
+                return false;
+            for (let i = 0; i < cascadeParameter.getReferencedParameters().length; i++) {
+                let referencedParameter = cascadeParameter.getReferencedParameters()[i];
+                if (referencedParameter.getParameterName() === this.getParameterName())
+                    return true;
+            }
+            return false;
+        }
     }
 
     // --- Dynamic Reference Parameter
@@ -441,6 +455,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
             console.log(`DynamicReferenceParameter Values retrieved from Referenced Parameters: ${parametersString}`);
             // Update the Map of parameters
+            console.log('Updating '+this.getParameterName())
             await this.proxy.doUpdate(parametersString);
             let parameterElement = this.getParameterElement();
 
@@ -964,12 +979,23 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     }
                 }
 
-                new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
+                let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
+                if (cascadeParameters && cascadeParameters.length > 0) {
+                    for (let i = 0; i < cascadeParameters.length; i++) {
+                        let other = cascadeParameters[i];
+                        if (rp.referencesMe(other)) {
+                            console.log(`Updating ${other.getParameterName()} from ${rp.getParameterName()}`);
+                            await other.update(true);
+                        }
+                    }
+                } else {
+                    console.log('Avoiding infinite loop due to recursion!');
+                }
             }
 
             // call update methods in Java passing the HTML values
-            console.log('Updating cascade of parameter [', name, '] ...');
-            await cascadeParameter.update(false);
+            // console.log('Updating cascade of parameter [', name, '] ...');
+            // await cascadeParameter.update(false);
         } else {
             console.log('Parameter error: Missing parameter [', paramName, '] HTML element!');
         }
@@ -1047,12 +1073,23 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     }
                 }
 
-                new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);
+                let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);
+                if (cascadeParameters && cascadeParameters.length > 0) {
+                    for (let i = 0; i < cascadeParameters.length; i++) {
+                        let other = cascadeParameters[i];
+                        if (rp.referencesMe(other)) {
+                            console.log(`Updating ${other.getParameterName()} from ${rp.getParameterName()}`);
+                            await other.update(true);
+                        }
+                    }
+                } else {
+                    console.log('Avoiding infinite loop due to recursion!');
+                }
             }
 
-            // call update methods in Java passing the HTML values
-            console.log('Updating cascade of parameter [', name, '] ...');
-            await dynamicParameter.update(false);
+            // // call update methods in Java passing the HTML values
+            // console.log('Updating cascade of parameter [', name, '] ...');
+            // await dynamicParameter.update(false);
         } else {
             console.log('Parameter error: Missing parameter [', paramName, '] HTML element!');
         }
