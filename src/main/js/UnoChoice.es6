@@ -126,9 +126,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
          */
         async update(avoidRecursion) {
             let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-            console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
             // Update the CascadeChoiceParameter Map of parameters
-            console.log('Updating '+this.getParameterName())
             await this.proxy.doUpdate(parametersString);
 
             let spinner, rootDiv;
@@ -152,7 +150,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             console.log('Calling Java server code to update HTML elements...');
             await this.proxy.getChoicesForUI(t => {
                 let data = t.responseObject();
-                console.log(`Values returned from server: ${data}`);
                 let newValues = data[0];
                 let newKeys = data[1];
                 let selectedElements = [];
@@ -368,7 +365,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     e.stopImmediatePropagation();
                 } else {
                     console.log(`Cascading changes from parameter ${_self.paramName}...`);
-                    console.log(`Cascade Parameter: ${_self.cascadeParameter.getParameterName()}`);
                     //_self.cascadeParameter.loading(true);
                     jQuery3(".behavior-loading").show();
                     // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
@@ -376,7 +372,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                         await _self.cascadeParameter.update(false);
                         for (let i = 0; i < cascadeParameters.length; i++) {
                             let other = cascadeParameters[i];
-                            if (_self.cascadeParameter.referencesMe(other)) {
+                            if (_self.referencesMe(other)) {
                                 console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
                                 await other.update(true);
                             }
@@ -453,9 +449,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
          */
         async update(avoidRecursion) {
             let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-            console.log(`DynamicReferenceParameter Values retrieved from Referenced Parameters: ${parametersString}`);
             // Update the Map of parameters
-            console.log('Updating '+this.getParameterName())
             await this.proxy.doUpdate(parametersString);
             let parameterElement = this.getParameterElement();
 
@@ -480,7 +474,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 await this.proxy.getChoicesForUI(t => {
                     jQuery3(parameterElement).empty(); // remove all children elements
                     const data = t.responseObject();
-                    console.log(`Values returned from server: ${data}`);
                     let newValues = data[0];
                     // let newKeys = data[1];
                     for (let i = 0; i < newValues.length; ++i) {
@@ -494,7 +487,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 console.log('Calling Java server code to update HTML elements...');
                 await this.proxy.getChoicesForUI(t => {
                     const data = t.responseObject();
-                    console.log(`Values returned from server: ${data}`);
                     let newValues = data[0];
                     // let newKeys = data[1];
                     for (let i = 0; i < newValues.length; ++i) {
@@ -988,8 +980,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             await other.update(true);
                         }
                     }
-                } else {
-                    console.log('Avoiding infinite loop due to recursion!');
                 }
             }
 
@@ -1082,8 +1072,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             await other.update(true);
                         }
                     }
-                } else {
-                    console.log('Avoiding infinite loop due to recursion!');
                 }
             }
 
