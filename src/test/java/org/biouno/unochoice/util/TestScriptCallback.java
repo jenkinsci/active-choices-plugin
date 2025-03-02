@@ -24,40 +24,39 @@
 
 package org.biouno.unochoice.util;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Test the {@link ScriptCallback} bean.
  */
-public class TestScriptCallback {
+@WithJenkins
+class TestScriptCallback {
 
-    private final static String SCRIPT = "return ['a', 'b']";
-    private final static String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private static final String SCRIPT = "return ['a', 'b']";
+    private static final String FALLBACK_SCRIPT = "return ['EMPTY!']";
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
-    public void testScriptCallback() throws Descriptor.FormException {
+    void testScriptCallback() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         Map<String, String> parameters = new HashMap<>();

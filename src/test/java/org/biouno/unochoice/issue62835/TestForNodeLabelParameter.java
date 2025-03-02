@@ -24,27 +24,26 @@
 
 package org.biouno.unochoice.issue62835;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import hudson.model.Descriptor;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.jenkins.plugins.nodelabelparameter.Constants;
 import org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition;
 import org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility;
@@ -68,31 +67,32 @@ import hudson.slaves.DumbSlave;
  * @see <a href="https://github.com/jenkinsci/nodelabelparameter-plugin/blob/ea0a822f3a09423eb32eee9d5496ce7a14b4a931/src/test/java/org/jvnet/jenkins/plugins/nodelabelparameter/TriggerJobsTest.java">https://github.com/jenkinsci/nodelabelparameter-plugin/blob/ea0a822f3a09423eb32eee9d5496ce7a14b4a931/src/test/java/org/jvnet/jenkins/plugins/nodelabelparameter/TriggerJobsTest.java</a>
  */
 @Issue("62835")
-public class TestForNodeLabelParameter {
+@WithJenkins
+class TestForNodeLabelParameter {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+    private JenkinsRule j;
 
     private DumbSlave onlineNode;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) throws Exception {
+        this.j = j;
         onlineNode = j.createOnlineSlave(new LabelAtom("mylabel1"));
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         j.jenkins.removeNode(onlineNode);
     }
 
     @Test
-    public void testNodeLabelParameterValueFound() throws IOException, SAXException, Descriptor.FormException {
+    void testNodeLabelParameterValueFound() throws IOException, SAXException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
 
         final String nodeName = onlineNode.getNodeName();
         /*
          * Create two parameters. One using the nodelabelparameter-plugin, and the other a
-         * parameter from this plug-in. 
+         * parameter from this plug-in.
          */
         NodeParameterDefinition nodeLabelParameter = new NodeParameterDefinition(
                 "NODE_LABEL_PARAM_A", // name
@@ -131,17 +131,17 @@ public class TestForNodeLabelParameter {
                     break;
                 }
             }
-            if (select == null) {
-                fail("Missing cascade parameter select HTML node element!");
-            }
+
+            assertNotNull(select, "Missing cascade parameter select HTML node element!");
+
             List<HtmlOption> htmlOptions = select.getOptions();
             final List<String> options = htmlOptions
                     .stream()
                     .map(HtmlOption::getText)
-                    .collect(Collectors.toList());
+                    .toList();
             final List<String> expected = new LinkedList<>(Collections.singletonList(nodeName));
-            assertEquals("Wrong number of HTML options rendered", expected.size(), options.size());
-            assertEquals("Wrong HTML options rendered (or out of order)", expected, options);
+            assertEquals(expected.size(), options.size(), "Wrong number of HTML options rendered");
+            assertEquals(expected, options, "Wrong HTML options rendered (or out of order)");
         }
     }
 }

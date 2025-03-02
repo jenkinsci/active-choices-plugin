@@ -37,7 +37,7 @@ public class ScriptlerHelper {
         this.scriptler = scriptler;
     }
 
-    public void saveScript(FileItem file, boolean nonAdministerUsing, String fileName) throws Exception {
+    public void saveScript(FileItem<?> file, boolean nonAdministerUsing, String fileName) throws Exception {
         scriptler.saveScript(file, nonAdministerUsing, fileName);
     }
 }

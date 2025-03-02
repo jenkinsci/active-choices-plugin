@@ -24,38 +24,28 @@
 package org.biouno.unochoice.jenkins_cert_1954;
 
 import hudson.model.Descriptor;
-import org.apache.commons.io.IOUtils;
 import org.htmlunit.html.*;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
-import hudson.util.VersionNumber;
-import jenkins.model.Jenkins;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests against XSS. See SECURITY-1954, and SECURITY-2008.
  * @since 2.5
  */
-public class TestParametersXssVulnerabilities {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestParametersXssVulnerabilities {
 
     /**
      * Tests that a {@code ChoiceParameter} using a Groovy script has its output value sanitized against XSS when
@@ -64,7 +54,7 @@ public class TestParametersXssVulnerabilities {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testChoicesParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         String xssString = "<img src=x onerror=alert(123)>";
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = String.format("return '%s'", xssString);
@@ -93,7 +83,7 @@ public class TestParametersXssVulnerabilities {
                     break;
                 }
             }
-            assertNotNull("Could not locate rendered parameter element", renderedParameterElement);
+            assertNotNull(renderedParameterElement, "Could not locate rendered parameter element");
 
             DomNode firstChild = null;
             for (DomNode child : renderedParameterElement.getChildren()) {
@@ -104,10 +94,10 @@ public class TestParametersXssVulnerabilities {
                 }
                 break;
             }
-            assertNotNull("Could not locate first child element", firstChild);
+            assertNotNull(firstChild, "Could not locate first child element");
             String renderedText = firstChild.asXml();
-            assertNotEquals("XSS string was not escaped!", xssString, renderedText);
-            assertTrue("XSS string was not escaped!", renderedText.trim().contains("&amp;lt;img src=x onerror=alert(123)&amp;gt;"));
+            assertNotEquals(xssString, renderedText, "XSS string was not escaped!");
+            assertTrue(renderedText.trim().contains("&amp;lt;img src=x onerror=alert(123)&amp;gt;"), "XSS string was not escaped!");
         }
     }
 }

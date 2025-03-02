@@ -5,15 +5,15 @@
 - Bump @babel/cli from 7.25.9 to 7.26.4
 - Bump @babel/core from 7.26.0 to 7.26.9
 - Bump @babel/preset-env from 7.26.0 to 7.26.9
-- Bump eslint from 9.15.0 to 9.20.1
+- Bump eslint from 9.15.0 to 9.21.0
 - Bump eslint-config-prettier from 9.1.0 to 10.0.1
 - Bump io.github.bonigarcia:webdrivermanager from 5.9.2 to 5.9.3
-- Bump io.jenkins.tools.bom:bom-2.479.x from 3559.vb_5b_81183b_d23 to 4136.vca_c3202a_7fd1
+- Bump io.jenkins.tools.bom:bom-2.479.x from 3559.vb_5b_81183b_d23 to 4228.v0a_71308d905b_
 - Bump jsdom from 25.0.1 to 26.0.0
 - Bump org.jenkins-ci.plugins:nodelabelparameter from 1.13.0 to 1.14.0
 - Bump org.jenkins-ci.plugins:plugin from 5.3 to 5.7
 - Bump org.jenkins-ci.plugins:scriptler from 376.v152edd95b_ca_f to 397.vc46f19cb_3c18
-- Bump org.seleniumhq.selenium:selenium-java from 4.26.0 to 4.28.1
+- Bump org.seleniumhq.selenium:selenium-java from 4.26.0 to 4.29.0
 - Bump prettier from 3.3.3 to 3.5.2
 - Bump serialize-javascript from 6.0.1 to 6.0.2
 - Bump ts-loader from 9.5.1 to 9.5.2
@@ -22,6 +22,7 @@
 - Bump webpack-cli from 5.1.4 to 6.0.1
 - Migrate from EE 8 to EE 9 (thanks @basil)
 - Migrate from Acegi to Spring Security (thanks, again, @basil)
+- Migrate tests to JUnit5 (thanks to @strangelookingnerd)
 - move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
 
 ## Version 2.8.6 (2024/11/23)

@@ -24,7 +24,7 @@
 
 package org.biouno.unochoice.issue61068;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import hudson.model.Descriptor;
 import org.biouno.unochoice.ChoiceParameter;
@@ -32,12 +32,12 @@ import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.ParameterValue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Tests for radio parameter has incorrect default value on parambuild URL. See
@@ -46,16 +46,14 @@ import hudson.model.ParameterValue;
  * @since 2.2.3
  */
 @Issue("JENKINS-61068")
-public class TestDefaultValuesOnParamBuildPage {
+@WithJenkins
+class TestDefaultValuesOnParamBuildPage {
 
     private static final String DEFAULT_FALLBACK_SCRIPT = "return ['EMPTY!']";
     private static final String PARAMETER_NAME = "my-parameter-name";
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
     @Test
-    public void testReturnEmptyWhenNoElementsAreAvailable() throws Descriptor.FormException {
+    void testReturnEmptyWhenNoElementsAreAvailable(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return []"
@@ -63,12 +61,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testReturnEmptyWhenOnlyEmptyElementIsDefined() throws Descriptor.FormException {
+    void testReturnEmptyWhenOnlyEmptyElementIsDefined(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['']"
@@ -76,12 +74,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testReturnFirstElementWhenSelectedIsNotSet() throws Descriptor.FormException {
+    void testReturnFirstElementWhenSelectedIsNotSet(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', 'C', 'D']"
@@ -89,12 +87,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "A", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("A", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testReturnSelectedElement() throws Descriptor.FormException {
+    void testReturnSelectedElement(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', 'C:selected', 'D', 'E:disabled']"
@@ -102,12 +100,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "C", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("C", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testReturnSelectedElements() throws Descriptor.FormException {
+    void testReturnSelectedElements(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A', 'B:selected', 'C', 'D:selected', 'E:disabled']"
@@ -115,12 +113,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "B,D", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("B,D", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testReturnSelectedEmptyElement() throws Descriptor.FormException {
+    void testReturnSelectedEmptyElement(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_RADIO,
                 "return ['A', 'B', ':selected', 'D', 'E:disabled']"
@@ -128,12 +126,12 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("", parameterValue.getValue(), "Invalid parameter value!");
     }
 
     @Test
-    public void testAllSuffixesAreTrimmed() throws Descriptor.FormException {
+    void testAllSuffixesAreTrimmed(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A:selected:disabled', 'B:disabled:selected', 'C', 'D:selected']"
@@ -141,11 +139,11 @@ public class TestDefaultValuesOnParamBuildPage {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "A,B,D", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("A,B,D", parameterValue.getValue(), "Invalid parameter value!");
     }
 
-    private static final ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
+    private static ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
         ScriptApproval.get().preapprove(script, GroovyLanguage.get());
         ScriptApproval.get().preapprove(DEFAULT_FALLBACK_SCRIPT, GroovyLanguage.get());
 
