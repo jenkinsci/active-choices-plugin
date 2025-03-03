@@ -155,7 +155,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>nodelabelparameter</artifactId>
-            <version>1.14.0</version>
+            <version>759.vb_b_e95db_f3251</version>
             <scope>test</scope>
         </dependency>
         <dependency>
