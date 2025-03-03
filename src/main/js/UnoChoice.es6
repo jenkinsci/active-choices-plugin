@@ -420,15 +420,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      */
     class DynamicReferenceParameter extends CascadeParameter {
         constructor(paramName, paramElement, proxy) {
-            super(paramName, paramElement, 'randomName', proxy);
-            this.paramName = paramName;
-            this.paramElement = paramElement;
-            this.proxy = proxy;
-            this.referencedParameters = [];
-        }
-
-        getReferencedParameters() {
-            return this.referencedParameters;
+            super(paramName, paramElement, null, proxy);
         }
 
         /**
@@ -756,8 +748,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let value = '';
         if (e.attr('name') === 'value') {
             value = util.getElementValue(e);
+        }  else if (e.attr('tagName') === 'INPUT') {
+            value = e.val();
         } else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
             let subElements = e.find('[name="value"]');
+            let textSubElement = e.find('[type="text"]');
             if (subElements && subElements.length > 0) {
                 let valueBuffer = Array();
                 subElements.each(function () {
@@ -766,6 +761,8 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                         valueBuffer.push(tempValue);
                 });
                 value = valueBuffer.toString();
+            } else if (textSubElement && textSubElement.length > 0) {
+                value = textSubElement.text();
             } else {
                 value = e.text();
             }
