@@ -327,14 +327,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
          * @return {boolean} <code>true</code> iff the given parameter references this parameter
          */
         referencesMe(cascadeParameter) {
-            if (!cascadeParameter ||
-                    !cascadeParameter.getReferencedParameters() ||
-                    cascadeParameter.getReferencedParameters().length === 0)
-                return false;
+            if (!cascadeParameter || !cascadeParameter.getReferencedParameters() || cascadeParameter.getReferencedParameters().length === 0) return false;
             for (let i = 0; i < cascadeParameter.getReferencedParameters().length; i++) {
                 let referencedParameter = cascadeParameter.getReferencedParameters()[i];
-                if (referencedParameter.getParameterName() === this.getParameterName())
-                    return true;
+                if (referencedParameter.getParameterName() === this.getParameterName()) return true;
             }
             return false;
         }
@@ -397,14 +393,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         }
 
         referencesMe(cascadeParameter) {
-            if (!cascadeParameter ||
-                    !cascadeParameter.getReferencedParameters() ||
-                    cascadeParameter.getReferencedParameters().length === 0)
-                return false;
+            if (!cascadeParameter || !cascadeParameter.getReferencedParameters() || cascadeParameter.getReferencedParameters().length === 0) return false;
             for (let i = 0; i < cascadeParameter.getReferencedParameters().length; i++) {
                 let referencedParameter = cascadeParameter.getReferencedParameters()[i];
-                if (referencedParameter.getParameterName() === this.getParameterName())
-                    return true;
+                if (referencedParameter.getParameterName() === this.getParameterName()) return true;
             }
             return false;
         }
@@ -489,7 +481,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 });
             } else if (parameterElement.id.indexOf('inputElement_') > -1) { // handle input text boxes
                 await this.proxy.getChoicesAsStringForUI(t => {
-                    parameterElement.value = JSON.stringify(t.responseObject());
+                    parameterElement.value = t.responseObject();
                 });
             } else if (parameterElement.id.indexOf('formattedHtml_') > -1) { // handle formatted HTML
                 await this.proxy.getChoicesAsStringForUI(t => {
@@ -634,17 +626,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 let idValue = `ecp_${e.target.randomName}_${i}`;
                                 idValue = idValue.replace(' ', '_');
 
-                                let input =
-                                        entry instanceof String ?
-                                                util.makeCheckbox(entry, undefined, undefined) :
-                                                entry.tagName === 'INPUT' ?
-                                                        entry :
-                                                        util.makeRadio(JSON.stringify(entry.value), 'value', undefined, undefined);
+                                let input = entry instanceof String ? util.makeCheckbox(entry, undefined, undefined) : entry.tagName === 'INPUT' ? entry : util.makeRadio(JSON.stringify(entry.value), 'value', undefined, undefined);
 
                                 // LABEL
-                                let label = (entry instanceof String || entry.tagName === 'INPUT') ?
-                                        util.makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) :
-                                        util.makeLabel(input, undefined);
+                                let label = (entry instanceof String || entry.tagName === 'INPUT') ? util.makeLabel(entry.getAttribute('title'), entry.getAttribute('title')) : util.makeLabel(input, undefined);
 
                                 // Put everything together
                                 let td = util.makeTd([input, label]);
@@ -746,35 +731,79 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     function getParameterValue(htmlParameter) {
         let e = jQuery3(htmlParameter);
         let value = '';
-        if (e.attr('name') === 'value') {
-            value = util.getElementValue(e);
-        }  else if (e.attr('tagName') === 'INPUT') {
-            value = e.val();
-        } else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
-            let subElements = e.find('[name="value"]');
-            let textSubElement = e.find('[type="text"]');
-            if (subElements && subElements.length > 0) {
-                let valueBuffer = Array();
-                subElements.each(function () {
-                    let tempValue = util.getElementValue(jQuery3(this));
-                    if (tempValue)
-                        valueBuffer.push(tempValue);
-                });
-                value = valueBuffer.toString();
-            } else if (textSubElement && textSubElement.length > 0) {
-                value = textSubElement.text();
+
+        if (e.is('select')) {
+            if (Array.isArray(e.val())) {
+                // Multi Select
+                value = e.val().join(', ')
             } else {
-                value = e.text();
+                // Single Select
+                value = e.val()
             }
-        } else if (e.attr('type') === 'file') {
-            let filesList = e.get(0).files;
-            if (filesList && filesList.length > 0) {
-                let firstFile = filesList[0]; // ignoring other files... but we could use it...
-                value = firstFile.name;
+        } else if (e.is('div')) {
+            // Check Boxes
+            if (e.hasClass('dynamic_checkbox')) {
+                value = e.find("input[type='checkbox']:checked").map(function () {
+                    return jQuery(this).val()
+                }).get().join(', ')
+            } else if (e.find("span[class='radio-content-data-holder']").length > 0){
+                // Radio Button
+                value = e.find("input[name='value']").val() || '';
+            } else {
+                // Formatted HTML / Formatted hidden HTML
+                value = e.text()
             }
-        } else if (e.prop('tagName') === 'INPUT' && !['', 'name'].includes(e.attr('name'))) {
-            value = util.getElementValue(e);
+        } else if (e.is('input')){
+            value = e.val()
+        } else if (e.find("div[class='dynamic_checkbox']").length > 0) {
+            value = e.find("input[type='checkbox']:checked").map(function () {
+                return jQuery(this).val()
+            }).get().join(', ')
+        } else if (e.find('ul, ol') > 0) {
+            // Numbered List / Bullet items list
+            let options = []
+            e.find('li').each(function () {
+                options.push(jQuery(this).text())
+            })
+            value = options.join(', ');
         }
+
+
+        else if (e.find('[type="text"]') > 0) {
+            // Input text box
+            let textElement = e.find('[type="text"]');
+            value = textElement.val();
+        }
+
+
+        // if (e.attr('name') === 'value') {
+        //     value = util.getElementValue(e);
+        // } else if (e.attr('tagName') === 'INPUT') {
+        //     value = e.val();
+        // } else if (e.prop('tagName') === 'DIV' || e.prop('tagName') === 'SPAN') {
+        //     let subElements = e.find('[name="value"]');
+        //     let textSubElement = e.find('[type="text"]');
+        //     if (subElements && subElements.length > 0) {
+        //         let valueBuffer = Array();
+        //         subElements.each(function () {
+        //             let tempValue = util.getElementValue(jQuery3(this));
+        //             if (tempValue) valueBuffer.push(tempValue);
+        //         });
+        //         value = valueBuffer.toString();
+        //     } else if (textSubElement && textSubElement.length > 0) {
+        //         value = textSubElement.text();
+        //     } else {
+        //         value = e.text();
+        //     }
+        // } else if (e.attr('type') === 'file') {
+        //     let filesList = e.get(0).files;
+        //     if (filesList && filesList.length > 0) {
+        //         let firstFile = filesList[0]; // ignoring other files... but we could use it...
+        //         value = firstFile.name;
+        //     }
+        // } else if (e.prop('tagName') === 'INPUT' && !['', 'name'].includes(e.attr('name'))) {
+        //     value = util.getElementValue(e);
+        // }
         return value;
     }
 
@@ -798,8 +827,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let stringify;
         if (Object.toJSON) // needs to use Prototype.js if it's present. See commit comment for discussion
             stringify = Object.toJSON;  // from prototype
-        else if (typeof (JSON) == "object" && JSON.stringify)
-            stringify = JSON.stringify; // standard
+        else if (typeof (JSON) == "object" && JSON.stringify) stringify = JSON.stringify; // standard
         let genMethod = methodName => {
             proxy[methodName] = async function () {
                 let args = arguments;
@@ -811,11 +839,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 })();
                 // 'arguments' is not an array, so we convert it into an array
                 let a = [];
-                for (let i = 0; i < args.length - (callback != null ? 1 : 0); i++)
-                    a.push(args[i]);
+                for (let i = 0; i < args.length - (callback != null ? 1 : 0); i++) a.push(args[i]);
                 let headers = {
-                    'Content-Type': 'application/x-stapler-method-invocation;charset=UTF-8',
-                    'Crumb': staplerCrumb,
+                    'Content-Type': 'application/x-stapler-method-invocation;charset=UTF-8', 'Crumb': staplerCrumb,
                 }
                 // If running in Jenkins, add Jenkins-Crumb header.
                 if (typeof crumb !== 'undefined') {
@@ -833,15 +859,12 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 // a dependant parameter is only rendered after its parent/referenced
                 // parameter).
                 await fetch(url + methodName, {
-                    method: 'POST',
-                    headers: headers,
-                    body: stringify(a),
+                    method: 'POST', headers: headers, body: stringify(a),
                 })
                         .then(function (response) {
                             if (response.ok) {
                                 const t = {
-                                    status: response.status,
-                                    statusText: response.statusText,
+                                    status: response.status, statusText: response.statusText,
                                 };
                                 if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
                                     response.json().then(function (responseObject) {
@@ -960,7 +983,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             } else if (child.getAttribute('type') === 'file') {
                                 parameterElement = child;
                                 break;
-                            } else if (child.tagName === 'INPUT' && !['', 'name'].includes(child.name)) {
+                            } else if (child.tagName === 'INPUT' && child.readOnly && child.disabled && child.type === 'text' && child.id.startsWith('inputElement_choice-parameter')) {
                                 parameterElement = child;
                                 break;
                             }
@@ -969,6 +992,8 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 }
 
                 let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
+                console.log(`renderDynamicRenderParameter: paramName: ${rp.getParameterName()} parameterElement: ${rp.getParameterElement()} `)
+
                 if (cascadeParameters && cascadeParameters.length > 0) {
                     for (let i = 0; i < cascadeParameters.length; i++) {
                         let other = cascadeParameters[i];
@@ -1052,7 +1077,8 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             } else if (child.getAttribute('type') === 'file') {
                                 parameterElement = child;
                                 break;
-                            } else if (child.tagName === 'INPUT' && !['', 'name'].includes(child.name)) {
+                            } else if (child.tagName === 'INPUT' && child.readOnly && child.disabled && child.type === 'text' && child.id.startsWith('inputElement_choice-parameter')) {
+                                // Input text box
                                 parameterElement = child;
                                 break;
                             }
@@ -1061,6 +1087,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 }
 
                 let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);
+                console.log(`renderDynamicRenderParameter: paramName: ${rp.getParameterName()} parameterElement: ${rp.getParameterElement()} `)
                 if (cascadeParameters && cascadeParameters.length > 0) {
                     for (let i = 0; i < cascadeParameters.length; i++) {
                         let other = cascadeParameters[i];
