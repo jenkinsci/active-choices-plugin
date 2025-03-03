@@ -470,6 +470,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 jQuery3(parameterElement).empty(); // remove all children elements
                 console.log('Calling Java server code to update HTML elements...');
                 await this.proxy.getChoicesForUI(t => {
+                    jQuery3(parameterElement).empty(); // remove all children elements
                     const data = t.responseObject();
                     let newValues = data[0];
                     // let newKeys = data[1];
@@ -746,9 +747,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 value = e.find("input[type='checkbox']:checked").map(function () {
                     return jQuery(this).val()
                 }).get().join(', ')
-            } else if (e.find("span[class='radio-content-data-holder']").length > 0){
+            } else if (e.find("div[class='radio-block-end']").length > 0){
                 // Radio Button
-                value = e.find("input[name='value']").val() || '';
+                value = e.find("input[type='radio']:checked").map(function () {
+                    return jQuery(this).val()
+                }).get().join(', ')
             } else {
                 // Formatted HTML / Formatted hidden HTML
                 value = e.text()
@@ -759,17 +762,14 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             value = e.find("input[type='checkbox']:checked").map(function () {
                 return jQuery(this).val()
             }).get().join(', ')
-        } else if (e.find('ul, ol') > 0) {
+        } else if (e.is('ul, ol')) {
             // Numbered List / Bullet items list
             let options = []
             e.find('li').each(function () {
                 options.push(jQuery(this).text())
             })
             value = options.join(', ');
-        }
-
-
-        else if (e.find('[type="text"]') > 0) {
+        } else if (e.find('[type="text"]') > 0) {
             // Input text box
             let textElement = e.find('[type="text"]');
             value = textElement.val();
@@ -986,14 +986,16 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             } else if (child.tagName === 'INPUT' && child.readOnly && child.disabled && child.type === 'text' && child.id.startsWith('inputElement_choice-parameter')) {
                                 parameterElement = child;
                                 break;
+                            } else if (['OL', 'UL'].includes(child.tagName)) {
+                                // Numbered List / Bullet items list
+                                parameterElement = child;
+                                break;
                             }
                         }
                     }
                 }
 
                 let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, cascadeParameter);
-                console.log(`renderDynamicRenderParameter: paramName: ${rp.getParameterName()} parameterElement: ${rp.getParameterElement()} `)
-
                 if (cascadeParameters && cascadeParameters.length > 0) {
                     for (let i = 0; i < cascadeParameters.length; i++) {
                         let other = cascadeParameters[i];
@@ -1081,13 +1083,16 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 // Input text box
                                 parameterElement = child;
                                 break;
+                            } else if (['OL', 'UL'].includes(child.tagName)) {
+                                // Numbered List / Bullet items list
+                                parameterElement = child;
+                                break;
                             }
                         }
                     }
                 }
 
                 let rp = new UnoChoice.ReferencedParameter(referencedParameters[i], parameterElement, dynamicParameter);
-                console.log(`renderDynamicRenderParameter: paramName: ${rp.getParameterName()} parameterElement: ${rp.getParameterElement()} `)
                 if (cascadeParameters && cascadeParameters.length > 0) {
                     for (let i = 0; i < cascadeParameters.length; i++) {
                         let other = cascadeParameters[i];
