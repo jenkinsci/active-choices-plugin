@@ -129,7 +129,7 @@ export default class Util {
         } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
             return e.prop('checked') ? e.val().toString(): '';
         } else if (e.prop('tagName') === 'INPUT' && e.attr('type') === 'text'){
-            return e.html()
+            return e.val().toString();
         } else {
             return e.val().toString();
         }
