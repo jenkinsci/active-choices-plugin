@@ -98,7 +98,7 @@ class UiAcceptanceTest extends BaseUiTest {
 
         checkRadios(() -> param2Choices, "A", "B", "C");
         // this is until something is selected
-        checkRadios(() -> findRadios("PARAM2A"), "1", "2", "3");
+        checkRadios(() -> findRadios("PARAM2A"), "ABC1", "ABC2", "ABC3");
 
         param2Choices.get(0).click();
         checkRadios(() -> findRadios("PARAM2A"), "A1", "A2", "A3");
