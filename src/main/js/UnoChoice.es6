@@ -752,6 +752,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 value = e.find("input[type='radio']:checked").map(function () {
                     return jQuery(this).val()
                 }).get().join(', ')
+            } else if (e.find("input[name='value']").length > 0) {
+                // custom input with value <input name='value', value='some value'/>
+                // this can be returned with Formatted HTML / Formatted hidden HTML
+                value = e.find("input[name='value']").val();
             } else {
                 // Formatted HTML / Formatted hidden HTML
                 value = e.text()
