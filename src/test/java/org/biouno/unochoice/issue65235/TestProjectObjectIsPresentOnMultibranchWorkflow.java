@@ -23,6 +23,7 @@
  */
 package org.biouno.unochoice.issue65235;
 
+import jenkins.plugins.git.junit.jupiter.WithGitSampleRepo;
 import jenkins.plugins.git.traits.BranchDiscoveryTrait;
 import jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait;
 import org.htmlunit.html.HtmlSelect;
@@ -41,13 +42,16 @@ import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
-import org.junit.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.*;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.List;
 
 import static org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectTest.scheduleAndFindBranchProject;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Test that scripts can access the jenkinsProject object.
@@ -55,21 +59,21 @@ import static org.junit.Assert.*;
  * @since 2.6.5
  */
 @Issue("JENKINS-65235")
-public class TestProjectObjectIsPresentOnMultibranchWorkflow {
+@WithJenkins
+@WithGitSampleRepo
+class TestProjectObjectIsPresentOnMultibranchWorkflow {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    @ClassRule public static BuildWatcher buildWatcher = new BuildWatcher();
-    @Rule public GitSampleRepoRule sampleRepo = new GitSampleRepoRule();
+    private JenkinsRule j;
+    private GitSampleRepoRule sampleRepo;
 
     // LIST script
     private static final String SCRIPT_LIST = "return ['A', 'B', jenkinsProject.fullName, 'C']";
     private static final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp(JenkinsRule j, GitSampleRepoRule sampleRepo) {
+        this.j = j;
+        this.sampleRepo = sampleRepo;
         ScriptApproval.get()
                 .preapprove(SCRIPT_LIST, GroovyLanguage.get());
         ScriptApproval.get()
@@ -77,7 +81,7 @@ public class TestProjectObjectIsPresentOnMultibranchWorkflow {
     }
 
     @Test
-    public void testProjectObjectIsAvailable() throws Exception {
+    void testProjectObjectIsAvailable() throws Exception {
         // create a multibranch workflow from git repo
         j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
         j.jenkins.setAuthorizationStrategy(new MockAuthorizationStrategy()
@@ -118,8 +122,8 @@ public class TestProjectObjectIsPresentOnMultibranchWorkflow {
         // load the page with params related UI
         HtmlSelect htmlSelect = wc.getPage(gitprj.asItem(), "build").getFormByName("parameters").getSelectByName("value");
 
-        assertNotEquals("fallback script execution detected", "EMPTY!", htmlSelect.getOption(0).getText());
-        assertEquals("currentProject not evaluated as expected", "gitprj/master", htmlSelect.getOption(2).getText());
+        assertNotEquals("EMPTY!", htmlSelect.getOption(0).getText(), "fallback script execution detected");
+        assertEquals("gitprj/master", htmlSelect.getOption(2).getText(), "currentProject not evaluated as expected");
 
     }
 
