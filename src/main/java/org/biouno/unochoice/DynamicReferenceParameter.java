@@ -27,6 +27,8 @@ package org.biouno.unochoice;
 import java.util.List;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
@@ -143,7 +145,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
          * A bit hacky, probably using another extension point would be a good idea.
          */
         @Override
-        public ParameterDefinition newInstance(StaplerRequest2 req, JSONObject formData) throws hudson.model.Descriptor.FormException {
+        public ParameterDefinition newInstance(StaplerRequest2 req, @NonNull JSONObject formData) throws hudson.model.Descriptor.FormException {
             if (req != null) {
                 List<Ancestor> ancestors = req.getAncestors();
                 AbstractProject<?, ?> project = null;
@@ -164,6 +166,7 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
         }
 
         @Override
+        @NonNull
         public String getDisplayName() {
             return "Active Choices Reactive Reference Parameter";
         }

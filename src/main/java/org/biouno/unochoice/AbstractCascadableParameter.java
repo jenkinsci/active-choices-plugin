@@ -115,6 +115,7 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
     @Override
     @JavaScriptMethod
     public void doUpdate(String parameters) {
+        System.out.println("doUpdate: " + parameters);
         getParameters().clear();
         final String[] params = parameters.split(SEPARATOR);
         for (String param : params) {
