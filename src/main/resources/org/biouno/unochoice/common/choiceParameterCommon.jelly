@@ -6,22 +6,26 @@
   <j:set var="choiceType" value="${it.choiceType}"/>
   <j:set var="escapeEntryTitleAndDescription" value="false"/>
   <f:entry title="${h.escape(it.name)}" description="${it.formattedDescription}">
-    <div id='${paramName}-spinner' style="display: none; position: absolute; margin-left: -25px;">
+    <div id='${paramName}-spinner' class="ac-spinner">
       <l:spinner />
     </div>
     <div name="parameter" description="${it.formattedDescription}" id='${paramName}' class="active-choice">
       <input type="hidden" name="name" value="${h.escape(it.name)}" />
       <j:choose>
         <j:when test="${choiceType eq 'PT_SINGLE_SELECT'}">
-          <select name="value">
-            <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
-          </select>
+          <div class="jenkins-select ac-ignore">
+            <select name="value" class="jenkins-select__input">
+              <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
+            </select>
+          </div>
         </j:when>
         <j:when test="${choiceType eq 'PT_MULTI_SELECT'}">
           <j:set var="multiple_select_id" value="multiple_select_${h.escape(it.randomName)}_${index}" />
-          <select name="value" multiple="multiple" size="1" id="${multiple_select_id}">
-            <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
-          </select>
+          <div class="jenkins-select__input ac-select__input ac-ignore">
+            <select name="value" multiple="multiple" size="1" id="${multiple_select_id}" class="ac-select">
+              <st:include page="/org/biouno/unochoice/common/selectContent.jelly"/>
+            </select>
+          </div>
           <span class="multi-select-data-holder" data-visible-item-count="${it.visibleItemCount}" data-multi-select-id="${multiple_select_id}"/>
           <st:adjunct includes="org.biouno.unochoice.common.multi-select"/>
         </j:when>
@@ -36,7 +40,7 @@
         </j:otherwise>
       </j:choose>
       <j:if test="${it.filterable}">
-        <input class='uno_choice_filter' type='text' value='' name='test' placeholder='Filter' />
+        <input class='uno_choice_filter jenkins-input jenkins-!-margin-top-1' type='text' value='' name='test' placeholder='Filter'/>
       </j:if>
     </div>
   </f:entry>
