@@ -27,6 +27,7 @@
 - Migrate tests to JUnit5 (thanks to @strangelookingnerd)
 - Move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
 - Upgrade node requirement from 18.18.0 to 22.14.0
+- JENKINS-74963: Spinning animation is not removed due to exception, select element is not found by plug-in
 
 ## Version 2.8.6 (2024/11/23)
 
