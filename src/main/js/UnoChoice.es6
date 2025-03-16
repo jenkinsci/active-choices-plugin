@@ -706,7 +706,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             } // if (tagName === 'SELECT') { // } else if (tagName === 'DIV') {
             // Propagate the changes made by the filter
             console.log('[Filter] - initEventHandler - Propagating change event after filtering');
-            let e1 = $.Event('change', {parameterName: 'Filter Element Event'});
+            let e1 = jQuery3.Event('change', {parameterName: 'Filter Element Event'});
             jQuery3(filteredElement).trigger(e1);
         });
     }
