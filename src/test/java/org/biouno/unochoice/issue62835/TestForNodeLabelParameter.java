@@ -47,7 +47,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -65,14 +64,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @WithJenkins
 class TestForNodeLabelParameter extends BaseUiTest {
 
-    private JenkinsRule j;
-
     private DumbSlave onlineNode;
 
     @BeforeEach
     public void setUp(JenkinsRule j) {
         super.setUp(j);
-        this.j = j;
         try {
             onlineNode = j.createOnlineSlave(new LabelAtom("mylabel1"));
         } catch (Exception e) {
@@ -91,7 +87,7 @@ class TestForNodeLabelParameter extends BaseUiTest {
     }
 
     @Test
-    void testNodeLabelParameterValueFound() throws IOException, SAXException, Descriptor.FormException {
+    void testNodeLabelParameterValueFound() throws IOException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
 
         final String nodeName = onlineNode.getNodeName();

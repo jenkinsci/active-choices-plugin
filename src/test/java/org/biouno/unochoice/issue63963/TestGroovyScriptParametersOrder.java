@@ -23,34 +23,29 @@
  */
 package org.biouno.unochoice.issue63963;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import hudson.model.Descriptor;
+import hudson.model.FreeStyleProject;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.model.StringParameterDefinition;
+import org.biouno.unochoice.BaseUiTest;
+import org.biouno.unochoice.CascadeChoiceParameter;
+import org.biouno.unochoice.model.GroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import hudson.model.Descriptor;
-import org.biouno.unochoice.CascadeChoiceParameter;
-import org.biouno.unochoice.model.GroovyScript;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
-import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
-import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
-import org.xml.sax.SAXException;
-
-import org.htmlunit.html.DomElement;
-import org.htmlunit.html.DomNode;
-import org.htmlunit.html.HtmlOption;
-import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSelect;
-
-import hudson.model.FreeStyleProject;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.StringParameterDefinition;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that verifies that the order of parameters is correct
@@ -58,26 +53,26 @@ import hudson.model.StringParameterDefinition;
  *
  * @since 2.5.1
  */
+@Issue("JENKINS-63963")
 @WithJenkins
-class TestGroovyScriptParametersOrder {
+class TestGroovyScriptParametersOrder extends BaseUiTest {
 
     /**
      * Using test kindly provided by Jason Antman in JENKINS-63963. See issue in JIRA for more context
      * about the problem, analysis, and solution (mostly done by Jason).
      *
      * @throws IOException if it fails to load the script
-     * @throws SAXException if the XML is malformed
      */
     @Test
-    void testGroovyScriptParametersOrder(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
+    void testGroovyScriptParametersOrder() throws IOException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
 
         StringParameterDefinition teamUid = new StringParameterDefinition("TEAM_UID", "foo", "Team name (UID)");
         StringParameterDefinition environment = new StringParameterDefinition("ENVIRONMENT", "bar", "The environment name to use for this stack (default: dev)");
 
         String scriptText = """
-                Map getOptions(String teamId, String enviro) {
-                    def found_snapshots = ["":"Select a backup file or snapshot to restore for " + teamId + " enviro " + enviro]; // value => selection text
+                Map getOptions(String teamId, String env) {
+                    def found_snapshots = ["":"Select a backup file or snapshot to restore for " + teamId + " env " + env]; // value => selection text
                     found_snapshots["one"] = "snapshot e";
                     found_snapshots["two"] = "snapshot d";
                     found_snapshots["three"] = "snapshot c";
@@ -112,36 +107,25 @@ class TestGroovyScriptParametersOrder {
         project.addProperty(new ParametersDefinitionProperty(Arrays.asList(teamUid, environment, backupFileName)));
         project.save();
 
+        driver.get(j.getURL().toString() + "job/" + project.getName() + "/build?delay=0sec");
 
-        WebClient wc = j.createWebClient();
-        wc.setThrowExceptionOnFailingStatusCode(false);
-        HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
-        DomElement renderedParameterElement = configPage.getElementById("random-name");
-        HtmlSelect select = null;
-        for (DomNode node: renderedParameterElement.getChildren()) {
-            if (node instanceof HtmlSelect) {
-                select = (HtmlSelect) node;
-                break;
-            }
-        }
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
-        assertNotNull(select, "Missing cascade parameter select HTML node element!");
-
-        List<HtmlOption> htmlOptions = select.getOptions();
-        final List<String> options = htmlOptions
-                .stream()
-                .map(HtmlOption::getText)
-                .toList();
+        By selectOptions = By.cssSelector("div.active-choice:has([name='name'][value='BACKUP_FILENAME']) > select > option");
+        wait.until(ExpectedConditions.numberOfElementsToBe(selectOptions, 6));
+        WebElement renderedParameterElement = findSelect("BACKUP_FILENAME");
+        Select select = new Select(renderedParameterElement);
+        List<WebElement> htmlOptions = select.getOptions();
         final List<String> expected = new LinkedList<>();
-        {
-            expected.add("Select a backup file or snapshot to restore for foo enviro bar");
-            expected.add("snapshot e");
-            expected.add("snapshot d");
-            expected.add("snapshot c");
-            expected.add("snapshot b");
-            expected.add("snapshot a");
+        expected.add("Select a backup file or snapshot to restore for foo env bar");
+        expected.add("snapshot e");
+        expected.add("snapshot d");
+        expected.add("snapshot c");
+        expected.add("snapshot b");
+        expected.add("snapshot a");
+        assertEquals(expected.size(), htmlOptions.size(), "Wrong number of HTML options rendered");
+        for (int i = 0; i < htmlOptions.size(); i++) {
+            assertEquals(expected.get(i), htmlOptions.get(i).getText(), "Wrong HTML options rendered (or out of order)");
         }
-        assertEquals(expected.size(), options.size(), "Wrong number of HTML options rendered");
-        assertEquals(expected, options, "Wrong HTML options rendered (or out of order)");
     }
 }
