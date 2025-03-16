@@ -29,6 +29,7 @@
 - Upgrade node requirement from 18.18.0 to 22.14.0
 - JENKINS-74963: Spinning animation is not removed due to exception, select element is not found by plug-in
   (duplicated issues: JENKINS-73919)
+- JENKINS-74967: Active choice parameter filter throws JavaScript error for parameter change event in browser console
 
 ## Version 2.8.6 (2024/11/23)
 
