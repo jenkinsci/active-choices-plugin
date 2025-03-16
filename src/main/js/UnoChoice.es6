@@ -322,7 +322,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
                         console.log(`[${this.paramName}] - CascadeParameter#update - Updating ${other.getParameterName()} from ${this.getParameterName()}`);
-                        await other.update(true);
+                        window.requestIdleCallback(async () => {
+                            await other.update(false);
+                        })
                     }
                 }
             }
@@ -385,10 +387,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
-                setTimeout(async () => {
-                   await _self.cascadeParameter.update(false);
-                   jQuery3(".behavior-loading").hide();
-                }, 0);
+                window.requestIdleCallback(async () => {
+                    await _self.cascadeParameter.update(false);
+                    jQuery3(".behavior-loading").hide();
+                })
             }
         });
         cascadeParameter.getReferencedParameters().push(this);
@@ -506,7 +508,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
                         console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Updating ${other.paramName} from ${this.paramName}`);
-                        await other.update(true);
+                        window.requestIdleCallback(async () => {
+                            await other.update(true);
+                        })
                     }
                 }
             }
@@ -962,7 +966,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
             // call update methods in Java passing the HTML values
             console.log(`[${name}] - renderCascadeChoiceParameter - Updating cascade of parameter [${name}] ...`);
-            await cascadeParameter.update(false);
+            window.requestIdleCallback(async () => {
+                await cascadeParameter.update(false);
+            })
         } else {
             console.log(`[${name}] - renderCascadeChoiceParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
@@ -1045,7 +1051,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
             // call update methods in Java passing the HTML values
             console.log(`[${name}] - renderDynamicRenderParameter - Updating cascade of parameter [${name}] ...`);
-            await dynamicParameter.update(false);
+            window.requestIdleCallback(async () => {
+                await dynamicParameter.update(false);
+            })
         } else {
             console.log(`[${name}] - renderDynamicRenderParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
