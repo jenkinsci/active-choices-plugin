@@ -71,10 +71,12 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
         // 3), because 3) is called with "a1" as parameter instead of "a2"
         // as should be after the 2) gets executed.
 
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
+
         WebElement targetParam = findSelect("TARGET");
         assertTrue(targetParam.isDisplayed());
         assertTrue(targetParam.isEnabled());
-        new Select(targetParam).selectByValue("Item2");
+        new Select(targetParam).selectByValue("Item3");
 
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
@@ -82,6 +84,15 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
         assertEquals(2, dockerBaseImageParam.size());
 
         checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
+
+        assertEquals("buster", findRadios("DOCKER_BASE_IMAGE").get(0).getDomAttribute("value"));
+        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(0).getDomAttribute("checked"));
+
+        List<WebElement> machinesParam = findCheckboxes("MACHINES");
+        assertEquals("server2", machinesParam.get(1).getDomAttribute("value"));
+        machinesParam.get(1).click();
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
         assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("value"));
         assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("checked"));

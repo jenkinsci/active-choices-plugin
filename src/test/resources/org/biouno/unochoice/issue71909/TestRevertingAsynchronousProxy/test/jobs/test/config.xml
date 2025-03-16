@@ -32,16 +32,16 @@
                     <visibleItemCount>1</visibleItemCount>
                     <script class="org.biouno.unochoice.model.GroovyScript">
                         <secureScript plugin="script-security@1362.v67dc1f0e1b_b_3">
-                            <script></script>
-                            <sandbox>false</sandbox>
-                        </secureScript>
-                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
                             <script>dynRefParam = &quot;a1:selected a2&quot;
                                 if( TARGET.equals( &quot;Item2&quot; ) )
                                 {
                                 dynRefParam = &quot;a2:selected&quot;
                                 }
                                 return dynRefParam.tokenize()</script>
+                            <sandbox>false</sandbox>
+                        </secureScript>
+                        <secureFallbackScript plugin="script-security@1362.v67dc1f0e1b_b_3">
+                            <script></script>
                             <sandbox>false</sandbox>
                         </secureFallbackScript>
                     </script>
