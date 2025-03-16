@@ -24,16 +24,13 @@
 
 package org.biouno.unochoice.issue62835;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import hudson.model.Descriptor;
+import hudson.model.FreeStyleProject;
+import hudson.model.ParametersDefinitionProperty;
+import hudson.model.labels.LabelAtom;
+import hudson.slaves.DumbSlave;
+import org.biouno.unochoice.BaseUiTest;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
@@ -42,47 +39,55 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.jenkins.plugins.nodelabelparameter.Constants;
 import org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition;
 import org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.xml.sax.SAXException;
 
-import org.htmlunit.html.DomElement;
-import org.htmlunit.html.DomNode;
-import org.htmlunit.html.HtmlOption;
-import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlSelect;
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.labels.LabelAtom;
-import hudson.slaves.DumbSlave;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for parameters created by the NodeLabel Plug-in.
  *
  * @see <a href="https://github.com/jenkinsci/nodelabelparameter-plugin/blob/ea0a822f3a09423eb32eee9d5496ce7a14b4a931/src/test/java/org/jvnet/jenkins/plugins/nodelabelparameter/TriggerJobsTest.java">https://github.com/jenkinsci/nodelabelparameter-plugin/blob/ea0a822f3a09423eb32eee9d5496ce7a14b4a931/src/test/java/org/jvnet/jenkins/plugins/nodelabelparameter/TriggerJobsTest.java</a>
  */
-@Issue("62835")
+@Issue("JENKINS-62835")
 @WithJenkins
-class TestForNodeLabelParameter {
+class TestForNodeLabelParameter extends BaseUiTest {
 
     private JenkinsRule j;
 
     private DumbSlave onlineNode;
 
     @BeforeEach
-    void setUp(JenkinsRule j) throws Exception {
+    public void setUp(JenkinsRule j) {
+        super.setUp(j);
         this.j = j;
-        onlineNode = j.createOnlineSlave(new LabelAtom("mylabel1"));
+        try {
+            onlineNode = j.createOnlineSlave(new LabelAtom("mylabel1"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterEach
-    void tearDown() throws Exception {
-        j.jenkins.removeNode(onlineNode);
+    public void tearDown() {
+        super.tearDown();;
+        try {
+            j.jenkins.removeNode(onlineNode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -120,28 +125,17 @@ class TestForNodeLabelParameter {
         project.addProperty(new ParametersDefinitionProperty(Arrays.asList(nodeLabelParameter, reactsToNodeLabelParameter)));
         project.save();
 
-        try (WebClient wc = j.createWebClient()) {
-            wc.setThrowExceptionOnFailingStatusCode(false);
-            HtmlPage configPage = wc.goTo("job/" + project.getName() + "/build?delay=0sec");
-            DomElement renderedParameterElement = configPage.getElementById("random-name");
-            HtmlSelect select = null;
-            for (DomNode node: renderedParameterElement.getChildren()) {
-                if (node instanceof HtmlSelect) {
-                    select = (HtmlSelect) node;
-                    break;
-                }
-            }
+        driver.get(j.getURL().toString() + "job/" + project.getName() + "/build?delay=0sec");
 
-            assertNotNull(select, "Missing cascade parameter select HTML node element!");
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
-            List<HtmlOption> htmlOptions = select.getOptions();
-            final List<String> options = htmlOptions
-                    .stream()
-                    .map(HtmlOption::getText)
-                    .toList();
-            final List<String> expected = new LinkedList<>(Collections.singletonList(nodeName));
-            assertEquals(expected.size(), options.size(), "Wrong number of HTML options rendered");
-            assertEquals(expected, options, "Wrong HTML options rendered (or out of order)");
-        }
+        WebElement renderedParameterElement = findSelect("PARAM_B");
+        final Select select = new Select(renderedParameterElement);
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
+
+        List<WebElement> htmlOptions = select.getOptions();
+        assertEquals(1, htmlOptions.size(), "Wrong number of HTML options rendered");
+        assertEquals(nodeName, htmlOptions.get(0).getText(), "Wrong HTML options rendered (or out of order)");
     }
 }
