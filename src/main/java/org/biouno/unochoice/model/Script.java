@@ -24,8 +24,11 @@
 
 package org.biouno.unochoice.model;
 
+import hudson.DescriptorExtensionList;
+import hudson.model.Describable;
 import java.io.Serializable;
 import java.util.Map;
+import jenkins.model.Jenkins;
 
 /**
  * Interface for scripts.
@@ -33,7 +36,7 @@ import java.util.Map;
  * @author Bruno P. Kinoshita
  * @since 0.23
  */
-public interface Script extends Serializable {
+public interface Script extends Serializable, Describable<Script> {
 
     /**
      * Evaluates the script.
@@ -49,5 +52,14 @@ public interface Script extends Serializable {
      * @return output of the script
      */
     Object eval(Map<String, String> parameters);
+
+    static DescriptorExtensionList<Script, ScriptDescriptor> all() {
+        final Jenkins instance = Jenkins.getInstanceOrNull();
+        DescriptorExtensionList<Script, ScriptDescriptor> all = null;
+        if (instance != null) {
+            all = instance.getDescriptorList(Script.class);
+        }
+        return all;
+    }
 
 }
