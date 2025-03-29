@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014-2020 Ioannis Moutsatsos, Bruno P. Kinoshita
+ * Copyright (c) 2014-2025 Ioannis Moutsatsos, Bruno P. Kinoshita
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,13 @@
 
 package org.biouno.unochoice.model;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.Extension;
+import hudson.Util;
 import hudson.model.Descriptor;
+import hudson.model.ManagementLink;
+import jenkins.model.Jenkins;
+import net.sf.json.JSONArray;
 import org.biouno.unochoice.util.Utils;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptler.ScriptlerManagement;
@@ -41,12 +43,13 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.Extension;
-import hudson.Util;
-import hudson.model.ManagementLink;
-import jenkins.model.Jenkins;
-import net.sf.json.JSONArray;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A scriptler script.
@@ -256,7 +259,6 @@ public class ScriptlerScript extends AbstractScript {
             return "Scriptler Script";
         }
 
-        @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
         private ManagementLink getScriptler() {
             return Jenkins.get().getExtensionList(ScriptlerManagement.class).get(0);
         }
