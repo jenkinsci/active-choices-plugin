@@ -99,7 +99,11 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
 
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
-        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("value"));
-        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("checked"));
+        checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
+
+        dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
+
+        assertEquals("bullseye", dockerBaseImageParam.get(1).getDomAttribute("value"));
+        assertEquals("true", dockerBaseImageParam.get(1).getDomAttribute("checked"));
     }
 }
