@@ -30,6 +30,8 @@
 - Migrate tests to JUnit5 (thanks to @strangelookingnerd)
 - Move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
 - Upgrade node requirement from 18.18.0 to 22.14.0
+- JENKINS-73239: Added test to prevent JS errors when a cascade parameter does not reference other parameters
+  (the issue itself was closed as will not implement, due to Jenkins security that prevents loading external JS files)
 - JENKINS-74963: Spinning animation is not removed due to exception, select element is not found by plug-in
   (duplicated issues: JENKINS-73919, JENKINS-73928)
 - JENKINS-74967: Active choice parameter filter throws JavaScript error for parameter change event in browser console

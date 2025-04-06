@@ -6,9 +6,14 @@ if (window.makeStaplerProxy) {
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".dynamic-reference-parameter-data-holder").forEach((dataHolder) => {
         const { name, paramName, proxyName } = dataHolder.dataset;
-        const referencedParameters = dataHolder.dataset.referencedParameters.split(",").map((val) => val.trim());
+        const referencedParameters = dataHolder.dataset.referencedParameters;
+        if (referencedParameters === undefined || referencedParameters === null || referencedParameters.length === 0) {
+            console.log(`[${name}] - dynamic-reference-parameter.js#querySelectorAll#forEach - No parameters referenced!`);
+            return;
+        }
+        const referencedParametersList = dataHolder.dataset.referencedParameters.split(",").map((val) => val.trim());
 
-        UnoChoice.renderDynamicRenderParameter(`#${paramName}`, name, paramName, referencedParameters, window[proxyName]);
+        UnoChoice.renderDynamicRenderParameter(`#${paramName}`, name, paramName, referencedParametersList, window[proxyName]);
 
         // update spinner id
         var rootElmt = document.querySelector(`#${paramName}`);

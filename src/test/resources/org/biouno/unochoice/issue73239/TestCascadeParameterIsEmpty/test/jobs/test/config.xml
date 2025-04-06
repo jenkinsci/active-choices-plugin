@@ -1,0 +1,221 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1505.vea_4b_20a_4a_495">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@2.2247.va_423189a_7dff"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@2.2247.va_423189a_7dff">
+      <jobProperties>
+        <string>jenkins.model.BuildDiscarderProperty</string>
+      </jobProperties>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@803.v08103b_87c280">
+      <jobPropertyDescriptors>
+        <string>hudson.model.ParametersDefinitionProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>6</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>6</artifactNumToKeep>
+        <removeLastBuild>false</removeLastBuild>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>l</name>
+          <randomName>choice-parameter-11</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1373.vb_b_4a_a_c26fa_00">
+              <script>
+html =
+&quot;&quot;&quot;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+ &lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;!-- The above 3 meta tags *must* come first in the head--&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css&quot; integrity=&quot;sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u&quot; crossorigin=&quot;anonymous&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css&quot; integrity=&quot;sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp&quot; crossorigin=&quot;anonymous&quot;&gt;
+  &lt;!--NOT POSSIBLE DUE TO OLD JQUERY VERSION IN JENKINS. THIS MEANS THAT FOR INSTANCE TOOLTIPS IS NOT LOOKING AS EXPECTED
+  &lt;script src=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+  --&gt;
+  &lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries --&gt;
+  &lt;!-- WARNING: Respond.js doesn&apos;t work if you view the page via file:// --&gt;
+  &lt;style&gt;
+    .tt {data-toggle: tooltip;}
+  &lt;/style&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;div class=&quot;row&quot;&gt;
+   &lt;div class=&quot;col-md-8&quot;&gt;
+    &lt;table class=&quot;table table-bordered table-condensed&quot;&gt;
+     &lt;tbody&gt;
+      &lt;tr&gt;
+       &lt;td&gt;BUILDS&lt;/td&gt;
+       &lt;td&gt;&lt;input type=&quot;checkbox&quot; id=&quot;CB_BUILDS&quot; class=&quot;tt&quot; title=&quot;Build&quot;&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+     &lt;/tbody&gt;
+    &lt;/table&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+&quot;&quot;&quot;
+return html
+</script>
+              <sandbox>false</sandbox>
+              <classpath/>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1373.vb_b_4a_a_c26fa_00">
+              <script>&lt;html&gt;&lt;body&gt;BROKEN OR UNAPPROVED SCRIPT&lt;/body&gt;&lt;/html&gt;</script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureFallbackScript>
+          </script>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters></referencedParameters>
+          <choiceType>ET_FORMATTED_HTML</choiceType>
+          <omitValueField>false</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+        <org.biouno.unochoice.DynamicReferenceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>BUILDS</name>
+          <randomName>choice-parameter-52844584764609</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1373.vb_b_4a_a_c26fa_00">
+              <script>return &quot;&lt;input type=&apos;checkbox&apos; id=&apos;BUILDS&apos; name=&apos;value&apos; checked=true &gt;&lt;script type=&apos;text/javascript&apos;&gt;jQuery3(document.getElementById(&apos;CB_BUILDS&apos;)).click(function() {console.log(&apos;change!&apos;);document.getElementById(&apos;BUILDS&apos;).checked = this.checked;});document.getElementById(&apos;CB_BUILDS&apos;).checked = true;&lt;/script&gt; &quot;</script>
+              <sandbox>false</sandbox>
+              <classpath/>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1373.vb_b_4a_a_c26fa_00">
+              <script>&lt;html&gt;&lt;body&gt;BROKEN OR UNAPPROVED SCRIPT&lt;/body&gt;&lt;/html&gt;</script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureFallbackScript>
+          </script>
+          <parameters class="linked-hash-map"/>
+          <choiceType>ET_FORMATTED_HIDDEN_HTML</choiceType>
+          <omitValueField>true</omitValueField>
+        </org.biouno.unochoice.DynamicReferenceParameter>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@4043.va_fb_de6a_a_8b_f5">
+    <script>def THE_SCRIPT = &apos;&apos;&apos;
+html =
+&quot;&quot;&quot;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+ &lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;!-- The above 3 meta tags *must* come first in the head--&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css&quot; integrity=&quot;sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u&quot; crossorigin=&quot;anonymous&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css&quot; integrity=&quot;sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp&quot; crossorigin=&quot;anonymous&quot;&gt;
+  &lt;!--NOT POSSIBLE DUE TO OLD JQUERY VERSION IN JENKINS. THIS MEANS THAT FOR INSTANCE TOOLTIPS IS NOT LOOKING AS EXPECTED
+  &lt;script src=&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+  --&gt;
+  &lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries --&gt;
+  &lt;!-- WARNING: Respond.js doesn&apos;t work if you view the page via file:// --&gt;
+  &lt;style&gt;
+    .tt {data-toggle: tooltip;}
+  &lt;/style&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;div class=&quot;row&quot;&gt;
+   &lt;div class=&quot;col-md-8&quot;&gt;
+    &lt;table class=&quot;table table-bordered table-condensed&quot;&gt;
+     &lt;tbody&gt;
+      &lt;tr&gt;
+       &lt;td&gt;BUILDS&lt;/td&gt;
+       &lt;td&gt;&lt;input type=&quot;checkbox&quot; id=&quot;CB_BUILDS&quot; class=&quot;tt&quot; title=&quot;Build&quot;&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+     &lt;/tbody&gt;
+    &lt;/table&gt;
+   &lt;/div&gt;
+  &lt;/div&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+&quot;&quot;&quot;
+return html
+&apos;&apos;&apos;
+
+def mainBuildParam = [
+    $class: &apos;DynamicReferenceParameter&apos;,
+    choiceType: &apos;ET_FORMATTED_HTML&apos;,
+    description: &apos;&apos;,
+    name: &apos;l&apos;,
+    randomName: &apos;choice-parameter-11&apos;,
+    referencedParameters: &apos;&apos;,
+    omitValueField: false,
+    script: [
+        $class: &apos;GroovyScript&apos;,
+        fallbackScript: [
+            classpath: [],
+            sandbox: true,
+            script:
+            &apos;&lt;html&gt;&lt;body&gt;BROKEN OR UNAPPROVED SCRIPT&lt;/body&gt;&lt;/html&gt;&apos;
+        ],
+        script: [
+            classpath: [],
+            sandbox: false,
+            script: THE_SCRIPT
+        ]
+    ]
+]
+
+def ANOTHER_CODE = &apos;&apos;&apos;
+return \&quot;&lt;input type=&apos;checkbox&apos; id=&apos;BUILDS&apos; name=&apos;value&apos; checked=true &gt;
+&lt;script type=&apos;text/javascript&apos;&gt;
+document.getElementById(&apos;CB_BUILDS&apos;).on(&apos;change&apos;, function() {
+    document.getElementById(&apos;CB_BUILDS&apos;).checked = this.checked;
+});
+document.getElementById(&apos;CB_BUILDS&apos;).checked = true;
+&lt;/script&gt;
+\&quot;
+&apos;&apos;&apos;
+
+def otherParameter = [
+    $class: &apos;DynamicReferenceParameter&apos;,
+    choiceType: &apos;ET_FORMATTED_HIDDEN_HTML&apos;,
+    name: &apos;BUILDS&apos;,
+    description: &apos;&apos;,
+    omitValueField: true,
+    script: [
+        $class: &apos;GroovyScript&apos;,
+        script: [
+            classpath: [],
+            sandbox: false,
+            script: ANOTHER_CODE
+        ]
+    ]
+]
+
+
+properties([
+    parameters([
+        mainBuildParam,
+        otherParameter
+    ])
+])
+
+node any {
+    echo &quot;ok&quot;
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
