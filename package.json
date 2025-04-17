@@ -27,7 +27,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-junit": "^16.0.0",
         "jquery": "^3.7.1",
-        "jsdom": "^26.0.0",
+        "jsdom": "^26.1.0",
         "prettier": "^3.5.3",
         "ts-loader": "^9.5.2",
         "typescript": "^5.8.3",
