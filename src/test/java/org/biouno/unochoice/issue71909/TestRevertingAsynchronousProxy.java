@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -70,6 +72,10 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
         // 3), because 3) is called with "a1" as parameter instead of "a2"
         // as should be after the 2) gets executed.
 
+        // From: https://bugbug.io/blog/software-testing/StaleElementReferenceException/
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("return document.readyState").equals("complete");
+
         waitLoadingMessage();
 
         WebElement targetParam = findSelect("TARGET");
@@ -82,27 +88,35 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
 
         waitLoadingMessage();
 
-        List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
-        wait.until(ExpectedConditions.elementToBeClickable(dockerBaseImageParam.get(0)));
-        assertEquals(2, dockerBaseImageParam.size());
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(findRadios("DOCKER_BASE_IMAGE").get(0)));
+            assertEquals(2, findRadios("DOCKER_BASE_IMAGE").size());
+        } catch (StaleElementReferenceException e) {
+            List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
+            wait.until(ExpectedConditions.elementToBeClickable(dockerBaseImageParam.get(0)));
+            assertEquals(2, dockerBaseImageParam.size());
+        }
 
         checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
 
         assertEquals("buster", findRadios("DOCKER_BASE_IMAGE").get(0).getDomAttribute("value"));
         assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(0).getDomAttribute("checked"));
 
-        List<WebElement> machinesParam = findCheckboxes("MACHINES");
-        wait.until(ExpectedConditions.elementToBeClickable(machinesParam.get(0)));
-        assertEquals("server2", machinesParam.get(1).getDomAttribute("value"));
-        machinesParam.get(1).click();
+        wait.until(ExpectedConditions.elementToBeClickable(findCheckboxes("MACHINES").get(0)));
+
+        try {
+            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            findCheckboxes("MACHINES").get(1).click();
+        } catch (StaleElementReferenceException e) {
+            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            findCheckboxes("MACHINES").get(1).click();
+        }
 
         waitLoadingMessage();
 
         checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
 
-        dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
-
-        assertEquals("bullseye", dockerBaseImageParam.get(1).getDomAttribute("value"));
-        assertEquals("true", dockerBaseImageParam.get(1).getDomAttribute("checked"));
+        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("value"));
+        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("checked"));
     }
 }
