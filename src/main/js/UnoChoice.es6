@@ -23,6 +23,46 @@
  */
 import Util from './Util.ts';
 
+/*
+ * At the time of writing, requestIdleCallback is still not available in Safari,
+ * https://caniuse.com/requestidlecallback (see JENKINS-75596).
+ *
+ * The code below is from the polyfill pladaria/requestidlecallback-polyfill,
+ * licensed under Apache License 2 (code) and MIT (types, which are not used here),
+ * https://github.com/pladaria/requestidlecallback-polyfill/blob/76338b35d0883eca1fb03e7a250c60860a09facb/index.js.
+ *
+ * To be removed once Safari adds requestIdleCallback, or if we find a different
+ * way to handle reactivity and order of rendering parameters.
+ */
+
+/**
+ * requestIdleCallback polyfill.
+ * @type {((callback: IdleRequestCallback, options?: IdleRequestOptions) => number)|(function(*): number)}
+ */
+window.requestIdleCallback =
+        window.requestIdleCallback ||
+        function(cb) {
+            var start = Date.now();
+            return setTimeout(function() {
+                cb({
+                    didTimeout: false,
+                    timeRemaining: function() {
+                        return Math.max(0, 50 - (Date.now() - start));
+                    },
+                });
+            }, 1);
+        };
+
+/**
+ * cancelIdleCallback polyfill.
+ * @type {((handle: number) => void)|(function(*): void)|*}
+ */
+window.cancelIdleCallback =
+        window.cancelIdleCallback ||
+        function(id) {
+            clearTimeout(id);
+        };
+
 jQuery3.noConflict();
 /**
  * <h2>Uno Choice Javascript module.</h2>

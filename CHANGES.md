@@ -1,12 +1,13 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.9 (????/??/??)
+## Version 2.8.8 (2025/05/04)
 
 - Bump eslint from 9.24.0 to 9.25.1
 - Bump io.github.bonigarcia:webdrivermanager from 6.0.1 to 6.1.0
 - Bump io.jenkins.tools.bom:bom-2.479.x from 4607.v67a_4791074d7 to 4669.v0e99c712a_30e
 - Bump org.jenkins-ci.plugins:plugin from 5.10 to 5.12
 - Bump webpack from 5.99.5 to 5.99.7
+- JENKINS-75596: Not loading Reactive Reference Parameter in Safari (copied polyfill code)
 
 ## Version 2.8.7 (2025/04/19)
 
