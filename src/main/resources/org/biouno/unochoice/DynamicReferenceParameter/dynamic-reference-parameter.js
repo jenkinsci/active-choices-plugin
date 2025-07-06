@@ -6,12 +6,8 @@ if (window.makeStaplerProxy) {
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".dynamic-reference-parameter-data-holder").forEach((dataHolder) => {
         const { name, paramName, proxyName } = dataHolder.dataset;
-        const referencedParameters = dataHolder.dataset.referencedParameters;
-        if (referencedParameters === undefined || referencedParameters === null || referencedParameters.length === 0) {
-            console.log(`[${name}] - dynamic-reference-parameter.js#querySelectorAll#forEach - No parameters referenced!`);
-            return;
-        }
-        const referencedParametersList = dataHolder.dataset.referencedParameters.split(",").map((val) => val.trim());
+        const referencedParameters = dataHolder.dataset.referencedParameters || '';
+        const referencedParametersList = referencedParameters.split(",").map((val) => val.trim());
 
         UnoChoice.renderDynamicRenderParameter(`#${paramName}`, name, paramName, referencedParametersList, window[proxyName]);
 
