@@ -45,7 +45,6 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 @WithJenkins
@@ -105,11 +104,12 @@ public abstract class BaseUiTest {
         return driver.findElements(radios(paramName));
     }
 
-    protected WebElement radioLabel(WebElement element) {
+    protected WebElement getLabel(WebElement element) {
         return element.findElement(By.xpath("following-sibling::*"));
     }
+
     protected void clickRadio(WebElement element) {
-        radioLabel(element).click();
+        getLabel(element).click();
     }
 
     protected static By checkboxes(String paramName) {
