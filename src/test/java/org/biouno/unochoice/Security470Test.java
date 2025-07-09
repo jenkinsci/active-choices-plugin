@@ -24,25 +24,24 @@
 
 package org.biouno.unochoice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import hudson.model.Job;
 import jenkins.model.Jenkins;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class Security470Test {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class Security470Test {
 
     @Test
-    public void testSanitization() throws Exception {
+    void testSanitization(JenkinsRule j) throws Exception {
         j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
         MockAuthorizationStrategy strategy = new MockAuthorizationStrategy();
         strategy.grant(Jenkins.READ).onRoot().toEveryone();
@@ -54,7 +53,7 @@ public class Security470Test {
                     null);
             DynamicReferenceParameter param = new DynamicReferenceParameter("whatever", "description", "some-random-name",
                     script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
-            Assert.assertEquals("<img src=\"fail\" /><b>text</b>", param.getChoicesAsStringForUI());
+            assertEquals("<img src=\"fail\" /><b>text</b>", param.getChoicesAsStringForUI());
         }
 
         { // test HTML does not get sanitized when run outside the sandbox
@@ -63,11 +62,11 @@ public class Security470Test {
                     null);
             DynamicReferenceParameter param = new DynamicReferenceParameter("whatever", "description", "some-random-name",
                     script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "", true);
-            Assert.assertEquals("{}", param.getChoicesAsStringForUI()); // not yet approved
+            assertEquals("{}", param.getChoicesAsStringForUI()); // not yet approved
 
             ScriptApproval.get().preapprove(htmlScript, GroovyLanguage.get());
 
-            Assert.assertEquals("<img src='fail' onerror='alert(\"foo\");' /><b>text</b>", param.getChoicesAsStringForUI()); // approved
+            assertEquals("<img src='fail' onerror='alert(\"foo\");' /><b>text</b>", param.getChoicesAsStringForUI()); // approved
         }
     }
 }

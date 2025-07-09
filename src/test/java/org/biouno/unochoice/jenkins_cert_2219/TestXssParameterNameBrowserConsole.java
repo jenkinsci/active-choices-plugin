@@ -23,6 +23,8 @@
  */
 package org.biouno.unochoice.jenkins_cert_2219;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import hudson.model.Descriptor;
 import org.htmlunit.CollectingAlertHandler;
 import hudson.model.FreeStyleProject;
@@ -32,17 +34,15 @@ import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Prevent a case where a parameter name is logged to the browser console,
@@ -55,10 +55,8 @@ import static org.junit.Assert.assertEquals;
  * @see hudson.Util#escape(String)
  */
 @Issue("2219")
-public class TestXssParameterNameBrowserConsole {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestXssParameterNameBrowserConsole {
 
     /**
      * Tests that a {@code ChoiceParameter} reference parameter name is sanitized against XSS.
@@ -66,7 +64,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoiceParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testChoiceParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -91,7 +89,7 @@ public class TestXssParameterNameBrowserConsole {
         wc.goTo("job/" + project.getName() + "/build?delay=0sec");
         final List<String> alerts = alertHandler.getCollectedAlerts();
 
-        assertEquals("You got a JS alert, look out for XSS!", 0, alerts.size());
+        assertEquals(0, alerts.size(), "You got a JS alert, look out for XSS!");
     }
 
     /**
@@ -100,7 +98,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testCascadeChoiceParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testCascadeChoiceParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -126,7 +124,7 @@ public class TestXssParameterNameBrowserConsole {
         wc.goTo("job/" + project.getName() + "/build?delay=0sec");
         final List<String> alerts = alertHandler.getCollectedAlerts();
 
-        assertEquals("You got a JS alert, look out for XSS!", 0, alerts.size());
+        assertEquals(0, alerts.size(), "You got a JS alert, look out for XSS!");
     }
 
     /**
@@ -135,7 +133,7 @@ public class TestXssParameterNameBrowserConsole {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testDynamicReferenceParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testDynamicReferenceParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         final FreeStyleProject project = j.createFreeStyleProject();
         final String scriptText = "return ['1']";
         final SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -160,6 +158,6 @@ public class TestXssParameterNameBrowserConsole {
         wc.goTo("job/" + project.getName() + "/build?delay=0sec");
         final List<String> alerts = alertHandler.getCollectedAlerts();
 
-        assertEquals("You got a JS alert, look out for XSS!", 0, alerts.size());
+        assertEquals(0, alerts.size(), "You got a JS alert, look out for XSS!");
     }
 }

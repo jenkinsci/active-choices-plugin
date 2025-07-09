@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 package org.biouno.unochoice;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -33,15 +33,14 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class UiAcceptanceTest extends BaseUiTest {
+@WithJenkins
+class UiAcceptanceTest extends BaseUiTest {
 
     @LocalData("test")
     @Test
-    public void testHelpFiles() throws Exception {
+    void testHelpFiles() throws Exception {
         // Load the page
         driver.get(j.getURL().toString() + "job/test/configure");
 
@@ -66,7 +65,7 @@ public class UiAcceptanceTest extends BaseUiTest {
 
     @LocalData
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         // Load the page
         driver.get(j.getURL().toString() + "job/test/build");
 

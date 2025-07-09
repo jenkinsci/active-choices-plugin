@@ -24,36 +24,32 @@
 
 package org.biouno.unochoice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import hudson.model.Descriptor;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TestChoiceParameter {
+@WithJenkins
+class TestChoiceParameter {
 
-    private final String SCRIPT = "return ['a', 'b']";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private static final String SCRIPT = "return ['a', 'b']";
+    private static final String FALLBACK_SCRIPT = "return ['EMPTY!']";
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
-    public void testConstructor() throws Descriptor.FormException {
+    void testConstructor() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,
@@ -69,7 +65,7 @@ public class TestChoiceParameter {
     }
 
     @Test
-    public void testNullFilterable() throws Descriptor.FormException {
+    void testNullFilterable() throws Descriptor.FormException {
         GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
         ChoiceParameter param = new ChoiceParameter("param000", "description", "some-random-name", script,

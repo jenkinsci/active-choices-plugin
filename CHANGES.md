@@ -1,26 +1,92 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.7 (202?/??/??)
+## Version 2.8.9 (20??/??/??)
 
-- Bump @babel/cli from 7.25.9 to 7.26.4
-- Bump @babel/core from 7.26.0 to 7.26.7
-- Bump @babel/preset-env from 7.26.0 to 7.26.7
-- Bump eslint from 9.15.0 to 9.19.0
-- Bump eslint-config-prettier from 9.1.0 to 10.0.1
-- Bump io.jenkins.tools.bom:bom-2.479.x from 3559.vb_5b_81183b_d23 to 4051.v78dce3ce8b_d6
-- Bump jsdom from 25.0.1 to 26.0.0
-- Bump org.jenkins-ci.plugins:nodelabelparameter from 1.13.0 to 1.14.0
-- Bump org.jenkins-ci.plugins:plugin from 5.3 to 5.7
+- Bump @babel/cli from 7.27.0 to 7.27.2
+- Bump @babel/core from 7.26.10 to 7.27.7
+- Bump @babel/preset-env from 7.26.9 to 7.27.1
+- Bump @babel/preset-flow from 7.25.9 to 7.27.1
+- Bump @babel/preset-typescript from 7.27.0 to 7.27.1
+- Bump eslint from 9.25.1 to 9.30.0
+- Bump eslint-config-prettier from 10.1.2 to 10.1.5
+- Bump io.jenkins.tools.bom:bom-2.479.x from 4669.v0e99c712a_30e to 4948.vcf1d17350668
+- Bump jest from 29.7.0 to 30.0.3
+- Bump jest-environment-jsdom from 29.7.0 to 30.0.0
+- Bump org.jenkins-ci.plugins:job-dsl from 1.92 to 1.93
+- Bump org.jenkins-ci.plugins:plugin from 5.12 to 5.18
+- Bump org.seleniumhq.selenium:selenium-java from 4.31.0 to 4.34.0
+- Bump prettier from 3.5.3 to 3.6.2
+- Bump webpack from 5.99.7 to 5.99.9
+
+## Version 2.8.8 (2025/05/04)
+
+- Bump eslint from 9.24.0 to 9.25.1
+- Bump io.github.bonigarcia:webdrivermanager from 6.0.1 to 6.1.0
+- Bump io.jenkins.tools.bom:bom-2.479.x from 4607.v67a_4791074d7 to 4669.v0e99c712a_30e
+- Bump org.jenkins-ci.plugins:plugin from 5.10 to 5.12
+- Bump webpack from 5.99.5 to 5.99.7
+- JENKINS-75596: Not loading Reactive Reference Parameter in Safari (copied polyfill code)
+
+## Version 2.8.7 (2025/04/19)
+
+- Bump @babel/cli from 7.25.9 to 7.27.0
+- Bump @babel/core from 7.26.0 to 7.26.10
+- Bump @babel/preset-env from 7.26.0 to 7.26.9
+- Bump @babel/preset-typescript from 7.26.0 to 7.27.0
+- Bump babel-loader from 9.2.1 to 10.0.0
+- Bump eslint from 9.15.0 to 9.24.0
+- Bump eslint-config-prettier from 9.1.0 to 10.1.2
+- Bump io.github.bonigarcia:webdrivermanager from 5.9.2 to 6.0.1
+- Bump io.jenkins.tools.bom:bom-2.479.x from 3559.vb_5b_81183b_d23 to 4607.v67a_4791074d7
+- Bump jsdom from 25.0.1 to 26.1.0
+- Bump org.jenkins-ci.plugins:job-dsl from 1.90 to 1.92
+- Bump org.jenkins-ci.plugins:nodelabelparameter from 1.13.0 to 759.vb_b_e95db_f3251
+- Bump org.jenkins-ci.plugins:plugin from 5.3 to 5.10
 - Bump org.jenkins-ci.plugins:scriptler from 376.v152edd95b_ca_f to 397.vc46f19cb_3c18
-- Bump org.seleniumhq.selenium:selenium-java from 4.26.0 to 4.28.1
-- Bump prettier from 3.3.3 to 3.4.2
+- Bump org.jenkins-ci.plugins.workflow:workflow-aggregator from 600.vb_57cdd26fdd7 to 608.v67378e9d3db_1
+- Bump org.seleniumhq.selenium:selenium-java from 4.26.0 to 4.31.0
+- Bump prettier from 3.3.3 to 3.5.3
+- Bump serialize-javascript from 6.0.1 to 6.0.2
 - Bump ts-loader from 9.5.1 to 9.5.2
-- Bump typescript from 5.6.3 to 5.7.3
-- Bump webpack from 5.96.1 to 5.97.1
+- Bump typescript from 5.6.3 to 5.8.3
+- Bump webpack from 5.96.1 to 5.99.5
 - Bump webpack-cli from 5.1.4 to 6.0.1
+- Implement Describable from Script, not AbstractScript (thanks @jglick)
 - Migrate from EE 8 to EE 9 (thanks @basil)
 - Migrate from Acegi to Spring Security (thanks, again, @basil)
-- move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
+- Migrate tests to JUnit5 (thanks to @strangelookingnerd)
+- Move js script to webapp folder to allow loading map files by the browser (thanks to @mawinter69)
+- Upgrade node requirement from 18.18.0 to 22.14.0
+- JENKINS-69016: This issue could not be reproduced in this version, possibly fixed by JENKINS-73239, JENKINS-75194, JENKINS-72826
+- JENKINS-70380: This issue could not be reproduced in this version, possibly fixed by JENKINS-73239, JENKINS-75194, JENKINS-72826
+- JENKINS-72129: Filtering parameter by a value that matches exactly one entry, results in incorrect result. This issue could not be
+  reproduced in this version, possibly fixed by JENKINS-74967, JENKINS-74967, or JENKINS-75194/JENKINS-72826.
+- JENKINS-72549: The [CloudBees tutorial](https://docs.cloudbees.com/docs/cloudbees-ci-kb/latest/client-and-managed-controllers/how-to-create-a-custom-ui-component-for-the-active-choices-plugin)
+  for creating UI components with Active Choices is failing. Note: there is no pull request as this issue could not
+  be reproduced with the latest code for 2.8.7. This issue has been marked as fixed but unreleased, but can be re-opened
+  if users verify 2.8.7 is causing a similar issue in their environments.
+- JENKINS-73210: Parameter values not displayed when references are null; note: there is no pull request linked
+  to the JIRA issue, as it was likely fixed by another change in JS or Java code associated to another JIRA issue,
+  e.g. JENKINS-75194/JENKINS-72826, or JENKINS-72129.
+- JENKINS-73239: Added test to prevent JS errors when a cascade parameter does not reference other parameters
+  (the issue itself was closed as will not implement, due to Jenkins security that prevents loading external JS files)
+- JENKINS-73899: This issue could not be reproduced during the 2.8.7 milestone development, but
+  a user with a similar issue/error reported that upgrading to 2.8.7 fixed their issue, so this was
+  added to the changelog after the release, for completeness.
+- JENKINS-73922: Starting from 2.8.4 I get "Cannot read properties of null (reading 'toString')". Note that there is
+  no pull request associated with this issue, as it could not be reproduced with the latest code. It has probably been
+  fixed in JENKINS-75194/JENKINS-72826, or JENKINS-72129.
+- JENKINS-74963: Spinning animation is not removed due to exception, select element is not found by plug-in
+  (duplicated issues: JENKINS-73919, JENKINS-73928, JENKINS-72949, JENKINS-73022, JENKINS-73118, JENKINS-73215)
+- JENKINS-74967: Active choice parameter filter throws JavaScript error for parameter change event in browser console
+- JENKINS-75017: Dropdowns not working with keyboard inputs in Firefox on Windows - Jenkins version 2.479.2;
+  note: there is no pull request linked to the JIRA issue, as it was likely fixed by another change in JS or
+  Java code associated to another JIRA issue.
+- JENKINS-75194, JENKINS-72826: Use window.requestIdleCallback instead of setTimeout to force the browser to update parameters 
+  in order, waiting for DOM to be updated (partially addresses JENKINS-75194, duplicated issues: JENKINS-75194)
+- JENKINS-75434: DynamicReferenceParameters do not work properly after 'Active Choices Plug-in' update at Jenkins Pipeline Jobs;
+  note: there is no pull request linked to the JIRA issue, as it was likely fixed by another change in JS or
+  Java code associated to another JIRA issue (possibly fixed by JENKINS-75194/JENKINS-72826)
 
 ## Version 2.8.6 (2024/11/23)
 
@@ -198,7 +264,7 @@
 10. [#82](https://github.com/jenkinsci/active-choices-plugin/pull/82): Bump semver from 5.7.1 to 5.7.2, thanks @dependabot
 11. [#83](https://github.com/jenkinsci/active-choices-plugin/pull/83): Bump word-wrap from 1.2.3 to 1.2.4, thanks @dependabot
 12. [#84](https://github.com/jenkinsci/active-choices-plugin/pull/84): Remove outdated Jenkins version test conditional, thanks @MarkEWaite
-12. [#79](https://github.com/jenkinsci/active-choices-plugin/pull/79): refactor: Replace synchronous proxy with standard proxy @rahulsom
+13. [#79](https://github.com/jenkinsci/active-choices-plugin/pull/79): refactor: Replace synchronous proxy with standard proxy @rahulsom
 
 ## Version 2.6.5 (2023/04/18)
 
@@ -317,7 +383,7 @@ The `pom.xml` had dependencies updated (such as Scriptler, Node Labels Plug-in, 
 ## Version 2.0 (2017/10/23)
 
 1. [Fix security vulnerability](https://jenkins.io/security/advisory/2017-10-23/)
-  1. **Important:** **Sandboxed** Groovy scripts for **Active Choices
+  1.1. **Important:** **Sandboxed** Groovy scripts for **Active Choices
     Reactive Reference Parameter** will no longer emit HTML that is
     considered unsafe, such as <script> tags. This may result in
     behavior changes on *Build With Parameters* forms, such as

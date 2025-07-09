@@ -1,0 +1,163 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1498.v33a_0c6f3a_4b_4">
+  <actions>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@800.v5f0a_a_660950e">
+      <jobPropertyDescriptors>
+        <string>hudson.model.ParametersDefinitionProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@2.2221.vc657003fb_d93"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@2.2221.vc657003fb_d93">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.biouno.unochoice.ChoiceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>paramA</name>
+          <description>Choose opion</description>
+          <randomName>choice-parameter-26751749888928</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1369.v9b_98a_4e95b_2d">
+              <script>return [&quot;AAA&quot;,&quot;BBB&quot;,&quot;CCC&quot;]</script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1369.v9b_98a_4e95b_2d">
+              <script>return[&quot;ERROR paramA&quot;]</script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureFallbackScript>
+          </script>
+          <choiceType>PT_SINGLE_SELECT</choiceType>
+          <filterable>true</filterable>
+          <filterLength>1</filterLength>
+        </org.biouno.unochoice.ChoiceParameter>
+        <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>paramB</name>
+          <description>chose related option</description>
+          <randomName>choice-parameter-26751750130750</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.GroovyScript">
+            <secureScript plugin="script-security@1369.v9b_98a_4e95b_2d">
+              <script>
+                        if (paramA.equals(&quot;AAA&quot;)) {
+                            return [&quot;AAA-1&quot;,&quot;AAA-2&quot;,&quot;AAA-3&quot;]
+                        }
+                        else if (paramA.equals(&quot;BBB&quot;)) {
+                            return [&quot;BBB-1&quot;,&quot;BBB-2&quot;,&quot;BBB-3&quot;]
+                        }
+                        else if (paramA.equals(&quot;CCC&quot;)) {
+                            return [&quot;CCC-1&quot;,&quot;CCC-2&quot;,&quot;CCC-3&quot;]
+                        }
+                        else {
+                            return [&quot;UNK&quot;]
+                        }
+                    </script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureScript>
+            <secureFallbackScript plugin="script-security@1369.v9b_98a_4e95b_2d">
+              <script>return[&quot;ERROR paramB&quot;]</script>
+              <sandbox>true</sandbox>
+              <classpath/>
+            </secureFallbackScript>
+          </script>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>paramA</referencedParameters>
+          <choiceType>PT_RADIO</choiceType>
+          <filterable>false</filterable>
+          <filterLength>1</filterLength>
+        </org.biouno.unochoice.CascadeChoiceParameter>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@4014.vcd7dc51d8b_30">
+    <script>#!groovy
+
+properties([
+    parameters([
+        [
+            $class: &apos;ChoiceParameter&apos;,
+            choiceType: &apos;PT_SINGLE_SELECT&apos;,
+            description: &apos;Choose opion&apos;,
+            filterLength: 1,
+            filterable: true,
+            name: &apos;paramA&apos;,
+            script: [
+                $class: &apos;GroovyScript&apos;,
+                script: [
+                    classpath: [],
+                    sandbox: true,
+                    script: &apos;return [&quot;AAA&quot;,&quot;BBB&quot;,&quot;CCC&quot;]&apos;
+                ],
+                fallbackScript: [
+                    classpath: [],
+                    sandbox: true,
+                    script: &apos;return[&quot;ERROR paramA&quot;]&apos;
+                ]
+            ]
+        ],
+        [
+            $class: &apos;CascadeChoiceParameter&apos;,
+            choiceType: &apos;PT_RADIO&apos;,
+            description: &apos;chose related option&apos;,
+            filterLength: 1,
+            filterable: false,
+            name: &apos;paramB&apos;,
+            referencedParameters: &apos;paramA&apos;,
+            script: [
+                $class: &apos;GroovyScript&apos;,
+                script: [
+                    classpath: [],
+                    sandbox: true,
+                    script: &apos;&apos;&apos;
+                        if (paramA.equals(&quot;AAA&quot;)) {
+                            return [&quot;AAA-1&quot;,&quot;AAA-2&quot;,&quot;AAA-3&quot;]
+                        }
+                        else if (paramA.equals(&quot;BBB&quot;)) {
+                            return [&quot;BBB-1&quot;,&quot;BBB-2&quot;,&quot;BBB-3&quot;]
+                        }
+                        else if (paramA.equals(&quot;CCC&quot;)) {
+                            return [&quot;CCC-1&quot;,&quot;CCC-2&quot;,&quot;CCC-3&quot;]
+                        }
+                        else {
+                            return [&quot;UNK&quot;]
+                        }
+                    &apos;&apos;&apos;
+                ],
+                fallbackScript: [
+                    classpath: [],
+                    sandbox: true,
+                    script: &apos;return[&quot;ERROR paramB&quot;]&apos;
+                ]
+            ]
+        ]
+    ])
+])
+
+pipeline {
+    agent any
+
+    stages {
+        stage(&apos;Params&apos;) {
+            steps {
+                echo &quot;paramA: ${params.paramA}&quot;
+                echo &quot;paramB: ${params.paramB}&quot;
+            }
+        }
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

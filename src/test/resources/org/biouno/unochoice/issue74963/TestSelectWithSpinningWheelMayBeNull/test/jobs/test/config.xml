@@ -1,0 +1,91 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1505.vea_4b_20a_4a_495">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@2.2221.vc657003fb_d93"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@2.2221.vc657003fb_d93">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description>Reproduction of parameter loading bug</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>ENVIRONMENT</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>DEV</string>
+              <string>PRODUCTION</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>AWS_REGION</name>
+          <randomName>choice-parameter-2310721065448267</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.ScriptlerScript">
+            <scriptlerBuilder plugin="scriptler@397.vc46f19cb_3c18">
+              <builderId>simplified_get_deployment_regions</builderId>
+              <scriptId>get_deployment_regions.groovy</scriptId>
+              <propagateParams>false</propagateParams>
+              <parameters/>
+            </scriptlerBuilder>
+            <isSandboxed>false</isSandboxed>
+          </script>
+          <projectName>JENKINS-75194</projectName>
+          <projectFullName>JENKINS-75194</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>ENVIRONMENT</referencedParameters>
+          <choiceType>PT_SINGLE_SELECT</choiceType>
+          <filterable>false</filterable>
+          <filterLength>1</filterLength>
+        </org.biouno.unochoice.CascadeChoiceParameter>
+        <org.biouno.unochoice.CascadeChoiceParameter plugin="uno-choice@2.8.7-SNAPSHOT">
+          <name>ECR_IMAGE_TAG</name>
+          <randomName>choice-parameter-aws-ecr-image-tag</randomName>
+          <visibleItemCount>1</visibleItemCount>
+          <script class="org.biouno.unochoice.model.ScriptlerScript">
+            <scriptlerBuilder plugin="scriptler@397.vc46f19cb_3c18">
+              <builderId>simplified_aws_ecr_images_tags</builderId>
+              <scriptId>aws_ecr_images_tags.groovy</scriptId>
+              <propagateParams>false</propagateParams>
+              <parameters/>
+            </scriptlerBuilder>
+            <isSandboxed>false</isSandboxed>
+          </script>
+          <projectName>JENKINS-75194</projectName>
+          <projectFullName>JENKINS-75194</projectFullName>
+          <parameters class="linked-hash-map"/>
+          <referencedParameters>AWS_REGION</referencedParameters>
+          <choiceType>PT_SINGLE_SELECT</choiceType>
+          <filterable>false</filterable>
+          <filterLength>1</filterLength>
+        </org.biouno.unochoice.CascadeChoiceParameter>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@4018.vf02e01888da_f">
+    <script>
+      @Library(&quot;jenkins-shared-library&quot;) _
+      pipeline {
+        agent { label &apos;any&apos; }
+        stages {
+          stage(&apos;Hello&apos;) {
+            steps {
+              script {
+                echo &quot;Hello&quot;
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

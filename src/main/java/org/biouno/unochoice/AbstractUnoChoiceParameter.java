@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014-2020 Ioannis Moutsatsos, Bruno P. Kinoshita
+ * Copyright (c) 2014-2025 Ioannis Moutsatsos, Bruno P. Kinoshita
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,23 @@
 
 package org.biouno.unochoice;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import hudson.model.FileParameterValue;
+import hudson.model.ParameterValue;
+import hudson.model.SimpleParameterDefinition;
+import hudson.model.StringParameterValue;
 import jakarta.servlet.ServletException;
-
+import jenkins.model.Jenkins;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.util.Utils;
 import org.kohsuke.stapler.StaplerRequest2;
 
-import hudson.DescriptorExtensionList;
-import hudson.model.FileParameterValue;
-import hudson.model.ParameterDefinition;
-import hudson.model.ParameterValue;
-import hudson.model.SimpleParameterDefinition;
-import hudson.model.StringParameterValue;
-import jenkins.model.Jenkins;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.util.JSONUtils;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Abstract Uno Choice parameter. Provides basic methods common to all Uno Choice parameters.
@@ -207,12 +203,6 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
             return desc;
         }
         throw new RuntimeException("Missing parameter description!");
-    }
-
-    public static DescriptorExtensionList<ParameterDefinition, ParameterDescriptor> all() {
-        return Jenkins
-                .get()
-                .getDescriptorList(ParameterDefinition.class);
     }
 
 }

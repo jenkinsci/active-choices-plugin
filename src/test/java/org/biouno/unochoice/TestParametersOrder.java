@@ -24,38 +24,36 @@
 
 package org.biouno.unochoice;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TestParametersOrder {
+@WithJenkins
+class TestParametersOrder {
 
-    private final String SCRIPT = "return ['D', 'C', 'B', 'A']";
-    private final String FALLBACK_SCRIPT = "";
+    private static final String SCRIPT = "return ['D', 'C', 'B', 'A']";
+    private static final String FALLBACK_SCRIPT = "";
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
-    public void testParametersOrder() throws Descriptor.FormException {
+    void testParametersOrder() throws Descriptor.FormException {
         Map<Object, Object> parameters = new LinkedHashMap<>();
         parameters.put("D", "D");
         parameters.put("C", "C");

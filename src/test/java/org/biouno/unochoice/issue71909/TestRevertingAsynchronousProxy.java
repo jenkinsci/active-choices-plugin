@@ -24,18 +24,20 @@
 package org.biouno.unochoice.issue71909;
 
 import org.biouno.unochoice.BaseUiTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
-import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * See JENKINS-71909.
@@ -53,11 +55,12 @@ import static org.junit.Assert.assertTrue;
  * @since 2.8.4
  */
 @Issue("JENKINS-71909")
-public class TestRevertingAsynchronousProxy extends BaseUiTest {
+@WithJenkins
+class TestRevertingAsynchronousProxy extends BaseUiTest {
 
     @LocalData("test")
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         // Load the page
         driver.get(j.getURL().toString() + "job/test/build");
 
@@ -69,19 +72,54 @@ public class TestRevertingAsynchronousProxy extends BaseUiTest {
         // 3), because 3) is called with "a1" as parameter instead of "a2"
         // as should be after the 2) gets executed.
 
+        // From: https://bugbug.io/blog/software-testing/StaleElementReferenceException/
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("return document.readyState").equals("complete");
+
+        waitLoadingMessage();
+
         WebElement targetParam = findSelect("TARGET");
+
+        wait.until(ExpectedConditions.elementToBeClickable(targetParam));
+
         assertTrue(targetParam.isDisplayed());
         assertTrue(targetParam.isEnabled());
-        new Select(targetParam).selectByValue("Item2");
+        new Select(targetParam).selectByValue("Item3");
 
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
+        waitLoadingMessage();
 
-        List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
-        assertEquals(2, dockerBaseImageParam.size());
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(findRadios("DOCKER_BASE_IMAGE").get(0)));
+            assertEquals(2, findRadios("DOCKER_BASE_IMAGE").size());
+        } catch (StaleElementReferenceException e) {
+            List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
+            wait.until(ExpectedConditions.elementToBeClickable(dockerBaseImageParam.get(0)));
+            assertEquals(2, dockerBaseImageParam.size());
+        }
 
         checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
 
-        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getAttribute("value"));
-        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getAttribute("checked"));
+        // NOTE: interestingly, having two calls to findRadios (same param) one after the other resulted
+        //       in stale element exceptions, even after trying to wait for visibility/JS load/DOM elements rendered/etc.
+        final WebElement radio = findRadios("DOCKER_BASE_IMAGE").get(0);
+        assertEquals("buster", radio.getDomAttribute("value"));
+        assertEquals("true", radio.getDomAttribute("checked"));
+
+        wait.until(ExpectedConditions.elementToBeClickable(findCheckboxes("MACHINES").get(0)));
+
+        try {
+            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            findCheckboxes("MACHINES").get(1).click();
+        } catch (StaleElementReferenceException e) {
+            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            findCheckboxes("MACHINES").get(1).click();
+        }
+
+        waitLoadingMessage();
+
+        checkRadios(radios("DOCKER_BASE_IMAGE"), "buster", "bullseye");
+
+        assertEquals("bullseye", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("value"));
+        assertEquals("true", findRadios("DOCKER_BASE_IMAGE").get(1).getDomAttribute("checked"));
     }
 }

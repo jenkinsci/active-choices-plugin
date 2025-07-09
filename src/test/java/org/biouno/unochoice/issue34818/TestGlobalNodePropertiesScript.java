@@ -23,26 +23,26 @@
  */
 package org.biouno.unochoice.issue34818;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.slaves.EnvironmentVariablesNodeProperty;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Test that scripts can access global node properties.
@@ -50,22 +50,23 @@ import hudson.slaves.EnvironmentVariablesNodeProperty;
  * @since 1.5.x
  */
 @Issue("JENKINS-34818")
-public class TestGlobalNodePropertiesScript {
+@WithJenkins
+class TestGlobalNodePropertiesScript {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+    private JenkinsRule j;
 
-    private final String SCRIPT = "return ['a', 'b', \"$NODE_TIME\"]";
-    private final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private static final String SCRIPT = "return ['a', 'b', \"$NODE_TIME\"]";
+    private static final String FALLBACK_SCRIPT = "return ['EMPTY!']";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
+        this.j = j;
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
-    public void testScriptAccessingGlobalProperties() throws Descriptor.FormException {
+    void testScriptAccessingGlobalProperties() throws Descriptor.FormException {
         Map<String, String> testMap = new HashMap<>();
         testMap.put("time", "20:13:13");
         EnvironmentVariablesNodeProperty.Entry entry = new EnvironmentVariablesNodeProperty.Entry("NODE_TIME",

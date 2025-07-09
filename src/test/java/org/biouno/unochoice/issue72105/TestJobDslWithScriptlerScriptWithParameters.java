@@ -40,11 +40,11 @@ import org.jenkinsci.plugins.scriptler.config.Parameter;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
 
 import java.io.File;
@@ -54,10 +54,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * In JENKINS-72105 the plug-in did not persist the user option to use
@@ -65,10 +62,10 @@ import static org.junit.Assert.assertTrue;
  * by a Job DSL build.
  */
 @Issue("JENKINS-72105")
-public class TestJobDslWithScriptlerScriptWithParameters {
+@WithJenkins
+class TestJobDslWithScriptlerScriptWithParameters {
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+    private JenkinsRule j;
 
     private ScriptlerManagement scriptler;
     private File scriptFile = null;
@@ -81,8 +78,9 @@ public class TestJobDslWithScriptlerScriptWithParameters {
      *
      * @throws Exception I/O?
      */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) throws Exception {
+        this.j = j;
         ScriptApproval.get().preapprove(GROOVY_SCRIPT, new GroovyLanguage());
         // scriptler setup
         scriptler = j.getInstance().getExtensionList(ScriptlerManagement.class).get(0);
@@ -101,7 +99,7 @@ public class TestJobDslWithScriptlerScriptWithParameters {
 
     @Test
     @LocalData("test")
-    public void test() throws Exception {
+    void test() throws Exception {
         assertNull(j.jenkins.getItem("scriptler-test"));
 
         final FreeStyleProject job = (FreeStyleProject) j.jenkins.getItem("job");
@@ -116,13 +114,11 @@ public class TestJobDslWithScriptlerScriptWithParameters {
         for (Map.Entry<JobPropertyDescriptor, JobProperty<? super WorkflowJob>> entry : jobDSLCreated.getProperties()
                 .entrySet()) {
             JobProperty<? super WorkflowJob> jobProperty = entry.getValue();
-            if (jobProperty instanceof ParametersDefinitionProperty) {
-                ParametersDefinitionProperty paramDef = (ParametersDefinitionProperty) jobProperty;
+            if (jobProperty instanceof ParametersDefinitionProperty paramDef) {
                 List<ParameterDefinition> parameters = paramDef.getParameterDefinitions();
                 for (ParameterDefinition parameter : parameters) {
                     if (PARAMETER_WITH_SCRIPTLER_AND_PARAMETERS.equals(parameter.getName()) &&
-                            parameter instanceof CascadeChoiceParameter) {
-                        final CascadeChoiceParameter p3 = (CascadeChoiceParameter) parameter;
+                            parameter instanceof CascadeChoiceParameter p3) {
                         ScriptlerScript script = (ScriptlerScript) p3.getScript();
                         assertEquals(2, script.getParameters().size());
                         assertTrue(script.getParameters().containsKey("P1"));
@@ -134,6 +130,6 @@ public class TestJobDslWithScriptlerScriptWithParameters {
             }
         }
 
-        assertTrue("The P3 parameter MUST have a scriptler parameter with two parameters (persisted when saving it). Regression detected!", parametersDefined);
+        assertTrue(parametersDefined, "The P3 parameter MUST have a scriptler parameter with two parameters (persisted when saving it). Regression detected!");
     }
 }

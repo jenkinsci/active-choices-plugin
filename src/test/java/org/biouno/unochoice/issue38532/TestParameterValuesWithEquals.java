@@ -23,11 +23,9 @@
  */
 package org.biouno.unochoice.issue38532;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
@@ -35,11 +33,11 @@ import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.HttpResponses;
 
 /**
@@ -48,21 +46,19 @@ import org.kohsuke.stapler.HttpResponses;
  * @since 1.5.x
  */
 @Issue("JENKINS-38532")
-public class TestParameterValuesWithEquals {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestParameterValuesWithEquals {
 
     // LIST script
-    private final String SCRIPT_LIST = "return ['A=1', 'B=2', 'C=3']";
-    private final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
+    private static final String SCRIPT_LIST = "return ['A=1', 'B=2', 'C=3']";
+    private static final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
 
     // LIST_SELECTION script
-    private final String SCRIPT_LIST_SELECTION = "value = LIST.toString()\nreturn \"${value}\"";
-    private final String FALLBACK_SCRIPT_LIST_SELECTION = "return ['EMPTY!']";
+    private static final String SCRIPT_LIST_SELECTION = "value = LIST.toString()\nreturn \"${value}\"";
+    private static final String FALLBACK_SCRIPT_LIST_SELECTION = "return ['EMPTY!']";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT_LIST, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT_LIST, GroovyLanguage.get());
         ScriptApproval.get().preapprove(SCRIPT_LIST_SELECTION, GroovyLanguage.get());
@@ -70,7 +66,7 @@ public class TestParameterValuesWithEquals {
     }
 
     @Test
-    public void testEvaluationWorksEvenThoughWeUsedEqualsInParameterValues() throws IOException, Descriptor.FormException {
+    void testEvaluationWorksEvenThoughWeUsedEqualsInParameterValues() throws Descriptor.FormException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
         GroovyScript listSelectionScript = new GroovyScript(
@@ -92,8 +88,9 @@ public class TestParameterValuesWithEquals {
         String listSelectionValue = listSelectionParam.getChoicesAsString();
 
         // by default, the plug-in returns the first element in the list...
-        assertEquals("Value returned from selection list doesn't match first element in list parameter", "A=1",
-                listSelectionValue);
+        assertEquals("A=1",
+                listSelectionValue,
+                "Value returned from selection list doesn't match first element in list parameter");
     }
 
 }

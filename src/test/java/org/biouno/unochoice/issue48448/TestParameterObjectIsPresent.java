@@ -23,23 +23,22 @@
  */
 package org.biouno.unochoice.issue48448;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
 import java.util.Map;
 
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Test that scripts can access the parameter object.
@@ -47,19 +46,17 @@ import org.jvnet.hudson.test.JenkinsRule;
  * @since 1.5.x
  */
 @Issue("JENKINS-48448")
-public class TestParameterObjectIsPresent {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestParameterObjectIsPresent {
 
     // LIST script
-    private final String SCRIPT_LIST = "return ['A', 'B', jenkinsParameter.getName(), 'C']";
-    private final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
+    private static final String SCRIPT_LIST = "return ['A', 'B', jenkinsParameter.getName(), 'C']";
+    private static final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
 
-    private final String PARAMETER_NAME = "my-parameter-name";
+    private static final String PARAMETER_NAME = "my-parameter-name";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
         ScriptApproval.get()
                 .preapprove(SCRIPT_LIST, GroovyLanguage.get());
         ScriptApproval.get()
@@ -67,7 +64,7 @@ public class TestParameterObjectIsPresent {
     }
 
     @Test
-    public void testParameterObjectIsPresent() throws IOException, Descriptor.FormException {
+    void testParameterObjectIsPresent() throws Descriptor.FormException {
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
         ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name1", listScript,
@@ -75,7 +72,7 @@ public class TestParameterObjectIsPresent {
         Map<Object, Object> listSelectionValue = listParam.getChoices();
 
         // keys and values have the same content when the parameter returns an array...
-        assertTrue("Missing parameter name!", listSelectionValue.containsKey(PARAMETER_NAME));
+        assertTrue(listSelectionValue.containsKey(PARAMETER_NAME), "Missing parameter name!");
     }
 
 }

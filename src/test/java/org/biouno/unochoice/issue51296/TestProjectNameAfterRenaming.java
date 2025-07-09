@@ -24,26 +24,26 @@
 
 package org.biouno.unochoice.issue51296;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.Map;
 
 import hudson.model.Descriptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.biouno.unochoice.CascadeChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.ParametersDefinitionProperty;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Tests for projectName being correct after renaming project. See JENKINS-51296.
@@ -51,21 +51,22 @@ import hudson.model.ParametersDefinitionProperty;
  * @since 2.2
  */
 @Issue("JENKINS-51296")
-public class TestProjectNameAfterRenaming {
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestProjectNameAfterRenaming {
+    private JenkinsRule j;
 
     // LIST script
-    private final String SCRIPT_LIST = "return ['Test', jenkinsProject.getName()]";
-    private final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
+    private static final String SCRIPT_LIST = "return ['Test', jenkinsProject.getName()]";
+    private static final String FALLBACK_SCRIPT_LIST = "return ['EMPTY!']";
 
-    private final String PARAMETER_NAME = "my-parameter-name";
+    private static final String PARAMETER_NAME = "my-parameter-name";
 
-    private final String PROJECT_NAME_BEFORE = "MyOldJenkinsJob";
-    private final String PROJECT_NAME_AFTER = "MyRealJenkinsJob";
+    private static final String PROJECT_NAME_BEFORE = "MyOldJenkinsJob";
+    private static final String PROJECT_NAME_AFTER = "MyRealJenkinsJob";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp(JenkinsRule j) {
+        this.j = j;
         ScriptApproval.get()
                 .preapprove(SCRIPT_LIST, GroovyLanguage.get());
         ScriptApproval.get()
@@ -73,27 +74,27 @@ public class TestProjectNameAfterRenaming {
     }
 
     @Test
-    public void testProjectAreDifferent() throws IOException, Descriptor.FormException {
+    void testProjectAreDifferent() throws IOException, Descriptor.FormException {
 
         FreeStyleProject project = j.createProject(FreeStyleProject.class, PROJECT_NAME_BEFORE);
 
         GroovyScript listScript = new GroovyScript(new SecureGroovyScript(SCRIPT_LIST, Boolean.FALSE, null),
                                                     new SecureGroovyScript(FALLBACK_SCRIPT_LIST, Boolean.FALSE, null));
-        
+
         ChoiceParameter listParam = new ChoiceParameter(PARAMETER_NAME, "description...", "random-name", listScript,
                 CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, false, 1);
 
         ParametersDefinitionProperty paramsDef = new ParametersDefinitionProperty(listParam);
 
         project.addProperty(paramsDef);
-        
+
         Map<Object, Object> listSelectionValue = listParam.getChoices();
 
         String choicesStatus = listParam.getChoicesAsString() ;
-        
+
         // keys and values have the same content when the parameter returns an array...
-        assertTrue("Wrong project name from the begging ["+choicesStatus+"] test broken?!", listSelectionValue.containsKey(PROJECT_NAME_BEFORE));
-        
+        assertTrue(listSelectionValue.containsKey(PROJECT_NAME_BEFORE), "Wrong project name from the begging ["+choicesStatus+"] test broken?!");
+
         // --- After renaming, the real test ---
         project.renameTo(PROJECT_NAME_AFTER);
         Map<Object, Object> listSelectionValueAfter = listParam.getChoices();
@@ -101,6 +102,6 @@ public class TestProjectNameAfterRenaming {
         choicesStatus = listParam.getChoicesAsString() ;
 
         // Now, check full name!
-        assertTrue("Wrong project name after renaming: "+choicesStatus, listSelectionValueAfter.containsKey(PROJECT_NAME_AFTER));
+        assertTrue(listSelectionValueAfter.containsKey(PROJECT_NAME_AFTER), "Wrong project name after renaming: "+choicesStatus);
     }
 }

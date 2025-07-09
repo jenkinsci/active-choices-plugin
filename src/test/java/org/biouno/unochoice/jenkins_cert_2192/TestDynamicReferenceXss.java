@@ -23,8 +23,8 @@
  */
 package org.biouno.unochoice.jenkins_cert_2192;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,11 +35,11 @@ import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.DynamicReferenceParameter;
 import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import org.htmlunit.CollectingAlertHandler;
@@ -56,10 +56,8 @@ import hudson.model.ParametersDefinitionProperty;
  * @see hudson.Util#escape(String)
  */
 @Issue("2192")
-public class TestDynamicReferenceXss {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestDynamicReferenceXss {
 
     /**
      * Tests that a {@code DynamicReference} reference parameter name is sanitized against XSS.
@@ -67,7 +65,7 @@ public class TestDynamicReferenceXss {
      * @throws SAXException if the XML is malformed
      */
     @Test
-    public void testChoicesParameterXss() throws IOException, SAXException, Descriptor.FormException {
+    void testChoicesParameterXss(JenkinsRule j) throws IOException, SAXException, Descriptor.FormException {
         FreeStyleProject project = j.createFreeStyleProject();
         String scriptText = "return ['OK']";
         SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
@@ -94,14 +92,14 @@ public class TestDynamicReferenceXss {
         wc.goTo("job/" + project.getName() + "/build?delay=0sec");
         final List<String> alerts = alertHandler.getCollectedAlerts();
 
-        assertEquals("You got a JS alert, look out for XSS!", 0, alerts.size());
+        assertEquals(0, alerts.size(), "You got a JS alert, look out for XSS!");
     }
 
     /**
      * Test that the reference parameter value is escaped.
      */
     @Test
-    public void testGetReferencedParametersAsArray() throws Descriptor.FormException {
+    void testGetReferencedParametersAsArray(JenkinsRule j) throws Descriptor.FormException {
         String scriptText = "return ['OK']";
         SecureGroovyScript secureScript = new SecureGroovyScript(scriptText, true, null);
         GroovyScript script = new GroovyScript(secureScript, secureScript);
@@ -117,6 +115,6 @@ public class TestDynamicReferenceXss {
 
         String[] parameters = parameter.getReferencedParametersAsArray();
         String[] expected = new String[] {"&quot;+alert(123)+&quot;"};
-        assertArrayEquals("Your reference parameter name was not escaped, look out for XSS!", expected, parameters);
+        assertArrayEquals(expected, parameters, "Your reference parameter name was not escaped, look out for XSS!");
     }
 }

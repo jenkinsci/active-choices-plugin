@@ -24,7 +24,7 @@
 
 package org.biouno.unochoice.issue69448;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import hudson.model.Descriptor;
 import org.biouno.unochoice.ChoiceParameter;
@@ -32,12 +32,12 @@ import org.biouno.unochoice.model.GroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.ParameterValue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * See JENKINS-69448.
@@ -45,16 +45,14 @@ import hudson.model.ParameterValue;
  * @since 2.6.3
  */
 @Issue("JENKINS-69448")
-public class TestDefaultValuesWithScriptReturningMap {
+@WithJenkins
+class TestDefaultValuesWithScriptReturningMap {
 
     private static final String DEFAULT_FALLBACK_SCRIPT = "return ['EMPTY!']";
     private static final String PARAMETER_NAME = "my-parameter-name";
 
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-
     @Test
-    public void testReturnMap() throws Descriptor.FormException {
+    void testReturnMap(JenkinsRule j) throws Descriptor.FormException {
         ChoiceParameter parameter = createChoiceParameter(
                 ChoiceParameter.PARAMETER_TYPE_CHECK_BOX,
                 "return ['A':'Description for A:selected:disabled', 'B':'Description for B:disabled:selected', 'C':'Description for C', 'D':'Description for D:selected']"
@@ -62,11 +60,11 @@ public class TestDefaultValuesWithScriptReturningMap {
 
         ParameterValue parameterValue = parameter.getDefaultParameterValue();
 
-        assertEquals("Invalid parameter name!", PARAMETER_NAME, parameterValue.getName());
-        assertEquals("Invalid parameter value!", "A,B,D", parameterValue.getValue());
+        assertEquals(PARAMETER_NAME, parameterValue.getName(), "Invalid parameter name!");
+        assertEquals("A,B,D", parameterValue.getValue(), "Invalid parameter value!");
     }
 
-    private static final ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
+    private static ChoiceParameter createChoiceParameter(String type, String script) throws Descriptor.FormException {
         ScriptApproval.get().preapprove(script, GroovyLanguage.get());
         ScriptApproval.get().preapprove(DEFAULT_FALLBACK_SCRIPT, GroovyLanguage.get());
 

@@ -23,6 +23,46 @@
  */
 import Util from './Util.ts';
 
+/*
+ * At the time of writing, requestIdleCallback is still not available in Safari,
+ * https://caniuse.com/requestidlecallback (see JENKINS-75596).
+ *
+ * The code below is from the polyfill pladaria/requestidlecallback-polyfill,
+ * licensed under Apache License 2 (code) and MIT (types, which are not used here),
+ * https://github.com/pladaria/requestidlecallback-polyfill/blob/76338b35d0883eca1fb03e7a250c60860a09facb/index.js.
+ *
+ * To be removed once Safari adds requestIdleCallback, or if we find a different
+ * way to handle reactivity and order of rendering parameters.
+ */
+
+/**
+ * requestIdleCallback polyfill.
+ * @type {((callback: IdleRequestCallback, options?: IdleRequestOptions) => number)|(function(*): number)}
+ */
+window.requestIdleCallback =
+        window.requestIdleCallback ||
+        function(cb) {
+            var start = Date.now();
+            return setTimeout(function() {
+                cb({
+                    didTimeout: false,
+                    timeRemaining: function() {
+                        return Math.max(0, 50 - (Date.now() - start));
+                    },
+                });
+            }, 1);
+        };
+
+/**
+ * cancelIdleCallback polyfill.
+ * @type {((handle: number) => void)|(function(*): void)|*}
+ */
+window.cancelIdleCallback =
+        window.cancelIdleCallback ||
+        function(id) {
+            clearTimeout(id);
+        };
+
 jQuery3.noConflict();
 /**
  * <h2>Uno Choice Javascript module.</h2>
@@ -146,7 +186,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      */
     CascadeParameter.prototype.update = async function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-        console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
+        console.log(`[${this.paramName}] - CascadeParameter#update - Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the CascadeChoiceParameter Map of parameters
         await this.proxy.doUpdate(parametersString);
 
@@ -165,13 +205,13 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
         }
 
-        // Now we get the updated choices, after the Groovy script is eval'd using the updated Map of parameters
+        // Now we get the updated choices, after the Groovy script is evaluated using the updated Map of parameters
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         let _self = this; // re-reference this to use within the inner function
-        console.log('Calling Java server code to update HTML elements...');
+        console.log(`[${this.paramName}] - CascadeParameter#update - Calling Java server code to update HTML elements...`);
         await this.proxy.getChoicesForUI(t => {
             let data = t.responseObject();
-            console.log(`Values returned from server: ${data}`);
+            console.log(`[${this.paramName}] - CascadeParameter#update - Values returned from server: ${data}`);
             let newValues = data[0];
             let newKeys = data[1];
             let selectedElements = [];
@@ -198,7 +238,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 }
             }
             if (_self.getFilterElement()) {
-                console.log('Updating values in filter array');
+                console.log(`[${this.paramName}] - CascadeParameter#update - Updating values in filter array`);
             }
             // FIXME
             // http://stackoverflow.com/questions/6364748/change-the-options-array-of-a-select-list
@@ -321,7 +361,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             } // if (parameterElement.tagName === 'SELECT') { // } else if (parameterElement.tagName === 'DIV') {
         });
         // propagate change
-        // console.log('Propagating change event from ' + this.getParameterName());
+        // console.log(`[${this.paramName}] - CascadeParameter#update - Propagating change event from ${this.getParameterName()}`);
         // let e1 = $.Event('change', {parameterName: this.getParameterName()});
         // jQuery3(this.getParameterElement()).trigger(e1);
         if (!avoidRecursion) {
@@ -329,13 +369,15 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 for (let i = 0; i < cascadeParameters.length; i++) {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
-                        console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
-                        await other.update(true);
+                        console.log(`[${this.paramName}] - CascadeParameter#update - Updating ${other.getParameterName()} from ${this.getParameterName()}`);
+                        window.requestIdleCallback(async () => {
+                            await other.update(false);
+                        })
                     }
                 }
             }
         } else {
-            console.log('Avoiding infinite loop due to recursion!');
+            console.log(`[${this.paramName}] - CascadeParameter#update - Avoiding infinite loop due to recursion!`);
         }
         // Hide spinner
         if (spinner) {
@@ -386,17 +428,17 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let _self = this;
         jQuery3(this.paramElement).change(e => {
             if (e.parameterName === _self.paramName) {
-                console.log('Skipping self reference to avoid infinite loop!');
+                console.log(`[${this.paramName}] - ReferencedParameter#constructor - Skipping self reference to avoid infinite loop!`);
                 e.stopImmediatePropagation();
             } else {
-                console.log(`Cascading changes from parameter ${_self.paramName}...`);
+                console.log(`[${this.paramName}] - ReferencedParameter#constructor - Cascading changes from parameter ${_self.paramName}...`);
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
-                setTimeout(async () => {
-                   await _self.cascadeParameter.update(false);
-                   jQuery3(".behavior-loading").hide();
-                }, 0);
+                window.requestIdleCallback(async () => {
+                    await _self.cascadeParameter.update(false);
+                    jQuery3(".behavior-loading").hide();
+                })
             }
         });
         cascadeParameter.getReferencedParameters().push(this);
@@ -446,7 +488,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
      */
     DynamicReferenceParameter.prototype.update = async function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
-        console.log(`Values retrieved from Referenced Parameters: ${parametersString}`);
+        console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values retrieved from Referenced Parameters: ${parametersString}`);
         // Update the Map of parameters
         await this.proxy.doUpdate(parametersString);
         let parameterElement = this.getParameterElement();
@@ -468,11 +510,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         // Here depending on the HTML element we might need to call a method to return a Map of elements,
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName === 'OL') { // handle OL's
-            console.log('Calling Java server code to update HTML elements...');
+            console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Calling Java server code to update HTML elements...`);
             await this.proxy.getChoicesForUI(t => {
                 jQuery3(parameterElement).empty(); // remove all children elements
                 const data = t.responseObject();
-                console.log(`Values returned from server: ${data}`);
+                console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values returned from server: ${data}`);
                 let newValues = data[0];
                 // let newKeys = data[1];
                 for (let i = 0; i < newValues.length; ++i) {
@@ -483,10 +525,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             });
         } else if (parameterElement.tagName === 'UL') { // handle OL's
             jQuery3(parameterElement).empty(); // remove all children elements
-            console.log('Calling Java server code to update HTML elements...');
+            console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Calling Java server code to update HTML elements...`);
             await this.proxy.getChoicesForUI(t => {
                 const data = t.responseObject();
-                console.log(`Values returned from server: ${data}`);
+                console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values returned from server: ${data}`);
                 let newValues = data[0];
                 // let newKeys = data[1];
                 for (let i = 0; i < newValues.length; ++i) {
@@ -505,7 +547,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             });
         }
         // propagate change
-        // console.log('Propagating change event from ' + this.getParameterName());
+        // console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Propagating change event from ${this.getParameterName()}`);
         // let e1 = $.Event('change', {parameterName: this.getParameterName()});
         // jQuery3(this.getParameterElement()).trigger(e1);
         if (!avoidRecursion) {
@@ -513,13 +555,15 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 for (let i = 0; i < cascadeParameters.length; i++) {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
-                        console.log(`Updating ${other.getParameterName()} from ${this.getParameterName()}`);
-                        await other.update(true);
+                        console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Updating ${other.paramName} from ${this.paramName}`);
+                        window.requestIdleCallback(async () => {
+                            await other.update(true);
+                        })
                     }
                 }
             }
         } else {
-            console.log('Avoiding infinite loop due to recursion!');
+            console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Avoiding infinite loop due to recursion!`);
         }
         // Hide spinner
         if (spinner) {
@@ -624,7 +668,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             let filteredElement = _self.getParameterElement();
             let text = filterElement.value.toLowerCase();
             if (text.length !== 0 && text.length < _self.getFilterLength()) {
-                //console.log("Filter pattern too short: [" + text.length + " < " + _self.getFilterLength() + "]");
+                //console.log(`[Filter] - initEventHandler -Filter pattern too short: [${text.length} < ${_self.getFilterLength()}]`);
                 return;
             }
             let options = _self.originalArray;
@@ -718,8 +762,8 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 } // if (jQuery3(filteredElement).children().length > 0 && jQuery3(filteredElement).children()[0].tagName === 'DIV') {
             } // if (tagName === 'SELECT') { // } else if (tagName === 'DIV') {
             // Propagate the changes made by the filter
-            console.log('Propagating change event after filtering');
-            let e1 = $.Event('change', {parameterName: 'Filter Element Event'});
+            console.log('[Filter] - initEventHandler - Propagating change event after filtering');
+            let e1 = jQuery3.Event('change', {parameterName: 'Filter Element Event'});
             jQuery3(filteredElement).trigger(e1);
         });
     }
@@ -900,7 +944,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let parentDiv = jQuery3(`#${paramName}`);
         let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
-            console.log('Could not find element by name, perhaps it is a DIV?');
+            console.log(`[${paramName}] - renderChoiceParameter - Could not find element by name, perhaps it is a DIV?`);
             parameterHtmlElement = parentDiv.find('*[name="value"]');
         }
         if (parameterHtmlElement && parameterHtmlElement.get(0)) {
@@ -908,10 +952,10 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             if (filterHtmlElement && filterHtmlElement.get(0)) {
                 parameterHtmlElement.filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), filterLength); // TBD: not very elegant
             } else {
-                console.log('Filter error: Missing filter element!');
+                console.log(`[${paramName}] - renderChoiceParameter -Filter error: Missing filter element!`);
             }
         } else {
-            console.log('Filter error: Missing parameter element!');
+            console.log(`[${paramName}] - renderChoiceParameter -Filter error: Missing parameter element!`);
         }
     }
 
@@ -920,7 +964,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         let parentDiv = jQuery3(parentDivRef);
         let parameterHtmlElement = parentDiv.find('DIV:not(.ac-ignore)');
         if (!parameterHtmlElement || parameterHtmlElement.length === 0) {
-            console.log('Could not find element by name, perhaps it is a DIV?');
+            console.log(`[${name}] - renderCascadeChoiceParameter - Could not find element by name, perhaps it is a DIV?`);
             parameterHtmlElement = parentDiv.find('*[name="value"]');
         }
         if (parameterHtmlElement && parameterHtmlElement.get(0)) {
@@ -933,7 +977,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     let filterElement = new UnoChoice.FilterElement(parameterHtmlElement.get(0), filterHtmlElement.get(0), filterLength);
                     cascadeParameter.setFilterElement(filterElement);
                 } else {
-                    console.log('Filter error: Missing filter element!');
+                    console.log(`[${name}] - renderCascadeChoiceParameter - Filter error: Missing filter element!`);
                 }
             }
             for (let i  = 0; i < referencedParameters.length ; ++i) {
@@ -974,10 +1018,12 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
 
             // call update methods in Java passing the HTML values
-            console.log('Updating cascade of parameter [', name, '] ...');
-            await cascadeParameter.update(false);
+            console.log(`[${name}] - renderCascadeChoiceParameter - Updating cascade of parameter [${name}] ...`);
+            window.requestIdleCallback(async () => {
+                await cascadeParameter.update(false);
+            })
         } else {
-            console.log('Parameter error: Missing parameter [', paramName, '] HTML element!');
+            console.log(`[${name}] - renderCascadeChoiceParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
     }
 
@@ -1057,10 +1103,12 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
 
             // call update methods in Java passing the HTML values
-            console.log('Updating cascade of parameter [', name, '] ...');
-            await dynamicParameter.update(false);
+            console.log(`[${name}] - renderDynamicRenderParameter - Updating cascade of parameter [${name}] ...`);
+            window.requestIdleCallback(async () => {
+                await dynamicParameter.update(false);
+            })
         } else {
-            console.log('Parameter error: Missing parameter [', paramName,'] HTML element!');
+            console.log(`[${name}] - renderDynamicRenderParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
     }
 

@@ -24,30 +24,25 @@
 
 package org.biouno.unochoice.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.slaves.EnvironmentVariablesNodeProperty;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 /**
  * Test the {@link Utils} utility class.
  */
-public class TestUtils {
-
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
+@WithJenkins
+class TestUtils {
 
     @Test
-    public void testIsSelected() {
+    void testIsSelected(JenkinsRule j) {
         assertTrue(Utils.isSelected("a:selected"));
         assertTrue(Utils.isSelected("a:selected:disabled"));
         assertTrue(Utils.isSelected("a:disabled:selected"));
@@ -58,7 +53,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testEscapeSelected() {
+    void testEscapeSelected(JenkinsRule j) {
         String escaped = Utils.escapeSelected(null);
         assertEquals("", escaped);
 
@@ -82,7 +77,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testIsDisabled() {
+    void testIsDisabled(JenkinsRule j) {
         assertTrue(Utils.isDisabled("a:disabled"));
         assertTrue(Utils.isDisabled("a:selected:disabled"));
         assertTrue(Utils.isDisabled("a:disabled:selected"));
@@ -93,7 +88,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testEscapeDisabled() {
+    void testEscapeDisabled(JenkinsRule j) {
         String escaped = Utils.escapeDisabled(null);
         assertEquals("", escaped);
 
@@ -117,7 +112,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testEscapeSelectedAndDisabled() {
+    void testEscapeSelectedAndDisabled(JenkinsRule j) {
         String escaped = Utils.escapeSelectedAndDisabled(null);
         assertEquals("", escaped);
 
@@ -150,7 +145,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testRandomParameterName() {
+    void testRandomParameterName(JenkinsRule j) {
         String paramName = Utils.createRandomParameterName("test", "param");
         assertNotNull(paramName);
         assertTrue(paramName.startsWith("test"));
@@ -168,7 +163,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testGetGlobalNodeProperties() {
+    void testGetGlobalNodeProperties(JenkinsRule j) {
         Map<String, String> testMap = new HashMap<>();
         testMap.put("time", "20:13:13");
         EnvironmentVariablesNodeProperty.Entry entry = new EnvironmentVariablesNodeProperty.Entry("time",
