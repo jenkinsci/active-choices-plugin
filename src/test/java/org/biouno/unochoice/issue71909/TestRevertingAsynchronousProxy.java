@@ -93,7 +93,7 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
             assertEquals(2, findRadios("DOCKER_BASE_IMAGE").size());
         } catch (StaleElementReferenceException e) {
             List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
-            wait.until(ExpectedConditions.elementToBeClickable(dockerBaseImageParam.get(0)));
+            wait.until(ExpectedConditions.elementToBeClickable(radioLabel(dockerBaseImageParam.get(0))));
             assertEquals(2, dockerBaseImageParam.size());
         }
 

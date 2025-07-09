@@ -68,7 +68,7 @@ class TestFilter extends BaseUiTest {
         List<WebElement> paramB = findRadios("paramB");
         for (int i = 0; i < paramB.size(); i++) {
             WebElement param = paramB.get(i);
-            assertTrue(param.isDisplayed());
+            assertTrue(radioLabel(param).isDisplayed());
             assertTrue(param.isEnabled());
             assertEquals("AAA-" + (i + 1), param.getDomAttribute("value"));
         }

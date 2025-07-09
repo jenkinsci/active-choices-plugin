@@ -105,8 +105,11 @@ public abstract class BaseUiTest {
         return driver.findElements(radios(paramName));
     }
 
+    protected WebElement radioLabel(WebElement element) {
+        return element.findElement(By.xpath("following-sibling::*"));
+    }
     protected void clickRadio(WebElement element) {
-        element.findElement(By.xpath("following-sibling::*")).click();
+        radioLabel(element).click();
     }
 
     protected static By checkboxes(String paramName) {
@@ -118,7 +121,7 @@ public abstract class BaseUiTest {
     }
 
     protected static By selects(String paramName) {
-        return By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) select");
+        return By.cssSelector("div.active-choice:has([name='name'][value='" + paramName + "']) > div > select");
     }
 
     protected WebElement findSelect(String paramName) {
