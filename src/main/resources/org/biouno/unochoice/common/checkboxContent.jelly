@@ -1,55 +1,8 @@
 <?jelly escape-by-default='true' ?>
-<j:jelly xmlns:j="jelly:core"
-         xmlns:d="jelly:define"
-         xmlns:transitionWrapper="transitionWrapper"
-         xmlns:st="jelly:stapler">
-    <d:taglib uri="transitionWrapper">
-      <d:tag name="randomTableIdBlock">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div id="tbl_ecp_${h.escape(it.randomName)}">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <table id="tbl_ecp_${h.escape(it.randomName)}">
-                      <d:invokeBody/>
-                  </table>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-      <d:tag name="row">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div id="ecp_${h.escape(it.randomName)}_${index}" class="tr" style="white-space:nowrap">
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <tr id="ecp_${h.escape(it.randomName)}_${index}" style="white-space:nowrap">
-                      <d:invokeBody/>
-                  </tr>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-      <d:tag name="td">
-          <j:choose>
-              <j:when test="${divBasedFormLayout}">
-                  <div>
-                      <d:invokeBody/>
-                  </div>
-              </j:when>
-              <j:otherwise>
-                  <td>
-                      <d:invokeBody/>
-                  </td>
-              </j:otherwise>
-          </j:choose>
-      </d:tag>
-  </d:taglib>
-  <div id="ecp_${h.escape(it.randomName)}" style="float:left; overflow-y:auto; padding-right:25px" class="dynamic_checkbox">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <div id="ecp_${h.escape(it.randomName)}" class="dynamic_checkbox ac-container__wrapper">
     <j:set var="index" value="0"/>
-    <transitionWrapper:randomTableIdBlock>
+    <div id="tbl_ecp_${h.escape(it.randomName)}" class="ac-container">
       <j:forEach var="iter" items="${it.getChoices()}" indexVar="indexVar">
         <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="isSelected" var="selected">
           <j:arg type="java.lang.Object" value="${iter.value}" />
@@ -70,8 +23,8 @@
           <j:arg type="java.lang.Object" value="${iter.key}" />
         </j:invokeStatic>
         <j:set var="id" value="ecp_${h.escape(it.randomName)}_${index}" />
-        <transitionWrapper:row>
-          <transitionWrapper:td>
+        <div id="ecp_${h.escape(it.randomName)}_${index}">
+          <div class="jenkins-checkbox">
             <j:choose>
               <j:when test="${selected &amp;&amp; disabled}">
                 <j:invokeStatic className="org.biouno.unochoice.util.Utils" method="escapeDisabled" var="escapedAndDisabledValue">
@@ -96,12 +49,12 @@
                 <label class="attach-previous" title="${escapedValue}">${escapedValue}</label>
               </j:otherwise>
             </j:choose>
-          </transitionWrapper:td>
-        </transitionWrapper:row>
+          </div>
+        </div>
         <j:set var="index" value="${index + 1}"/>
       </j:forEach>
-    </transitionWrapper:randomTableIdBlock>
+    </div>
   </div>
-  <span class="checkbox-content-data-holder" data-max-count="${it.getVisibleItemCount()}" data-random-name="${h.escape(it.randomName)}" />
+  <span class="checkbox-content-data-holder" data-item-count="${it.itemCount}" data-max-count="${it.visibleItemCount}" data-random-name="${h.escape(it.randomName)}" />
   <st:adjunct includes="org.biouno.unochoice.common.checkbox-content" />
 </j:jelly>
