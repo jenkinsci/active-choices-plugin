@@ -111,7 +111,7 @@ class TestGroovyScriptParametersOrder extends BaseUiTest {
 
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
 
-        By selectOptions = By.cssSelector("div.active-choice:has([name='name'][value='BACKUP_FILENAME']) > select > option");
+        By selectOptions = By.cssSelector("div.active-choice:has([name='name'][value='BACKUP_FILENAME']) > div > select > option");
         wait.until(ExpectedConditions.numberOfElementsToBe(selectOptions, 6));
         WebElement renderedParameterElement = findSelect("BACKUP_FILENAME");
         Select select = new Select(renderedParameterElement);
