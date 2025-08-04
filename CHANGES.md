@@ -19,6 +19,7 @@
 - Bump org.seleniumhq.selenium:selenium-java from 4.31.0 to 4.34.0
 - Bump prettier from 3.5.3 to 3.6.2
 - Bump webpack from 5.99.7 to 5.100.1
+- Bumped Jenkins version to 2.504.1
 - JENKINS-72282: Apply Jenkins styling to selects, radios and checkboxes (thanks @mawinter69) #429 (duplicated: JENKINS-75869)
 
 ## Version 2.8.8 (2025/05/04)

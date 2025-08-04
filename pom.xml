@@ -40,7 +40,7 @@
         <jenkins.baseline>2.479</jenkins.baseline>
         <!-- TODO: switch back to the LTS baseline once the CSP fix is in LTS -->
         <!--<jenkins.version>${jenkins.baseline}.1</jenkins.version>-->
-        <jenkins.version>2.482</jenkins.version>
+        <jenkins.version>2.504.1</jenkins.version>
         <!-- jenkins.version>${jenkins.baseline}.1</jenkins.version -->
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
         <node.version>22.14.0</node.version>
