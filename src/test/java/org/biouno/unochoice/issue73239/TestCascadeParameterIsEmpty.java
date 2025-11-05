@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * <p>This is a test to prevent that from happening again.</p>
  */
 @Issue("JENKINS-73239")
-public class TestCascadeParameterIsEmpty extends BaseUiTest {
+class TestCascadeParameterIsEmpty extends BaseUiTest {
 
     /**
      * Test that a cascade parameter without a referenced parameter does not result in
@@ -61,7 +61,7 @@ public class TestCascadeParameterIsEmpty extends BaseUiTest {
      */
     @Test
     @LocalData("test")
-    public void test() throws Exception {
+    void test() throws Exception {
         try (WebClient client = j.createWebClient().withThrowExceptionOnFailingStatusCode(false)) {
             final WebConsole console = client.getWebConsole();
             final PrintAllWebConsolerLogger logger = new PrintAllWebConsolerLogger();
