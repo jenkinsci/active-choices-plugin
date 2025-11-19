@@ -98,6 +98,10 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * The project Full Name (including folder).
      */
     private final String projectFullName;
+    /**
+     * A cache for the default parameter value to avoid JENKINS-76298
+     */
+    private String cachedDefaultValue;
 
     /**
      * Inherited constructor.
@@ -290,8 +294,12 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "getDefaultParameterValue");
         }
         final String name = getName();
+        if (cachedDefaultValue != null) {
+            return new StringParameterValue(name, cachedDefaultValue);
+        }
         String defaultValue = findDefaultValue(getChoices(Collections.emptyMap()));
         final String value = ObjectUtils.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
+        cachedDefaultValue = value;
         return new StringParameterValue(name, value);
     }
 
