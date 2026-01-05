@@ -127,7 +127,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scriptler</artifactId>
-            <version>432.v872ed6cd6d5b_</version>
+            <version>444.v7fd079eb_3b_86</version>
             <optional>true</optional>
         </dependency>
         <!-- testing -->
