@@ -37,7 +37,7 @@
         <revision>2.8.9</revision>
         <changelist>-SNAPSHOT</changelist>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.479</jenkins.baseline>
+        <jenkins.baseline>2.504</jenkins.baseline>
         <!-- TODO: switch back to the LTS baseline once the CSP fix is in LTS -->
         <!--<jenkins.version>${jenkins.baseline}.1</jenkins.version>-->
         <jenkins.version>2.504.3</jenkins.version>
