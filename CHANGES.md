@@ -28,6 +28,8 @@
 - Bump webpack from 5.99.7 to 5.104.1
 - Bumped Jenkins version to 2.504.1
 - JENKINS-72282: Apply Jenkins styling to selects, radios and checkboxes (thanks @mawinter69) #429 (duplicated: JENKINS-75869)
+- Issues migrated from JIRA to GitHub !
+- JENKINS-76298, GH-911: Active Choices plugin executes script once per every params access in first build (thanks to @Jendoliver on GH)
 
 ## Version 2.8.8 (2025/05/04)
 
