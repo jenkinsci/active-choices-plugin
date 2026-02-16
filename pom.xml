@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -7,7 +8,7 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>6.2111.v8b_6a_1d599df3</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>org.biouno</groupId>
@@ -16,7 +17,9 @@
     <packaging>hpi</packaging>
 
     <name>Active Choices Plug-in</name>
-    <description>This plug-in provides additional parameter types for jobs, that allow you to cascade changes and render images or other HTML elements instead of the traditional parameter.</description>
+    <description>This plug-in provides additional parameter types for jobs, that allow you to cascade changes and render images or other HTML elements instead
+        of the traditional parameter.
+    </description>
 
     <url>https://github.com/jenkinsci/active-choices-plugin</url>
 
@@ -47,10 +50,10 @@
         <yarn.version>1.22.19</yarn.version>
         <ui.loading.timeout>PT300S</ui.loading.timeout>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
-	<!-- <spotbugs.effort>Max</spotbugs.effort> -->
-	<!-- <spotbugs.threshold>Low</spotbugs.threshold> -->
-	<!-- <spotless.check.skip>false</spotless.check.skip> -->
-	<!-- TODO: For later, after we have merged a few more pull requests... -->
+        <!-- <spotbugs.effort>Max</spotbugs.effort> -->
+        <!-- <spotbugs.threshold>Low</spotbugs.threshold> -->
+        <!-- <spotless.check.skip>false</spotless.check.skip> -->
+        <!-- TODO: For later, after we have merged a few more pull requests... -->
     </properties>
 
     <scm>
@@ -91,7 +94,7 @@
                 <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>5054.v620b_5d2b_d5e6</version>
+                <version>5983.v443959746f1f</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
