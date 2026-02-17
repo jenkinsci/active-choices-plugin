@@ -16,7 +16,9 @@
     <packaging>hpi</packaging>
 
     <name>Active Choices Plug-in</name>
-    <description>This plug-in provides additional parameter types for jobs, that allow you to cascade changes and render images or other HTML elements instead of the traditional parameter.</description>
+    <description>This plug-in provides additional parameter types for jobs, that allow you to cascade changes and render images or other HTML elements instead
+        of the traditional parameter.
+    </description>
 
     <url>https://github.com/jenkinsci/active-choices-plugin</url>
 
@@ -34,23 +36,23 @@
     </issueManagement>
 
     <properties>
-        <revision>2.8.9</revision>
+        <revision>2.8.10</revision>
         <changelist>-SNAPSHOT</changelist>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.479</jenkins.baseline>
+        <jenkins.baseline>2.504</jenkins.baseline>
         <!-- TODO: switch back to the LTS baseline once the CSP fix is in LTS -->
         <!--<jenkins.version>${jenkins.baseline}.1</jenkins.version>-->
-        <jenkins.version>2.504.1</jenkins.version>
+        <jenkins.version>2.504.3</jenkins.version>
         <!-- jenkins.version>${jenkins.baseline}.1</jenkins.version -->
         <gitHubRepo>jenkinsci/active-choices-plugin</gitHubRepo>
         <node.version>22.14.0</node.version>
         <yarn.version>1.22.19</yarn.version>
         <ui.loading.timeout>PT300S</ui.loading.timeout>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
-	<!-- <spotbugs.effort>Max</spotbugs.effort> -->
-	<!-- <spotbugs.threshold>Low</spotbugs.threshold> -->
-	<!-- <spotless.check.skip>false</spotless.check.skip> -->
-	<!-- TODO: For later, after we have merged a few more pull requests... -->
+        <!-- <spotbugs.effort>Max</spotbugs.effort> -->
+        <!-- <spotbugs.threshold>Low</spotbugs.threshold> -->
+        <!-- <spotless.check.skip>false</spotless.check.skip> -->
+        <!-- TODO: For later, after we have merged a few more pull requests... -->
     </properties>
 
     <scm>
@@ -91,7 +93,7 @@
                 <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>5054.v620b_5d2b_d5e6</version>
+                <version>5983.v443959746f1f</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -127,7 +129,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scriptler</artifactId>
-            <version>432.v872ed6cd6d5b_</version>
+            <version>444.v7fd079eb_3b_86</version>
             <optional>true</optional>
         </dependency>
         <!-- testing -->

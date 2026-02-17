@@ -1,15 +1,17 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.9 (20??/??/??)
+## Version 2.8.10 (????/??/??)
+
+## Version 2.8.9 (2026/02/16)
 
 - Ban JUnit 4 imports (thanks @ strangelookingnerd)
 - Bump @babel/cli from 7.27.0 to 7.28.6
-- Bump @babel/core from 7.26.10 to 7.28.6
-- Bump @babel/preset-env from 7.26.9 to 7.28.6
+- Bump @babel/core from 7.26.10 to 7.29.0
+- Bump @babel/preset-env from 7.26.9 to 7.29.0
 - Bump @babel/preset-flow from 7.25.9 to 7.27.1
 - Bump @babel/preset-typescript from 7.27.0 to 7.28.5
 - Bump @types/jquery from 3.5.32 to 3.5.33
-- Bump eslint from 9.25.1 to 9.39.2
+- Bump eslint from 9.25.1 to 10.0.0
 - Bump eslint-config-prettier from 10.1.2 to 10.1.8
 - Bump io.github.bonigarcia:webdrivermanager from 6.1.0 to 6.3.3
 - Bump io.jenkins.tools.bom:bom-2.479.x from 4669.v0e99c712a_30e to 5054.v620b_5d2b_d5e6
@@ -17,17 +19,20 @@
 - Bump jest from 29.7.0 to 30.2.0
 - Bump jest-environment-jsdom from 29.7.0 to 30.2.0
 - Bump jquery from 3.7.1 to 4.0.0
-- Bump jsdom from 26.1.0 to 27.3.0
+- Bump js-yaml from 3.14.1 to 3.14.2
+- Bump jsdom from 26.1.0 to 28.0.0
 - Bump org.jenkins-ci.plugins:job-dsl from 1.92 to 1.93
 - Bump org.jenkins-ci.plugins:plugin from 5.12 to 6.2111.v8b_6a_1d599df3
-- Bump org.jenkins-ci.plugins:scriptler from 397.vc46f19cb_3c18 to 432.v872ed6cd6d5b_
+- Bump org.jenkins-ci.plugins:scriptler from 397.vc46f19cb_3c18 to 444.v7fd079eb_3b_86
 - Bump org.seleniumhq.selenium:selenium-java from 4.31.0 to 4.39.0
-- Bump prettier from 3.5.3 to 3.8.0
+- Bump prettier from 3.5.3 to 3.8.1
 - Bump ts-loader from 9.5.2 to 9.5.4
 - Bump typescript from 5.8.3 to 5.9.3
-- Bump webpack from 5.99.7 to 5.104.1
-- Bumped Jenkins version to 2.504.1
+- Bump webpack from 5.99.7 to 5.105.0
+- Bumped Jenkins version to 2.504.3 and BOM to 5983.v443959746f1f
 - JENKINS-72282: Apply Jenkins styling to selects, radios and checkboxes (thanks @mawinter69) #429 (duplicated: JENKINS-75869)
+- Issues migrated from JIRA to GitHub !
+- JENKINS-76298, GH-911: Active Choices plugin executes script once per every params access in first build (thanks to @Jendoliver on GH)
 
 ## Version 2.8.8 (2025/05/04)
 
