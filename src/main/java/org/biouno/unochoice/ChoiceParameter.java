@@ -26,12 +26,17 @@ package org.biouno.unochoice;
 
 import hudson.Extension;
 
+import hudson.model.ParameterValue;
+import hudson.model.StringParameterValue;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 /**
  * A parameter that renders its options as a choice (select) HTML component.
@@ -141,6 +146,32 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      */
     public Integer getFilterLength() {
         return filterLength == null ? (Integer) 1 : filterLength;
+    }
+
+    /**
+     * JENKINS-75760 : checkbox list must return empty default value.
+     * @return empty parameterValue
+     */
+    @Override
+    public ParameterValue getDefaultParameterValue() {
+        if (Objects.equals(choiceType, PARAMETER_TYPE_CHECK_BOX)) {
+            final String name = getName();
+            Map<Object, Object> choices = getChoices(Collections.emptyMap());
+            List<String> defaultValues = new ArrayList<>();
+
+            for (Map.Entry<?, ?> entry : choices.entrySet()) {
+                String keyStr = ObjectUtils.toString(entry.getKey());
+                String valueStr = ObjectUtils.toString(entry.getValue());
+                // on split choice sur ':' et on recherche selected
+                String key = Pattern.compile(":").splitAsStream(keyStr).findFirst().orElse(keyStr);
+                List<String> parts = Pattern.compile(":").splitAsStream(valueStr).toList();
+                if (parts.contains("selected")) {
+                    defaultValues.add(key);
+                }
+            }
+            return new StringParameterValue(name, String.join(",", defaultValues));
+        }
+        return super.getDefaultParameterValue();
     }
 
     // --- descriptor
