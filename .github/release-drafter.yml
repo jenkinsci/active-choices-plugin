@@ -1,6 +1,6 @@
 # https://github.com/jenkinsci/.github/blob/master/.github/release-drafter.adoc
 ---
-_extends: .github
+_extends: github:jenkinsci/.github:/.github/release-drafter.yml
 name-template: $NEXT_PATCH_VERSION
 tag-template: uno-choice-$NEXT_PATCH_VERSION
 version-template: $MAJOR.$MINOR.$PATCH
