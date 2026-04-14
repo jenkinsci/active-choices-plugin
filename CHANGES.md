@@ -3,6 +3,7 @@
 ## Version 2.8.10 (????/??/??)
 
 - Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
+- Bump jsdom from 28.1.0 to 29.0.1
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
 
 ## Version 2.8.9 (2026/02/16)
