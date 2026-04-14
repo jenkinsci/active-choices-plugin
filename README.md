@@ -3,7 +3,7 @@
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/uno-choice.svg)](https://plugins.jenkins.io/uno-choice)
 [![GitHub release](https://img.shields.io/github/release/jenkinsci/uno-choice-plugin.svg?label=changelog)](https://github.com/jenkinsci/active-choices-plugin/blob/master/CHANGES.md)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/uno-choice.svg?color=blue)](https://plugins.jenkins.io/active-choices)
-[![Jenkins](https://ci.jenkins.io/job/Plugins/job/active-choices-plugin/job/master/badge/icon?subject=Jenkins%20CI)](https://ci.jenkins.io/job/Plugins/job/active-choices-plugin/job/master/)
+[![Jenkins](https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Factive-choices-plugin%2Fmaster)](https://ci.jenkins.io/job/Plugins/job/active-choices-plugin/job/master/)
 [![JIRA issues](https://img.shields.io/static/v1?label=Issue%20tracking&message=component:%20active-choices-plugin&color=blue)](https://issues.jenkins.io/browse/JENKINS-64962?jql=component%20%3D%20%27active-choices-plugin%27%20AND%20resolution%20IS%20EMPTY%20ORDER%20BY%20updated%20DESC)
 
 ## Overview
@@ -595,4 +595,3 @@ Get in touch if you would like to sponsor the development of the plug-in, or an 
 - “Dynamic and reactive parameterization in Jenkins pipelines using HTML, Groovy, and Bash” by _Esteban Echavarria Collazos_ - [link](https://medium.com/globant/dynamic-and-reactive-parameterization-in-jenkins-pipelines-using-html-groovy-and-bash-27b031fcd69b)
 
 Check out a list of articles, tutorials, and publications at the [BioUno website](http://biouno.org/publications.html)
-
