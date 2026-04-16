@@ -2,9 +2,13 @@
 
 ## Version 2.8.10 (????/??/??)
 
-- Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
-- Bump jsdom from 28.1.0 to 29.0.1
+- Adapt build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
+- Bump @babel/preset-env from 7.29.0 to 7.29.2
+- Bump eslint from 10.0.3 to 10.1.0
+- Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
+- Bump jest-environment-jsdom from 30.2.0 to 30.3.0
+- Bump jsdom from 28.1.0 to 29.0.1
 
 ## Version 2.8.9 (2026/02/16)
 
