@@ -9,6 +9,8 @@
 - Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
 - Bump jest-environment-jsdom from 30.2.0 to 30.3.0
 - Bump jsdom from 28.1.0 to 29.0.1
+- Bump org.jenkins-ci.plugins:nodelabelparameter from 759.vb_b_e95db_f3251 to 851.vd94e5048d321
+- Bump org.jenkins-ci.plugins:scriptler from 444.v7fd079eb_3b_86 to 451.v02fdb_b_d6c619
 
 ## Version 2.8.9 (2026/02/16)
 
