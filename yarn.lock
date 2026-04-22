@@ -4741,10 +4741,10 @@ webidl-conversions@^8.0.1:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-8.0.1.tgz#0657e571fe6f06fcb15ca50ed1fdbcb495cd1686"
   integrity sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==
 
-webpack-cli@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-7.0.1.tgz#fb3775866c49a642e17d4f0793c5f16365d423cc"
-  integrity sha512-QeNvbQ3q67tiY7UqjbsfhK2026YTVhtW8XsfdrrGfGUtBe6EQpxBB1w9SbB2eLTZzx4m8tRvm8dqKo8rBNfeFg==
+webpack-cli@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-7.0.2.tgz#c916e324acc7c14f895226ed351020924900db12"
+  integrity sha512-dB0R4T+C/8YuvM+fabdvil6QE44/ChDXikV5lOOkrUeCkW5hTJv2pGLE3keh+D5hjYw8icBaJkZzpFoaHV4T+g==
   dependencies:
     "@discoveryjs/json-ext" "^1.0.0"
     commander "^14.0.3"
