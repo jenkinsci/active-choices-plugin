@@ -11,6 +11,8 @@
 - Bump jsdom from 28.1.0 to 29.0.1
 - Bump org.jenkins-ci.plugins:nodelabelparameter from 759.vb_b_e95db_f3251 to 851.vd94e5048d321
 - Bump org.jenkins-ci.plugins:scriptler from 444.v7fd079eb_3b_86 to 451.v02fdb_b_d6c619
+- Bump webpack from 5.105.4 to 5.106.2
+- Bump webpack-cli from 7.0.1 to 7.0.2
 
 ## Version 2.8.9 (2026/02/16)
 
