@@ -29,7 +29,7 @@
         "jquery": "^4.0.0",
         "jsdom": "^29.0.1",
         "prettier": "^3.8.1",
-        "ts-loader": "^9.5.4",
+        "ts-loader": "^9.5.7",
         "typescript": "^5.9.3",
         "webpack": "^5.106.2",
         "webpack-cli": "^7.0.2"
