@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
@@ -35,6 +36,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -73,15 +75,18 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
         // as should be after the 2) gets executed.
 
         // From: https://bugbug.io/blog/software-testing/StaleElementReferenceException/
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("return document.readyState").equals("complete");
+        wait.until(driver ->
+                Objects.equals(((JavascriptExecutor) driver)
+                        .executeScript("return document.readyState"), "complete")
+        );
 
         waitLoadingMessage();
 
-        WebElement targetParam = findSelect("TARGET");
+        By targetLocator = By.name("TARGET");
+        wait.until(ExpectedConditions.presenceOfElementLocated(targetLocator));
+        wait.until(ExpectedConditions.elementToBeClickable(targetLocator));
 
-        wait.until(ExpectedConditions.elementToBeClickable(targetParam));
-
+        WebElement targetParam = driver.findElement(targetLocator);
         assertTrue(targetParam.isDisplayed());
         assertTrue(targetParam.isEnabled());
         new Select(targetParam).selectByValue("Item3");
@@ -89,8 +94,10 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
         waitLoadingMessage();
 
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(findRadios("DOCKER_BASE_IMAGE").get(0)));
-            assertEquals(2, findRadios("DOCKER_BASE_IMAGE").size());
+            By radioLocator = By.name("DOCKER_BASE_IMAGE");
+            wait.until(ExpectedConditions.numberOfElementsToBe(radioLocator, 2));
+            List<WebElement> radios = findRadios("DOCKER_BASE_IMAGE");
+            assertEquals(2, radios.size());
         } catch (StaleElementReferenceException e) {
             List<WebElement> dockerBaseImageParam = findRadios("DOCKER_BASE_IMAGE");
             wait.until(ExpectedConditions.elementToBeClickable(getLabel(dockerBaseImageParam.get(0))));
@@ -101,17 +108,20 @@ class TestRevertingAsynchronousProxy extends BaseUiTest {
 
         // NOTE: interestingly, having two calls to findRadios (same param) one after the other resulted
         //       in stale element exceptions, even after trying to wait for visibility/JS load/DOM elements rendered/etc.
-        final WebElement radio = findRadios("DOCKER_BASE_IMAGE").get(0);
-        assertEquals("buster", radio.getDomAttribute("value"));
-        assertEquals("true", radio.getDomAttribute("checked"));
+        final List<WebElement> radios = findRadios("DOCKER_BASE_IMAGE");
+        assertEquals("buster", radios.get(0).getDomAttribute("value"));
+        assertEquals("true", radios.get(0).getDomAttribute("checked"));
 
-        wait.until(ExpectedConditions.elementToBeClickable(findCheckboxes("MACHINES").get(0)));
+        By machinesLocator = By.name("MACHINES");
+        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(machinesLocator, 0));
+
+        List<WebElement> machines = driver.findElements(machinesLocator);
 
         try {
-            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            assertEquals("server2", machines.get(1).getDomAttribute("value"));
             getLabel((findCheckboxes("MACHINES").get(1))).click();
         } catch (StaleElementReferenceException e) {
-            assertEquals("server2", findCheckboxes("MACHINES").get(1).getDomAttribute("value"));
+            assertEquals("server2", machines.get(1).getDomAttribute("value"));
             getLabel(findCheckboxes("MACHINES").get(1)).click();
         }
 
