@@ -319,7 +319,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             idValue = idValue.replace(' ', '_');
                             // <INPUT>
                             let input = util.makeRadio(key, _self.getParameterName(), selectedElements.indexOf(i) >= 0, disabledElements.indexOf(i) >= 0);
-                            input.setAttribute('onchange', `UnoChoice.fakeSelectRadioButton("${_self.getParameterName()}", "${idValue}")`);
+                                input.addEventListener('change', function () {
+                                fakeSelectRadioButton(_self.getParameterName(), idValue);
+                            });
                             input.setAttribute('otherId', idValue);
                             if (!entry instanceof String) {
                                 input.setAttribute('alt', JSON.stringify(entry));
