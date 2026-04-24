@@ -913,7 +913,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             statusText: response.statusText,
                         };
                         if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
-                            response.json().then(function (responseObject) {
+                            return response.json().then(function (responseObject) {
                                 t.responseObject = function () {
                                     return responseObject;
                                 };
@@ -923,7 +923,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 }
                             });
                         } else {
-                            response.text().then(function (responseText) {
+                            return response.text().then(function (responseText) {
                                 t.responseText = responseText;
                                 if (callback != null) {
                                     callback(t);
