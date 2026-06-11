@@ -99,6 +99,14 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      */
     private final String projectFullName;
     /**
+     * Cached project name resolved after construction, used to avoid repeated project scans.
+     */
+    private volatile String projectNameCache;
+    /**
+     * Cached project full name resolved after construction, used to avoid repeated project scans.
+     */
+    private volatile String projectFullNameCache;
+    /**
      * A cache for the default parameter value to avoid JENKINS-76298
      */
     private String cachedDefaultValue;
@@ -146,6 +154,16 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         this.projectFullName = projectFullName;
     }
 
+    private void rememberProject(AbstractItem project) {
+        if (project != null) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Caching project '%s' for parameter '%s'", project.getFullName(), getName()));
+            }
+            this.projectNameCache = project.getName();
+            this.projectFullNameCache = project.getFullName();
+        }
+    }
+
     protected AbstractItem detectProject() {
         final StaplerRequest2 currentRequest = Stapler.getCurrentRequest2();
         if (currentRequest != null) {
@@ -189,24 +207,59 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
 
         // First, if the project name is set, we then find the project by its name, and inject into the map
         Job<?, ?> project = null;
-        if (StringUtils.isNotBlank(this.projectFullName)) {
+        final String resolvedProjectFullName = StringUtils.defaultIfBlank(this.projectFullNameCache, this.projectFullName);
+        final String resolvedProjectName = StringUtils.defaultIfBlank(this.projectNameCache, this.projectName);
+        if (StringUtils.isNotBlank(resolvedProjectFullName)) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Attempting project resolution by full name '%s' for parameter '%s'", resolvedProjectFullName, getName()));
+            }
             // First try full name if exists
-            project = Jenkins.get().getItemByFullName(this.projectFullName, Project.class);
-        } else if (StringUtils.isNotBlank(this.projectName)) {
+            project = Jenkins.get().getItemByFullName(resolvedProjectFullName, Project.class);
+            if (project != null) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine(String.format("Resolved project by full name '%s' for parameter '%s'", resolvedProjectFullName, getName()));
+                }
+                rememberProject(project);
+            }
+        } else if (StringUtils.isNotBlank(resolvedProjectName)) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Attempting project resolution by name '%s' for parameter '%s'", resolvedProjectName, getName()));
+            }
             // next we try to get the item given its name, which is more efficient
-            project = Utils.getProjectByName(this.projectName);
+            project = Utils.getProjectByName(resolvedProjectName);
+            if (project != null) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine(String.format("Resolved project by name '%s' for parameter '%s'", resolvedProjectName, getName()));
+                }
+                rememberProject(project);
+            }
         } else {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("No cached project name available for parameter '%s'; attempting request-based project detection", getName()));
+            }
             // check whether the current thread has enough info to detect project
             // i.e. it serves a web request to the project build page
             final AbstractItem parentItem = detectProject();
             if (parentItem != null) {
                 project = Jenkins.get().getItemByFullName(parentItem.getFullName(), Job.class);
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine(String.format("Resolved project from current request '%s' for parameter '%s'", parentItem.getFullName(), getName()));
+                }
+                rememberProject(parentItem);
+            } else if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Request-based project detection did not find a project for parameter '%s'", getName()));
             }
         }
         // Last chance, if we were unable to get project from name and full name, try uuid
         if (project == null) {
             // otherwise, in case we don't have the item name, we iterate looking for a job that uses this UUID
             project = Utils.findProjectByParameterUUID(this.getRandomName());
+            if (project != null) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine(String.format("Resolved project by parameter UUID '%s' for parameter '%s'", this.getRandomName(), getName()));
+                }
+                rememberProject(project);
+            }
         }
         if (project != null) {
             helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
