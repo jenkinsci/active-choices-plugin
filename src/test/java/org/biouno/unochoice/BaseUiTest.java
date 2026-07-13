@@ -46,9 +46,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -60,6 +63,7 @@ public abstract class BaseUiTest {
     protected WebDriver driver;
     protected WebDriverWait wait;
     private static String ciBrowserBinary;
+    private static final int PLAYWRIGHT_BROWSER_SCAN_DEPTH = 8;
 
     protected static boolean isCi() {
         return StringUtils.isNotBlank(System.getenv("CI"));
@@ -101,26 +105,52 @@ public abstract class BaseUiTest {
         if (StringUtils.isBlank(configuredBinary)) {
             configuredBinary = System.getenv("CHROME_BIN");
         }
-        if (StringUtils.isNotBlank(configuredBinary) && Files.isExecutable(Path.of(configuredBinary))) {
+        if (StringUtils.isNotBlank(configuredBinary) && Files.exists(Path.of(configuredBinary))) {
             return configuredBinary;
         }
 
-        final Path playwrightCache = Path.of(System.getProperty("user.home"), ".cache", "ms-playwright");
-        if (!Files.isDirectory(playwrightCache)) {
-            return null;
+        final List<Path> searchRoots = browserSearchRoots();
+        for (Path searchRoot : searchRoots) {
+            if (Files.isDirectory(searchRoot)) {
+                final String detectedBinary = findChromeExecutable(searchRoot);
+                if (StringUtils.isNotBlank(detectedBinary)) {
+                    return detectedBinary;
+                }
+            }
         }
 
-        try (Stream<Path> paths = Files.walk(playwrightCache, 3)) {
+        System.out.println("No CI Chrome binary found. Checked " + searchRoots
+                + ", user.home=" + System.getProperty("user.home")
+                + ", HOME=" + System.getenv("HOME")
+                + ", CHROME_BIN=" + System.getenv("CHROME_BIN"));
+        return null;
+    }
+
+    private static List<Path> browserSearchRoots() {
+        final Set<Path> searchRoots = new LinkedHashSet<>();
+        addPlaywrightCache(searchRoots, System.getProperty("user.home"));
+        addPlaywrightCache(searchRoots, System.getenv("HOME"));
+        searchRoots.add(Path.of("/home/jenkins/.cache/ms-playwright"));
+        return new ArrayList<>(searchRoots);
+    }
+
+    private static void addPlaywrightCache(Set<Path> searchRoots, String homeDirectory) {
+        if (StringUtils.isNotBlank(homeDirectory)) {
+            searchRoots.add(Path.of(homeDirectory, ".cache", "ms-playwright"));
+        }
+    }
+
+    private static String findChromeExecutable(Path searchRoot) {
+        try (Stream<Path> paths = Files.walk(searchRoot, PLAYWRIGHT_BROWSER_SCAN_DEPTH)) {
             return paths
                     .filter(Files::isRegularFile)
-                    .filter(Files::isExecutable)
                     .filter(BaseUiTest::isChromeExecutable)
                     .sorted(Comparator.comparing(Path::toString).reversed())
                     .map(Path::toString)
                     .findFirst()
                     .orElse(null);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to scan Playwright browser cache", e);
+            throw new IllegalStateException("Failed to scan browser cache " + searchRoot, e);
         }
     }
 
