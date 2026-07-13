@@ -182,6 +182,7 @@ public abstract class BaseUiTest {
     private static boolean isChromeExecutable(Path path) {
         final String fileName = path.getFileName().toString();
         return "headless_shell".equals(fileName)
+                || "chrome-headless-shell".equals(fileName)
                 || "chrome".equals(fileName)
                 || "chromium".equals(fileName)
                 || "chromium-browser".equals(fileName);
