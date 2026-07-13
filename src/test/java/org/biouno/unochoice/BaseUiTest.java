@@ -109,6 +109,12 @@ public abstract class BaseUiTest {
             return configuredBinary;
         }
 
+        for (Path commonBinary : commonLinuxBrowserBinaries()) {
+            if (Files.exists(commonBinary)) {
+                return commonBinary.toString();
+            }
+        }
+
         final List<Path> searchRoots = browserSearchRoots();
         for (Path searchRoot : searchRoots) {
             if (Files.isDirectory(searchRoot)) {
@@ -122,21 +128,40 @@ public abstract class BaseUiTest {
         System.out.println("No CI Chrome binary found. Checked " + searchRoots
                 + ", user.home=" + System.getProperty("user.home")
                 + ", HOME=" + System.getenv("HOME")
-                + ", CHROME_BIN=" + System.getenv("CHROME_BIN"));
+                + ", CHROME_BIN=" + System.getenv("CHROME_BIN")
+                + ", PLAYWRIGHT_BROWSERS_PATH=" + System.getenv("PLAYWRIGHT_BROWSERS_PATH"));
         return null;
     }
 
     private static List<Path> browserSearchRoots() {
         final Set<Path> searchRoots = new LinkedHashSet<>();
+        addPath(searchRoots, System.getenv("PLAYWRIGHT_BROWSERS_PATH"));
         addPlaywrightCache(searchRoots, System.getProperty("user.home"));
         addPlaywrightCache(searchRoots, System.getenv("HOME"));
         searchRoots.add(Path.of("/home/jenkins/.cache/ms-playwright"));
+        searchRoots.add(Path.of("/cache/ms-playwright"));
+        searchRoots.add(Path.of("/cache"));
         return new ArrayList<>(searchRoots);
+    }
+
+    private static List<Path> commonLinuxBrowserBinaries() {
+        return List.of(
+                Path.of("/usr/bin/google-chrome"),
+                Path.of("/usr/bin/google-chrome-stable"),
+                Path.of("/usr/bin/chromium"),
+                Path.of("/usr/bin/chromium-browser"),
+                Path.of("/opt/google/chrome/chrome"));
     }
 
     private static void addPlaywrightCache(Set<Path> searchRoots, String homeDirectory) {
         if (StringUtils.isNotBlank(homeDirectory)) {
             searchRoots.add(Path.of(homeDirectory, ".cache", "ms-playwright"));
+        }
+    }
+
+    private static void addPath(Set<Path> searchRoots, String path) {
+        if (StringUtils.isNotBlank(path)) {
+            searchRoots.add(Path.of(path));
         }
     }
 
