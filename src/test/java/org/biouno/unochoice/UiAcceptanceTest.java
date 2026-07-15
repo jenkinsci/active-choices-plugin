@@ -60,7 +60,8 @@ class UiAcceptanceTest extends BaseUiTest {
 
         wait.withMessage(() -> "The help text should have been displayed").until(d -> helpTextDiv.isDisplayed());
 
-        assertTrue(helpTextDiv.getText().startsWith("This is a simple parameter"));
+        wait.withMessage(() -> "The help text should have loaded. Had: " + helpTextDiv.getText())
+                .until(d -> helpTextDiv.getText().startsWith("This is a simple parameter"));
     }
 
     @LocalData

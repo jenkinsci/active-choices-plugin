@@ -41,11 +41,19 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @WithJenkins
 public abstract class BaseUiTest {
@@ -54,6 +62,8 @@ public abstract class BaseUiTest {
 
     protected WebDriver driver;
     protected WebDriverWait wait;
+    private static String ciBrowserBinary;
+    private static final int PLAYWRIGHT_BROWSER_SCAN_DEPTH = 8;
 
     protected static boolean isCi() {
         return StringUtils.isNotBlank(System.getenv("CI"));
@@ -64,14 +74,12 @@ public abstract class BaseUiTest {
     @BeforeAll
     public static void setUpClass() {
         if (isCi()) {
-            // The browserVersion needs to match what is provided by the Jenkins Infrastructure
-            // If you see an exception like this:
-            //
-            // org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: session not created: This version of ChromeDriver only supports Chrome version 114
-            // Current browser version is 112.0.5615.49 with binary path /usr/bin/chromium-browser
-            //
-            // Then that means you need to update the version here to match the current browser version.
-            WebDriverManager.chromedriver().browserVersion("112").setup();
+            ciBrowserBinary = findCiBrowserBinary();
+            if (StringUtils.isNotBlank(ciBrowserBinary)) {
+                WebDriverManager.chromedriver().browserBinary(ciBrowserBinary).setup();
+            } else {
+                WebDriverManager.chromedriver().setup();
+            }
         } else {
             WebDriverManager.chromedriver().setup();
         }
@@ -80,13 +88,104 @@ public abstract class BaseUiTest {
     @BeforeEach
     public void setUp(JenkinsRule j) {
         this.j = j;
+        final ChromeOptions options = new ChromeOptions();
         if (isCi()) {
-            driver = new ChromeDriver(new ChromeOptions().addArguments("--headless", "--disable-dev-shm-usage", "--no-sandbox"));
-        } else {
-            driver = new ChromeDriver(new ChromeOptions());
+            options.addArguments("--headless", "--disable-dev-shm-usage", "--no-sandbox");
+            if (StringUtils.isNotBlank(ciBrowserBinary)) {
+                options.setBinary(ciBrowserBinary);
+            }
         }
+        driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, MAX_WAIT);
         driver.manage().window().setSize(new Dimension(2560, 1440));
+    }
+
+    private static String findCiBrowserBinary() {
+        String configuredBinary = System.getProperty("ui.chrome.binary");
+        if (StringUtils.isBlank(configuredBinary)) {
+            configuredBinary = System.getenv("CHROME_BIN");
+        }
+        if (StringUtils.isNotBlank(configuredBinary) && Files.exists(Path.of(configuredBinary))) {
+            return configuredBinary;
+        }
+
+        for (Path commonBinary : commonLinuxBrowserBinaries()) {
+            if (Files.exists(commonBinary)) {
+                return commonBinary.toString();
+            }
+        }
+
+        final List<Path> searchRoots = browserSearchRoots();
+        for (Path searchRoot : searchRoots) {
+            if (Files.isDirectory(searchRoot)) {
+                final String detectedBinary = findChromeExecutable(searchRoot);
+                if (StringUtils.isNotBlank(detectedBinary)) {
+                    return detectedBinary;
+                }
+            }
+        }
+
+        System.out.println("No CI Chrome binary found. Checked " + searchRoots
+                + ", user.home=" + System.getProperty("user.home")
+                + ", HOME=" + System.getenv("HOME")
+                + ", CHROME_BIN=" + System.getenv("CHROME_BIN")
+                + ", PLAYWRIGHT_BROWSERS_PATH=" + System.getenv("PLAYWRIGHT_BROWSERS_PATH"));
+        return null;
+    }
+
+    private static List<Path> browserSearchRoots() {
+        final Set<Path> searchRoots = new LinkedHashSet<>();
+        addPath(searchRoots, System.getenv("PLAYWRIGHT_BROWSERS_PATH"));
+        addPlaywrightCache(searchRoots, System.getProperty("user.home"));
+        addPlaywrightCache(searchRoots, System.getenv("HOME"));
+        searchRoots.add(Path.of("/home/jenkins/.cache/ms-playwright"));
+        searchRoots.add(Path.of("/cache/ms-playwright"));
+        searchRoots.add(Path.of("/cache"));
+        return new ArrayList<>(searchRoots);
+    }
+
+    private static List<Path> commonLinuxBrowserBinaries() {
+        return List.of(
+                Path.of("/usr/bin/google-chrome"),
+                Path.of("/usr/bin/google-chrome-stable"),
+                Path.of("/usr/bin/chromium"),
+                Path.of("/usr/bin/chromium-browser"),
+                Path.of("/opt/google/chrome/chrome"));
+    }
+
+    private static void addPlaywrightCache(Set<Path> searchRoots, String homeDirectory) {
+        if (StringUtils.isNotBlank(homeDirectory)) {
+            searchRoots.add(Path.of(homeDirectory, ".cache", "ms-playwright"));
+        }
+    }
+
+    private static void addPath(Set<Path> searchRoots, String path) {
+        if (StringUtils.isNotBlank(path)) {
+            searchRoots.add(Path.of(path));
+        }
+    }
+
+    private static String findChromeExecutable(Path searchRoot) {
+        try (Stream<Path> paths = Files.walk(searchRoot, PLAYWRIGHT_BROWSER_SCAN_DEPTH)) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(BaseUiTest::isChromeExecutable)
+                    .sorted(Comparator.comparing(Path::toString).reversed())
+                    .map(Path::toString)
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to scan browser cache " + searchRoot, e);
+        }
+    }
+
+    private static boolean isChromeExecutable(Path path) {
+        final String fileName = path.getFileName().toString();
+        return "headless_shell".equals(fileName)
+                || "chrome-headless-shell".equals(fileName)
+                || "chrome".equals(fileName)
+                || "chromium".equals(fileName)
+                || "chromium-browser".equals(fileName);
     }
 
     @AfterEach
