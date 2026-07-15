@@ -19,6 +19,7 @@
 - Bump webpack from 5.105.4 to 5.106.2
 - Bump webpack-cli from 7.0.1 to 7.0.2
 - #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
+- JENKINS-76298 follow-up: Add `cacheDefaultValue` option to control the default value cache introduced in 2.8.9. It is now disabled by default, so parameters whose choices are generated dynamically by a script no longer reuse a previously cached (and persisted) value
 
 ## Version 2.8.9 (2026/02/16)
 
