@@ -18,6 +18,7 @@
 - Bump ts-loader from 9.5.4 to 9.5.7
 - Bump webpack from 5.105.4 to 5.106.2
 - Bump webpack-cli from 7.0.1 to 7.0.2
+- #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
 
 ## Version 2.8.9 (2026/02/16)
 
