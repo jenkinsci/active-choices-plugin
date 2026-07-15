@@ -38,6 +38,7 @@ import org.biouno.unochoice.model.Script;
 import org.biouno.unochoice.util.ScriptCallback;
 import org.biouno.unochoice.util.Utils;
 import org.kohsuke.stapler.Ancestor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 
@@ -107,7 +108,14 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      */
     private volatile String projectFullNameCache;
     /**
-     * A cache for the default parameter value to avoid JENKINS-76298
+     * Whether the default parameter value may be cached (JENKINS-76298). Disabled by default,
+     * as the cached value is persisted with the job configuration and would shadow values
+     * produced by scripts that generate choices dynamically.
+     */
+    private Boolean cacheDefaultValue;
+    /**
+     * A cache for the default parameter value to avoid JENKINS-76298. Only used when
+     * {@link #getCacheDefaultValue()} is {@code true}.
      */
     private String cachedDefaultValue;
 
@@ -185,6 +193,28 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      */
     public Script getScript() {
         return script;
+    }
+
+    /**
+     * Gets the flag that controls whether the default parameter value may be cached.
+     *
+     * @return {@code true} if the default parameter value may be cached, {@code false} (default) otherwise
+     */
+    public boolean getCacheDefaultValue() {
+        return cacheDefaultValue != null && cacheDefaultValue;
+    }
+
+    /**
+     * Sets the flag that controls whether the default parameter value may be cached.
+     *
+     * @param cacheDefaultValue whether the default parameter value may be cached
+     */
+    @DataBoundSetter
+    public void setCacheDefaultValue(Boolean cacheDefaultValue) {
+        this.cacheDefaultValue = cacheDefaultValue;
+        if (!getCacheDefaultValue()) {
+            this.cachedDefaultValue = null;
+        }
     }
 
     /**
@@ -347,12 +377,12 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "getDefaultParameterValue");
         }
         final String name = getName();
-        if (cachedDefaultValue != null) {
+        if (getCacheDefaultValue() && cachedDefaultValue != null) {
             return new StringParameterValue(name, cachedDefaultValue);
         }
         String defaultValue = findDefaultValue(getChoices(Collections.emptyMap()));
         final String value = ObjectUtils.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
-        cachedDefaultValue = value;
+        cachedDefaultValue = getCacheDefaultValue() ? value : null;
         return new StringParameterValue(name, value);
     }
 

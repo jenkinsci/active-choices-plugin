@@ -64,26 +64,15 @@ class TestAbstractScriptableParameterDefaultValueCache {
     }
 
     /**
-     * Verifies that {@code getDefaultParameterValue()} uses an internal cache:
+     * Verifies that {@code getDefaultParameterValue()} uses an internal cache when
+     * {@code cacheDefaultValue} is enabled:
      * - the default value is computed once from the choices
      * - subsequent calls reuse the cached value without recomputing choices.
      */
     @Test
-    void testDefaultValueIsCached() throws Exception {
-        GroovyScript script = new GroovyScript(
-            new SecureGroovyScript(SCRIPT, false, null),
-            new SecureGroovyScript(FALLBACK_SCRIPT, false, null)
-        );
-
-        CountingChoiceParameter param = new CountingChoiceParameter(
-            "param000",
-            "description",
-            "some-random-name",
-            script,
-            "choiceType",
-            true,
-            0
-        );
+    void testDefaultValueIsCachedWhenCacheEnabled() throws Exception {
+        CountingChoiceParameter param = newCountingChoiceParameter();
+        param.setCacheDefaultValue(true);
 
         // First call: choices are evaluated and default value is computed
         ParameterValue first = param.getDefaultParameterValue();
@@ -96,6 +85,42 @@ class TestAbstractScriptableParameterDefaultValueCache {
 
         // Choices must have been computed exactly once
         assertEquals(1, param.getChoicesEvalCount());
+    }
+
+    /**
+     * Verifies that by default {@code getDefaultParameterValue()} does not cache the
+     * computed value, so scripts that generate choices dynamically are re-evaluated
+     * on every call instead of reusing a previously stored value.
+     */
+    @Test
+    void testDefaultValueIsNotCachedByDefault() throws Exception {
+        CountingChoiceParameter param = newCountingChoiceParameter();
+
+        ParameterValue first = param.getDefaultParameterValue();
+        assertEquals("first", ((StringParameterValue) first).getValue());
+
+        ParameterValue second = param.getDefaultParameterValue();
+        assertEquals("first", ((StringParameterValue) second).getValue());
+
+        // Choices must have been computed on every call
+        assertEquals(2, param.getChoicesEvalCount());
+    }
+
+    private static CountingChoiceParameter newCountingChoiceParameter() throws Exception {
+        GroovyScript script = new GroovyScript(
+            new SecureGroovyScript(SCRIPT, false, null),
+            new SecureGroovyScript(FALLBACK_SCRIPT, false, null)
+        );
+
+        return new CountingChoiceParameter(
+            "param000",
+            "description",
+            "some-random-name",
+            script,
+            "choiceType",
+            true,
+            0
+        );
     }
 
     /**

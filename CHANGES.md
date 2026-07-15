@@ -31,7 +31,10 @@
 - #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
 - #947 JENKINS-75760 Override getDefaultParameterValue for the checkbox list (thanks @c3p0-maif)
 - Upgrade TS code from 5.* to 6.*
-
+- #990 JENKINS-76298 follow-up: Add `cacheDefaultValue` option to control the default value cache
+  introduced in 2.8.9. It is now disabled by default, so parameters whose choices are
+  generated dynamically by a script no longer reuse a previously cached (and persisted)
+  value (thanks @ krrrr38)
 ## Version 2.8.9 (2026/02/16)
 
 - Ban JUnit 4 imports (thanks @ strangelookingnerd)
