@@ -65,5 +65,8 @@
     <f:entry title="${%Omit value field}" field="omitValueField" help="/plugin/uno-choice/help-omitValueField.html">
         <f:checkbox name="parameter.omitValueField" checked="${instance.omitValueField}" default="false">${%Omit value field}</f:checkbox>
     </f:entry>
+    <f:entry title="${%Cache default value}" field="cacheDefaultValue" help="/plugin/uno-choice/help-cacheDefaultValue.html">
+        <f:checkbox name="parameter.cacheDefaultValue" checked="${instance.cacheDefaultValue}" default="false">${%Cache default value}</f:checkbox>
+    </f:entry>
   </f:advanced>
 </j:jelly>

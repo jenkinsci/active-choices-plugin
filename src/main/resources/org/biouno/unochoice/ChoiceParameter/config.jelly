@@ -56,4 +56,7 @@
   <f:entry title="${%Filter starts at}" field="filterLength" help="/plugin/uno-choice/help-filterLengthParameters.html">
     <f:textbox name="parameter.filterLength" default="1" value="${instance.filterLength}" />
   </f:entry>
+  <f:entry title="${%Cache default value}" field="cacheDefaultValue" help="/plugin/uno-choice/help-cacheDefaultValue.html">
+    <f:checkbox name="parameter.cacheDefaultValue" checked="${instance.cacheDefaultValue}" default="false">${%Cache default value}</f:checkbox>
+  </f:entry>
 </j:jelly>
