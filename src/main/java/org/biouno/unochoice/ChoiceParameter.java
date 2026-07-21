@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014-2020 Ioannis Moutsatsos, Bruno P. Kinoshita
+ * Copyright (c) 2014-2026 Ioannis Moutsatsos, Bruno P. Kinoshita
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,18 @@
 package org.biouno.unochoice;
 
 import hudson.Extension;
-
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.biouno.unochoice.model.Script;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A parameter that renders its options as a choice (select) HTML component.
@@ -66,6 +66,11 @@ public class ChoiceParameter extends AbstractScriptableParameter {
      * is activated.
      */
     private final Integer filterLength;
+
+    /**
+     * Constant used for check boxes.
+     */
+    private static final String SELECTED_OPTION = "selected";
 
     /**
      * Constructor called from Jelly with parameters.
@@ -149,27 +154,26 @@ public class ChoiceParameter extends AbstractScriptableParameter {
     }
 
     /**
-     * JENKINS-75760 : checkbox list must return empty default value.
-     * @return empty parameterValue
+     * Returns the default value for this parameter.
+     *
+     * <p>For checkbox parameters (JENKINS-75760), the default value is derived from
+     * the choices marked as selected in the choice metadata. If no choices are
+     * selected, an empty value is returned.</p>
+     *
+     * @return the default parameter value, or a comma-separated list of selected checkbox values
      */
     @Override
     public ParameterValue getDefaultParameterValue() {
         if (Objects.equals(choiceType, PARAMETER_TYPE_CHECK_BOX)) {
             final String name = getName();
-            Map<Object, Object> choices = getChoices(Collections.emptyMap());
-            List<String> defaultValues = new ArrayList<>();
+            final Map<Object, Object> choices = getChoices(Collections.emptyMap());
 
-            for (Map.Entry<?, ?> entry : choices.entrySet()) {
-                String keyStr = ObjectUtils.toString(entry.getKey());
-                String valueStr = ObjectUtils.toString(entry.getValue());
-                // on split choice sur ':' et on recherche selected
-                String key = Pattern.compile(":").splitAsStream(keyStr).findFirst().orElse(keyStr);
-                List<String> parts = Pattern.compile(":").splitAsStream(valueStr).toList();
-                if (parts.contains("selected")) {
-                    defaultValues.add(key);
-                }
-            }
-            return new StringParameterValue(name, String.join(",", defaultValues));
+            final String defaultValue = choices.entrySet().stream()
+                    .filter(entry -> ObjectUtils.toString(entry.getValue()).contains(SELECTED_OPTION))
+                    .map(entry -> ObjectUtils.toString(entry.getKey()).split(":", 2)[0])
+                    .collect(Collectors.joining(","));
+
+            return new StringParameterValue(name, defaultValue);
         }
         return super.getDefaultParameterValue();
     }

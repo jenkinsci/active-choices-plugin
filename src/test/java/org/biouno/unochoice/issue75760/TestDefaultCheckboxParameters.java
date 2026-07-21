@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014-2023 Ioannis Moutsatsos, Bruno P. Kinoshita
+ * Copyright (c) 2014-2026 Ioannis Moutsatsos, Bruno P. Kinoshita
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,17 @@
  */
 package org.biouno.unochoice.issue75760;
 
-import hudson.model.queue.QueueTaskFuture;
-import jenkins.plugins.git.junit.jupiter.WithGitSampleRepo;
-import jenkins.plugins.git.traits.BranchDiscoveryTrait;
-import jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait;
 import hudson.model.ParametersDefinitionProperty;
+import hudson.model.queue.QueueTaskFuture;
 import jenkins.branch.BranchSource;
 import jenkins.model.Jenkins;
 import jenkins.plugins.git.GitBranchSCMHead;
 import jenkins.plugins.git.GitSCMSource;
 import jenkins.plugins.git.GitSampleRepoRule;
+import jenkins.plugins.git.junit.jupiter.WithGitSampleRepo;
+import jenkins.plugins.git.traits.BranchDiscoveryTrait;
 import jenkins.scm.api.SCMHead;
+import jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait;
 import org.biouno.unochoice.AbstractUnoChoiceParameter;
 import org.biouno.unochoice.ChoiceParameter;
 import org.biouno.unochoice.model.GroovyScript;
@@ -45,7 +45,9 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.jvnet.hudson.test.*;
+import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.MockAuthorizationStrategy;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.List;
@@ -56,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test that a build with no parameter set result on an empty value and not the first choice item.
  *
- * @since 2.6.5
+ * @since 2.8.10
  */
 @Issue("JENKINS-75760")
 @WithJenkins
