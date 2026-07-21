@@ -2,7 +2,7 @@
 
 ## Version 2.8.10 (????/??/??)
 
-- Adapt build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
+- Adapt the build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
 - Bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4
 - Bump @babel/preset-env from 7.29.0 to 7.29.7
@@ -19,6 +19,7 @@
 - Bump webpack from 5.105.4 to 5.106.2
 - Bump webpack-cli from 7.0.1 to 7.0.2
 - #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
+- #947 JENKINS-75760 Override getDefaultParameterValue for the checkbox list (thanks @c3p0-maif)
 
 ## Version 2.8.9 (2026/02/16)
 
