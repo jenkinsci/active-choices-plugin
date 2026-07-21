@@ -4,6 +4,7 @@
 
 - Adapt the build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
+- Bump @babel/core from 7.29.0 to 7.29.6
 - Bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4
 - Bump @babel/preset-env from 7.29.0 to 7.29.7
 - Bump eslint from 10.0.3 to 10.3.0
@@ -13,11 +14,12 @@
 - Bump jest-junit from 16.0.0 to 17.0.0
 - Bump jsdom from 28.1.0 to 29.1.1
 - Bump org.jenkins-ci.plugins:nodelabelparameter from 759.vb_b_e95db_f3251 to 851.vd94e5048d321
-- Bump org.jenkins-ci.plugins:plugin from 6.2152.ve00a_731c3ce9 to 6.2189.v695a_c41f5249
+- Bump org.jenkins-ci.plugins:plugin from 6.2152.ve00a_731c3ce9 to 6.2211.v27f680c93c53
 - Bump org.jenkins-ci.plugins:scriptler from 444.v7fd079eb_3b_86 to 456.v52a_410f4cdb_8
 - Bump ts-loader from 9.5.4 to 9.5.7
 - Bump webpack from 5.105.4 to 5.106.2
 - Bump webpack-cli from 7.0.1 to 7.0.2
+- Bump ws from 8.18.3 to 8.21.1
 - #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
 - #947 JENKINS-75760 Override getDefaultParameterValue for the checkbox list (thanks @c3p0-maif)
 
