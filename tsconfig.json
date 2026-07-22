@@ -8,6 +8,11 @@
     "compilerOptions": {
         "module": "CommonJS",
         "target": "es5",
+        "ignoreDeprecations": "6.0",
+        "rootDir": "src/main/js",
+        "types": [
+            "jquery"
+        ],
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "dist"
