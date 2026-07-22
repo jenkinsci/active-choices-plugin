@@ -17,6 +17,8 @@
 - Bump org.jenkins-ci.plugins:plugin from 6.2152.ve00a_731c3ce9 to 6.2211.v27f680c93c53
 - Bump org.jenkins-ci.plugins:scriptler from 444.v7fd079eb_3b_86 to 456.v52a_410f4cdb_8
 - Bump ts-loader from 9.5.4 to 9.5.7
+- Bump typescript from 5.9.3 to 6.0.3
+- Bump undici from 7.25.0 to 7.28.0
 - Bump webpack from 5.105.4 to 5.106.2
 - Bump webpack-cli from 7.0.1 to 7.0.2
 - Bump ws from 8.18.3 to 8.21.1
