@@ -10,3 +10,5 @@ test-output/
 node/
 node_modules/
 src/main/webapp/js
+.yarn/install-state.gz
+

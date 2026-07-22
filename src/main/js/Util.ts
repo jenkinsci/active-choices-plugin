@@ -138,11 +138,15 @@ export default class Util {
                 return ''
             }
             return selectValues.toString();
-        } else if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
-            return e.prop('checked') ? e.val().toString(): '';
-        } else {
-            return e.val().toString();
         }
+
+        const value = e.val();
+
+        if (e.attr('type') === 'checkbox' || e.attr('type') === 'radio') {
+            return e.prop('checked') && value !== undefined ? value.toString() : '';
+        }
+
+        return value !== undefined ? value.toString() : '';
     }
 
 }

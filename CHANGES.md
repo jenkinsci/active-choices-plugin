@@ -22,6 +22,7 @@
 - Bump ws from 8.18.3 to 8.21.1
 - #897 JENKINS-75644 Cache project resolution after UUID fallback (thanks @tzachs)
 - #947 JENKINS-75760 Override getDefaultParameterValue for the checkbox list (thanks @c3p0-maif)
+- Upgrade TS code from 5.* to 6.*
 
 ## Version 2.8.9 (2026/02/16)
 
