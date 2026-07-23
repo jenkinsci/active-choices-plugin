@@ -24,7 +24,7 @@
         "eslint": "^10.3.0",
         "eslint-config-prettier": "^10.1.8",
         "jest": "^30.3.0",
-        "jest-environment-jsdom": "^30.3.0",
+        "jest-environment-jsdom": "^30.4.1",
         "jest-junit": "^17.0.0",
         "jquery": "^4.0.0",
         "jsdom": "^29.1.1",
