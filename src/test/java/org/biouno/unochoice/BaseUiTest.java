@@ -94,6 +94,8 @@ public abstract class BaseUiTest {
             if (StringUtils.isNotBlank(ciBrowserBinary)) {
                 options.setBinary(ciBrowserBinary);
             }
+        } else {
+            options.addArguments("--headless=new");
         }
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, MAX_WAIT);
@@ -260,37 +262,22 @@ public abstract class BaseUiTest {
     }
 
     /**
-     * This function receives a {@code By} selector to avoid stale elements - it will repeatedly
-     * query the driver for a new element.
+     * Waits until the supplied radio elements have the expected values.
      *
-     * @param selector selector
-     * @param options expected options
+     * <p>The supplier should return fresh elements on each invocation to avoid
+     * stale element references when the page updates dynamically.</p>
+     *
+     * @param radioSupplier supplier that provides the current radio elements
+     * @param options expected radio values
      */
-    protected void checkRadios(By selector, String... options) {
+    protected void checkRadios(Supplier<List<WebElement>> radioSupplier, String... options) {
         wait.withMessage(() -> {
-                    final List<WebElement> radios = driver.findElements(selector);
-                    List<String> optionValues = radios.stream().map(it -> it.getDomAttribute("value")).toList();
-                    return MessageFormat.format("{0} should have had {1}. Had {2}", radios, Arrays.asList(options), optionValues);
+                    List<String> optionValues = radioSupplier.get().stream().map(it -> it.getDomAttribute("value")).toList();
+                    return MessageFormat.format("{0} should have had {1}. Had {2}", radioSupplier, Arrays.asList(options), optionValues);
                 })
                 .until(d -> {
                     try {
-                        final List<WebElement> radios = driver.findElements(selector);
-                        List<String> optionValues = radios.stream().map(it -> it.getDomAttribute("value")).toList();
-                        return optionValues.equals(Arrays.asList(options));
-                    } catch (StaleElementReferenceException e) {
-                        return false;
-                    }
-                });
-    }
-
-    protected void checkRadios(Supplier<List<WebElement>> radios, String... options) {
-        wait.withMessage(() -> {
-                    List<String> optionValues = radios.get().stream().map(it -> it.getDomAttribute("value")).toList();
-                    return MessageFormat.format("{0} should have had {1}. Had {2}", radios, Arrays.asList(options), optionValues);
-                })
-                .until(d -> {
-                    try {
-                        List<String> optionValues = radios.get().stream().map(it -> it.getDomAttribute("value")).toList();
+                        List<String> optionValues = radioSupplier.get().stream().map(it -> it.getDomAttribute("value")).toList();
                         return optionValues.equals(Arrays.asList(options));
                     } catch (StaleElementReferenceException e) {
                         return false;
@@ -300,5 +287,31 @@ public abstract class BaseUiTest {
 
     protected void waitLoadingMessage() {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".jenkins-spinner")));
+    }
+
+    protected void waitForCheckboxes(String parameterName, int expectedCount) {
+        wait.until(driver -> {
+            try {
+                List<WebElement> elements = findCheckboxes(parameterName);
+
+                System.out.printf(
+                        "Checkboxes: %d %s%n",
+                        elements.size(),
+                        elements.stream()
+                                .map(e -> e.getDomAttribute("value"))
+                                .toList());
+
+                return elements.size() == expectedCount;
+            } catch (StaleElementReferenceException e) {
+                System.out.println("stale");
+                return false;
+            }
+        });
+    }
+
+    protected <T> T retryOnStale(Supplier<T> supplier) {
+        return new WebDriverWait(driver, Duration.ofSeconds(5))
+                .ignoring(StaleElementReferenceException.class)
+                .until(d -> supplier.get());
     }
 }
