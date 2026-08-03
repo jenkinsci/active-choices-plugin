@@ -16,7 +16,7 @@
         "@babel/cli": "^7.28.6",
         "@babel/core": "^7.29.7",
         "@babel/preset-env": "^7.29.7",
-        "@babel/preset-flow": "^7.27.1",
+        "@babel/preset-flow": "^7.29.7",
         "@babel/preset-typescript": "^7.29.7",
         "@types/jquery": "^4.0.1",
         "babel-loader": "^10.1.1",
