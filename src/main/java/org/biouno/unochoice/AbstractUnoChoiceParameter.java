@@ -34,7 +34,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.util.JSONUtils;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.util.Utils;
 import org.kohsuke.stapler.StaplerRequest2;
 

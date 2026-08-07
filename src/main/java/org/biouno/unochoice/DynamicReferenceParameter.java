@@ -27,8 +27,8 @@ package org.biouno.unochoice;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.Ancestor;

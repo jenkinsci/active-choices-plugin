@@ -27,8 +27,7 @@ package org.biouno.unochoice;
 import hudson.Extension;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -169,8 +168,8 @@ public class ChoiceParameter extends AbstractScriptableParameter {
             final Map<Object, Object> choices = getChoices(Collections.emptyMap());
 
             final String defaultValue = choices.entrySet().stream()
-                    .filter(entry -> ObjectUtils.toString(entry.getValue()).contains(SELECTED_OPTION))
-                    .map(entry -> ObjectUtils.toString(entry.getKey()).split(":", 2)[0])
+                    .filter(entry -> Objects.toString(entry.getValue()).contains(SELECTED_OPTION))
+                    .map(entry -> Objects.toString(entry.getKey()).split(":", 2)[0])
                     .collect(Collectors.joining(","));
 
             return new StringParameterValue(name, defaultValue);

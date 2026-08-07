@@ -26,7 +26,7 @@ package org.biouno.unochoice;
 
 import hudson.Extension;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;

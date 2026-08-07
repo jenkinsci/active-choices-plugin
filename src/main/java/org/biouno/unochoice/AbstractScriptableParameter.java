@@ -30,10 +30,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.model.Script;
 import org.biouno.unochoice.util.ScriptCallback;
 import org.biouno.unochoice.util.Utils;
@@ -381,7 +381,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
             return new StringParameterValue(name, cachedDefaultValue);
         }
         String defaultValue = findDefaultValue(getChoices(Collections.emptyMap()));
-        final String value = ObjectUtils.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
+        final String value = Objects.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
         cachedDefaultValue = getCacheDefaultValue() ? value : null;
         return new StringParameterValue(name, value);
     }
@@ -394,15 +394,15 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         List<String> defaultValues = new ArrayList<>();
         List<Entry<?, ?>> entries = new ArrayList<>(choices.entrySet());
         for (Entry<?, ?> entry : entries) {
-            String valueText = ObjectUtils.toString(entry.getValue(), "");
+            String valueText = Objects.toString(entry.getValue(), "");
             if (Utils.isSelected(valueText)) {
-                String keyText = ObjectUtils.toString(entry.getKey(), "");
+                String keyText = Objects.toString(entry.getKey(), "");
                 defaultValues.add(Utils.escapeSelectedAndDisabled(keyText));
             }
         }
         if (defaultValues.isEmpty()) {
-            String keyText = ObjectUtils.toString(entries.get(0).getKey(), "");
-            return ObjectUtils.toString(keyText, "");
+            String keyText = Objects.toString(entries.get(0).getKey(), "");
+            return Objects.toString(keyText, "");
         }
 
         StringBuilder defaultValuesText = new StringBuilder();
