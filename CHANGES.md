@@ -1,6 +1,6 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.10 (????/??/??)
+## Version 2.8.10 (2026/08/25)
 
 - Adapt the build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
@@ -39,6 +39,7 @@
   generated dynamically by a script no longer reuse a previously cached (and persisted)
   value #990 (thanks @ krrrr38)
 - Migrate from Commons Lang 2 to Commons Lang 3 #1008 (thanks @timja)
+
 ## Version 2.8.9 (2026/02/16)
 
 - Ban JUnit 4 imports (thanks @ strangelookingnerd)
