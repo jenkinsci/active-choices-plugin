@@ -15,7 +15,7 @@
 - Bump @babel/preset-flow from 7.27.1 to 7.29.7
 - Bump @babel/preset-typescript from 7.28.5 to 7.29.7
 - Bump @types/jquery from 4.0.0 to 4.0.1
-- Bump eslint from 10.0.3 to 10.8.1
+- Bump eslint from 10.0.3 to 10.9.0
 - Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
 - Bump jest from 30.2.0 to 30.4.2
 - Bump jest-environment-jsdom from 30.2.0 to 30.4.1
