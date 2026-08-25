@@ -43,5 +43,9 @@
         <input class='uno_choice_filter jenkins-input jenkins-!-margin-top-1' type='text' value='' name='test' placeholder='Filter'/>
       </j:if>
     </div>
+    <j:if test="${it.required}">
+      <span class="ac-required-data-holder" data-param-name="${paramName}" data-param-label="${h.escape(it.name)}"/>
+      <st:adjunct includes="org.biouno.unochoice.common.required-validation"/>
+    </j:if>
   </f:entry>
 </j:jelly>
