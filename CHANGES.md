@@ -1,5 +1,9 @@
 # Active Choices plug-in changelog
 
+## Version 2.8.11 (????/??/??)
+
+-
+
 ## Version 2.8.10 (2026/08/25)
 
 - Adapt the build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
