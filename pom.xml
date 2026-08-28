@@ -36,7 +36,7 @@
     </issueManagement>
 
     <properties>
-        <revision>2.8.10</revision>
+        <revision>2.8.11</revision>
         <changelist>-SNAPSHOT</changelist>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.504</jenkins.baseline>

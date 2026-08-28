@@ -1,6 +1,10 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.10 (????/??/??)
+## Version 2.8.11 (????/??/??)
+
+-
+
+## Version 2.8.10 (2026/08/25)
 
 - Add `required` option to Active Choices Parameter and Active Choices Reactive Parameter: enforces a non-empty
   selection server-side (throws `Failure`) and provides browser-side inline error with disabled Build button
@@ -13,7 +17,7 @@
 - Bump @babel/preset-flow from 7.27.1 to 7.29.7
 - Bump @babel/preset-typescript from 7.28.5 to 7.29.7
 - Bump @types/jquery from 4.0.0 to 4.0.1
-- Bump eslint from 10.0.3 to 10.8.1
+- Bump eslint from 10.0.3 to 10.9.0
 - Bump io.github.bonigarcia:webdrivermanager from 6.3.3 to 6.3.4
 - Bump jest from 30.2.0 to 30.4.2
 - Bump jest-environment-jsdom from 30.2.0 to 30.4.1
@@ -41,6 +45,7 @@
   generated dynamically by a script no longer reuse a previously cached (and persisted)
   value #990 (thanks @ krrrr38)
 - Migrate from Commons Lang 2 to Commons Lang 3 #1008 (thanks @timja)
+
 ## Version 2.8.9 (2026/02/16)
 
 - Ban JUnit 4 imports (thanks @ strangelookingnerd)
