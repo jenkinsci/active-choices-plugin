@@ -198,7 +198,7 @@ class TestRequiredParameter {
 
     // --- Helpers
 
-    private GroovyScript groovyScript() {
+    private GroovyScript groovyScript() throws Descriptor.FormException {
         return new GroovyScript(
                 new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
                 new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
