@@ -131,7 +131,8 @@ class TestRequiredParameter {
 
         StringParameterValue spv = new StringParameterValue("db", "host1.example.com");
         StaplerRequest2 request = Mockito.mock(StaplerRequest2.class);
-        Mockito.when(request.bindJSON(StringParameterValue.class, Mockito.any(JSONObject.class))).thenReturn(spv);
+        Mockito.when(request.bindJSON(Mockito.eq(StringParameterValue.class), Mockito.any(JSONObject.class)))
+                .thenReturn(spv);
 
         var value = param.createValue(request, json);
         assertEquals("host1.example.com", value.getValue().toString());
@@ -145,7 +146,8 @@ class TestRequiredParameter {
 
         StringParameterValue spv = new StringParameterValue("db", "");
         StaplerRequest2 request = Mockito.mock(StaplerRequest2.class);
-        Mockito.when(request.bindJSON(StringParameterValue.class, Mockito.any(JSONObject.class))).thenReturn(spv);
+        Mockito.when(request.bindJSON(Mockito.eq(StringParameterValue.class), Mockito.any(JSONObject.class)))
+                .thenReturn(spv);
 
         var value = param.createValue(request, json);
         assertEquals("", value.getValue().toString());
