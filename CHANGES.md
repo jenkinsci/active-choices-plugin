@@ -2,7 +2,10 @@
 
 ## Version 2.8.11 (????/??/??)
 
--
+- Bump @humanfs/node from 0.16.6 to 0.16.8
+- Bump jest from 30.4.2 to 30.5.0
+- Bump org.seleniumhq.selenium:selenium-java from 4.47.0 to 4.48.0
+- Bump webpack-cli from 7.2.2 to 7.2.3
 
 ## Version 2.8.10 (2026/08/25)
 
