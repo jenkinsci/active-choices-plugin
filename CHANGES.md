@@ -9,6 +9,8 @@
 
 ## Version 2.8.10 (2026/08/25)
 
+- Add `required` option to Active Choices Parameter and Active Choices Reactive Parameter: enforces a non-empty
+  selection server-side (throws `Failure`) and provides browser-side inline error with disabled Build button
 - Adapt the build status icon for ci.jenkins.io permissions change (thanks @MarkEWaite)
 - Adapt to release drafter v7 configuration change (thanks @MarkEWaite)
 - Bump @babel/cli from 7.28.6 to 7.29.7
