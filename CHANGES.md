@@ -7,7 +7,7 @@
 - Bump jest from 30.4.2 to 30.5.1
 - Bump jest-environment-jsdom from 30.5.0 to 30.5.1
 - Bump js-yaml from 3.15.1 to 3.15.2
-- Bump org.seleniumhq.selenium:selenium-java from 4.47.0 to 4.48.0
+- Bump org.seleniumhq.selenium:selenium-java from 4.47.0 to 4.49.0
 - Bump webpack from 5.109.2 to 5.110.3
 - Bump webpack-cli from 7.2.2 to 7.2.3
 
