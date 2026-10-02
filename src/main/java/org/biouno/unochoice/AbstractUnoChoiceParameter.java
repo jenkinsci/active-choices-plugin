@@ -168,13 +168,7 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
             final JSONObject parameterJsonModel = new JSONObject(false);
             final Object value = json.get("value");
             final Object name = json.get("name");
-            final String valueAsText;
-
-            if (JSONUtils.isArray(value)) {
-                valueAsText = ((JSONArray) value).join(",", true);
-            } else {
-                valueAsText = (value == null) ? "" : String.valueOf(value);
-            }
+            final String valueAsText = getSubmittedValueAsText(value);
 
             parameterJsonModel.put("name",  name);
             parameterJsonModel.put("value", valueAsText);
@@ -183,6 +177,18 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
             parameterValue.setDescription(getDescription());
             return parameterValue;
         }
+    }
+
+    private static String getSubmittedValueAsText(Object value) {
+        if (!JSONUtils.isArray(value)) {
+            return (value == null) ? "" : String.valueOf(value);
+        }
+
+        JSONArray values = JSONArray.fromObject(value);
+        while (values.size() > 1 && "".equals(String.valueOf(values.get(values.size() - 1)))) {
+            values.remove(values.size() - 1);
+        }
+        return values.join(",", true);
     }
 
     /**
