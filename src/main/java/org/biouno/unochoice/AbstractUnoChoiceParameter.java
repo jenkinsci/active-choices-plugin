@@ -24,6 +24,7 @@
 
 package org.biouno.unochoice;
 
+import hudson.model.Failure;
 import hudson.model.FileParameterValue;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
@@ -36,6 +37,7 @@ import net.sf.json.util.JSONUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.biouno.unochoice.util.Utils;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest2;
 
 import java.io.IOException;
@@ -77,6 +79,12 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
     public static final int DEFAULT_MAX_VISIBLE_ITEM_COUNT = 10;
 
     private final String randomName;
+
+    /**
+     * Whether a non-empty value is mandatory for this parameter.
+     * Applies to checkbox, multi-select and radio choice types.
+     */
+    private Boolean required;
 
     /**
      * Inherited constructor.
@@ -121,6 +129,30 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
         return randomName;
     }
 
+    /**
+     * Returns whether this parameter is required (i.e. a non-empty selection must be provided).
+     * <p>
+     * This flag is meaningful for checkbox, multi-select and radio choice types. For single-select
+     * parameters a value is always submitted from the UI when the choices list is non-empty, so the
+     * flag is effectively a no-op there.
+     * </p>
+     *
+     * @return {@code true} if the parameter is required, {@code false} (default) otherwise
+     */
+    public boolean getRequired() {
+        return required != null && required;
+    }
+
+    /**
+     * Sets whether this parameter is required.
+     *
+     * @param required {@code true} to require a non-empty selection
+     */
+    @DataBoundSetter
+    public void setRequired(Boolean required) {
+        this.required = required;
+    }
+
     /*
      * (non-Javadoc)
      * @see hudson.model.SimpleParameterDefinition#createValue(java.lang.String)
@@ -129,6 +161,9 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
     public ParameterValue createValue(String value) {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.entering(AbstractUnoChoiceParameter.class.getName(), "createValue", value);
+        }
+        if (getRequired() && StringUtils.isBlank(value)) {
+            throw new Failure("Parameter [" + getName() + "] is required and must not be empty.");
         }
         final String description = getDescription();
         final String name = getName();
@@ -174,6 +209,10 @@ public abstract class AbstractUnoChoiceParameter extends SimpleParameterDefiniti
                 valueAsText = ((JSONArray) value).join(",", true);
             } else {
                 valueAsText = (value == null) ? "" : String.valueOf(value);
+            }
+
+            if (getRequired() && StringUtils.isBlank(valueAsText)) {
+                throw new Failure("Parameter [" + getName() + "] is required and must not be empty.");
             }
 
             parameterJsonModel.put("name",  name);
