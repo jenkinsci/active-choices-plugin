@@ -68,6 +68,10 @@
         ],
         "testMatch": [
             "<rootDir>/src/test/js/*.test.ts"
-        ]
+        ],
+        "moduleFileExtensions": ["js", "mjs", "cjs", "jsx", "ts", "tsx", "json", "node", "es6"],
+        "transform": {
+            "\\.(es6|[jt]sx?)$": "babel-jest"
+        }
     }
 }

@@ -1,6 +1,6 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.11 (????/??/??)
+## Version 2.8.11 (2026/??/??)
 
 - Bump @humanfs/node from 0.16.6 to 0.16.8
 - Bump eslint from 10.9.1 to 10.11.0
@@ -16,6 +16,10 @@
 - Bump webpack from 5.109.2 to 5.111.1
 - Bump webpack-cli from 7.2.2 to 7.2.3
 - Prevent infinite loop when a Cascade Reference Parameter references itself #1017 (thanks @B-Sp67)
+- JENKINS-73556, GH-868: Disable the Build button while reactive parameters are updating,
+  and keep it disabled with a reload message if an update fails #868 (thanks @Tomer9000)
+- JENKINS-75793, GH-902: Wait for a parameter to be rendered before updating the parameters
+  that reference it #902 (thanks @Tomer9000)
 
 ## Version 2.8.10 (2026/08/25)
 
