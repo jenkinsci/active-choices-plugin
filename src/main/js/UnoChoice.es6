@@ -371,7 +371,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     if (this.referencesMe(other)) {
                         console.log(`[${this.paramName}] - CascadeParameter#update - Updating ${other.getParameterName()} from ${this.getParameterName()}`);
                         window.requestIdleCallback(async () => {
-                            await other.update(false);
+                            await other.update(other.getParameterName() === this.getParameterName());
                         })
                     }
                 }

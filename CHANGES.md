@@ -15,6 +15,7 @@
 - Bump source-map-js from 1.2.1 to 1.2.2
 - Bump webpack from 5.109.2 to 5.111.1
 - Bump webpack-cli from 7.2.2 to 7.2.3
+- Prevent infinite loop when a Cascade Reference Parameter references itself #1017 (thanks @B-Sp67)
 
 ## Version 2.8.10 (2026/08/25)
 
