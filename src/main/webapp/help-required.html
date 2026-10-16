@@ -1,0 +1,18 @@
+<div>
+    <p>
+        When enabled, the build will be rejected if the user submits an empty value for this
+        parameter. This enforcement applies at the server side, so it covers the
+        <em>Build with Parameters</em> form, Rebuild, the REST API, and the CLI.
+    </p>
+    <p>
+        This option is most useful for <strong>Check Boxes</strong>, <strong>Multi Select</strong>,
+        and <strong>Radio Buttons</strong> choice types, where the user can submit the form without
+        selecting any option. For <strong>Single Select</strong> parameters a value is always
+        included in the submission when the choices list is non-empty, so the flag has no practical
+        effect there.
+    </p>
+    <p>
+        The browser-side validation (inline error message and disabled <em>Build</em> button)
+        provides early feedback, but server-side enforcement is the authoritative gate.
+    </p>
+</div>
