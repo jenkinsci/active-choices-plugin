@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 import Util from './Util.ts';
+import LoadingGuard from './LoadingGuard.ts';
 
 /*
  * At the time of writing, requestIdleCallback is still not available in Safari,
@@ -82,6 +83,8 @@ jQuery3.noConflict();
  */
 var UnoChoice = UnoChoice || (jQuery3 => {
     let util = new Util(jQuery3);
+    // Keeps Build disabled while any parameter is updating (JENKINS-73556).
+    let loadingGuard = new LoadingGuard(document);
     // The final public object
     let instance = {};
     let SEPARATOR = '__LESEP__';
@@ -102,6 +105,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         this.proxy = proxy;
         this.referencedParameters = [];
         this.filterElement = null;
+        trackProxy(proxy);
     }
     /**
      * Gets the parameter name.
@@ -370,9 +374,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
                         console.log(`[${this.paramName}] - CascadeParameter#update - Updating ${other.getParameterName()} from ${this.getParameterName()}`);
-                        window.requestIdleCallback(async () => {
-                            await other.update(false);
-                        })
+                        scheduleUpdate(other, other.getParameterName() === this.getParameterName());
                     }
                 }
             }
@@ -435,10 +437,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 //_self.cascadeParameter.loading(true);
                 jQuery3(".behavior-loading").show();
                 // start updating in separate async function so browser will be able to repaint and show 'loading' animation , see JENKINS-34487
-                window.requestIdleCallback(async () => {
-                    await _self.cascadeParameter.update(false);
+                scheduleUpdate(_self.cascadeParameter, false).then(() => {
                     jQuery3(".behavior-loading").hide();
-                })
+                });
             }
         });
         cascadeParameter.getReferencedParameters().push(this);
@@ -465,6 +466,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         this.paramElement = paramElement;
         this.proxy = proxy;
         this.referencedParameters = [];
+        trackProxy(proxy);
     }
     /**
      * Extend the cascade parameter.
@@ -556,9 +558,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     let other = cascadeParameters[i];
                     if (this.referencesMe(other)) {
                         console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Updating ${other.paramName} from ${this.paramName}`);
-                        window.requestIdleCallback(async () => {
-                            await other.update(true);
-                        })
+                        scheduleUpdate(other, true);
                     }
                 }
             }
@@ -847,6 +847,31 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         return value;
     }
 
+    // Updates the parameter once the browser is idle; Build stays disabled from now until the returned promise settles.
+    function scheduleUpdate(parameter, avoidRecursion) {
+        let done = loadingGuard.begin(parameter.getParameterElement());
+        return new Promise(resolve => {
+            window.requestIdleCallback(async () => {
+                try {
+                    await parameter.update(avoidRecursion);
+                } catch (e) {
+                    loadingGuard.fail();
+                    console.error(`[${parameter.getParameterName()}] - scheduleUpdate - Update failed`, e);
+                } finally {
+                    done();
+                    resolve();
+                }
+            });
+        });
+    }
+
+    // Calls made through this proxy keep Build disabled until their response has been rendered.
+    function trackProxy(proxy) {
+        if (proxy) {
+            proxy.loadingGuard = loadingGuard;
+        }
+    }
+
     // Hacks in Jenkins core
     /**
      * <p>This function is the same as makeStaplerProxy available in Jenkins core, but executes calls
@@ -901,6 +926,14 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 // what is rendered when, and properly chain certain actions (e.g.
                 // a dependant parameter is only rendered after its parent/referenced
                 // parameter).
+                // JENKINS-73556: the call counts as pending until its callback has rendered the response.
+                let guard = proxy.loadingGuard;
+                let done = guard ? guard.begin() : () => {};
+                let failed = error => {
+                    if (guard) guard.fail();
+                    done();
+                    console.error(`makeStaplerProxy2 - ${methodName} failed`, error);
+                };
                 await fetch(url + methodName, {
                     method: 'POST',
                     headers: headers,
@@ -912,8 +945,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                             status: response.status,
                             statusText: response.statusText,
                         };
+                        // Returned, so that awaiting this call also waits for its callback (JENKINS-75793).
                         if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
-                            response.json().then(function (responseObject) {
+                            return response.json().then(function (responseObject) {
                                 t.responseObject = function () {
                                     return responseObject;
                                 };
@@ -921,16 +955,22 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                                 if (callback != null) {
                                     callback(t);
                                 }
-                            });
+                            }).then(done, failed);
                         } else {
-                            response.text().then(function (responseText) {
+                            return response.text().then(function (responseText) {
                                 t.responseText = responseText;
                                 if (callback != null) {
                                     callback(t);
                                 }
-                            });
+                            }).then(done, failed);
                         }
+                    } else {
+                        // The parameter keeps its previous value, so it must not be submitted.
+                        failed(`HTTP ${response.status} ${response.statusText}`);
                     }
+                }, function (error) {
+                    failed(error);
+                    throw error;
                 })
             }
         };
@@ -1019,9 +1059,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
             // call update methods in Java passing the HTML values
             console.log(`[${name}] - renderCascadeChoiceParameter - Updating cascade of parameter [${name}] ...`);
-            window.requestIdleCallback(async () => {
-                await cascadeParameter.update(false);
-            })
+            scheduleUpdate(cascadeParameter, false);
         } else {
             console.log(`[${name}] - renderCascadeChoiceParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
@@ -1104,9 +1142,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
 
             // call update methods in Java passing the HTML values
             console.log(`[${name}] - renderDynamicRenderParameter - Updating cascade of parameter [${name}] ...`);
-            window.requestIdleCallback(async () => {
-                await dynamicParameter.update(false);
-            })
+            scheduleUpdate(dynamicParameter, false);
         } else {
             console.log(`[${name}] - renderDynamicRenderParameter - Parameter error: Missing parameter [${paramName}] HTML element!`);
         }
@@ -1120,6 +1156,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     instance.ReferencedParameter = ReferencedParameter;
     instance.FilterElement = FilterElement;
     instance.makeStaplerProxy2 = makeStaplerProxy2;
+    instance.loadingGuard = loadingGuard;
     instance.cascadeParameters = cascadeParameters;
     instance.renderChoiceParameter = renderChoiceParameter;
     instance.renderCascadeChoiceParameter = renderCascadeChoiceParameter;

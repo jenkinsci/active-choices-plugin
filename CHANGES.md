@@ -1,8 +1,32 @@
 # Active Choices plug-in changelog
 
-## Version 2.8.11 (????/??/??)
+## Version 2.8.12 (????/??/??)
 
--
+- Bump eslint from 10.11.0 to 10.12.0 - #1048
+- Bump jsdom from 30.1.1 to 30.1.2
+- Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.51.0
+- Bump prettier from 3.9.9 to 3.9.10
+
+## Version 2.8.11 (2026/10/12)
+
+- Bump @humanfs/node from 0.16.6 to 0.16.8
+- Bump eslint from 10.9.1 to 10.11.0
+- Bump io.github.bonigarcia:webdrivermanager from 6.3.4 to 6.4.0
+- Bump jest from 30.4.2 to 30.5.2
+- Bump jest-environment-jsdom from 30.5.0 to 30.5.2
+- Bump jsdom from 30.0.1 to 30.1.1
+- Bump js-yaml from 3.15.1 to 3.15.2
+- Bump org.jenkins-ci.plugins:plugin from 6.2221.va_045130417c9 to 6.2236.v12dd4c483242
+- Bump org.seleniumhq.selenium:selenium-java from 4.47.0 to 4.50.0
+- Bump prettier from 3.9.6 to 3.9.9
+- Bump source-map-js from 1.2.1 to 1.2.2
+- Bump webpack from 5.109.2 to 5.111.1
+- Bump webpack-cli from 7.2.2 to 7.2.3
+- Prevent infinite loop when a Cascade Reference Parameter references itself #1017 (thanks @B-Sp67)
+- JENKINS-73556, GH-868: Disable the Build button while reactive parameters are updating,
+  and keep it disabled with a reload message if an update fails #868 (thanks @Tomer9000)
+- JENKINS-75793, GH-902: Wait for a parameter to be rendered before updating the parameters
+  that reference it #902 (thanks @Tomer9000)
 
 ## Version 2.8.10 (2026/08/25)
 

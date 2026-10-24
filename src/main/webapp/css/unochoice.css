@@ -59,3 +59,14 @@
   box-shadow: var(--form-input-glow--focus);
   outline: none;
 }
+
+/* JENKINS-73556: shown next to Build while parameters are updating */
+.ac-loading-status {
+  align-self: center;
+  margin-left: 0.75rem;
+  color: var(--text-color-secondary);
+}
+
+.ac-loading-status--error {
+  color: var(--error-color);
+}
