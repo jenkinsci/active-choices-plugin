@@ -2,12 +2,16 @@
 
 ## Version 2.8.12 (????/??/??)
 
-- Bump eslint from 10.11.0 to 10.13.0
+- Bump brace-expansion from 1.1.11 to 1.1.21
+- Bump eslint from 10.11.0 to 10.14.0
 - Bump fast-uri from 3.1.8 to 3.1.9
 - Bump jsdom from 30.1.1 to 30.1.3
-- Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.51.0
+- Bump org.jenkins-ci.plugins:plugin from 6.2236.v12dd4c483242 to 6.2250.va_d01d559a_209
+- Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.52.0
+- Bump picomatch from 2.3.1 to 2.3.2
 - Bump prettier from 3.9.9 to 3.9.10
-- Bump webpack from 5.111.1 to 5.112.0 - #1053
+- Bump webpack from 5.111.1 to 5.112.2
+- Bump webpack-cli from 7.2.3 to 7.3.1
 
 ## Version 2.8.11 (2026/10/12)
 
