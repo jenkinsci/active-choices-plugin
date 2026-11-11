@@ -2,10 +2,11 @@
 
 ## Version 2.8.12 (????/??/??)
 
+- Bump @babel/core from 7.29.7 to 7.29.13
 - Bump brace-expansion from 1.1.11 to 1.1.21
 - Bump eslint from 10.11.0 to 10.14.0
 - Bump fast-uri from 3.1.8 to 3.1.9
-- Bump jsdom from 30.1.1 to 30.1.3
+- Bump jsdom from 30.1.1 to 31.0.0
 - Bump org.jenkins-ci.plugins:plugin from 6.2236.v12dd4c483242 to 6.2250.va_d01d559a_209
 - Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.52.0
 - Bump picomatch from 2.3.1 to 2.3.2
