@@ -165,6 +165,30 @@ Only value options that contain the text are then listed.
 
 This filer is case independent.
 
+#### The 'Required' option
+
+The **'Required'** option enforces that the user must select at least one value before the build can be submitted.
+When enabled:
+
+- The browser shows an inline error message and disables the **Build** button while no option is selected.
+- A server-side check in `createValue` throws a `hudson.model.Failure` if an empty value reaches the server
+  (for example via Rebuild, the REST API, or the CLI), so the guard cannot be bypassed.
+
+This option is most useful for **Check Boxes**, **Multi Select**, and **Radio Buttons** choice types where the
+user can submit the form without ticking anything. For a **Single Select** parameter a value is always present
+in the submission when the choices list is non-empty, so the flag has no practical effect there.
+
+**Pipeline / Jenkinsfile usage:**
+
+```groovy
+[$class: 'CascadeChoiceParameter',
+    name: 'Database',
+    choiceType: 'PT_CHECKBOX',
+    required: true,
+    ...
+]
+```
+
 ### Active Choices Parameter Rendering (Example 01)
 
 The 'Example 01' Active Choices parameter configuration generates the following build form UI control. The user can
