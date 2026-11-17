@@ -14,10 +14,10 @@
 - Bump webpack from 5.111.1 to 5.112.2
 - Bump webpack-cli from 7.2.3 to 7.3.1
 - Run the updates of a parameter one at a time, so that a late response for an earlier value no longer
-  replaces the choices of the latest value while Build is enabled (thanks @Tomer9000)
+  replaces the choices of the latest value while Build is enabled #1068 (thanks @Tomer9000)
 - Send the values of the referenced parameters with the call that evaluates the script, instead of storing
   them in the parameter first: the parameter is shared by every user and page of the job, so two builds being
-  prepared at the same time could get each other's values (thanks @Tomer9000)
+  prepared at the same time could get each other's values #1068 (thanks @Tomer9000)
 
 ## Version 2.8.11 (2026/10/12)
 
