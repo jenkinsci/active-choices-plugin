@@ -40,6 +40,7 @@ import org.mockito.Mockito;
 
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterValue;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -75,6 +76,31 @@ class TestAbstractUnoChoiceParameter {
         Mockito.when(request.bindJSON(StringParameterValue.class, json)).thenReturn((StringParameterValue) value);
 
         value = param.createValue(request, json);
+
+        assertEquals("value", value.getValue().toString());
+    }
+
+    @Test
+    void createValueIgnoresBlankTrailingValueFromDynamicReferenceParameters() throws Descriptor.FormException {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        ChoiceParameter param = new ChoiceParameter("name", "description", "some-random-name", script, "choiceType",
+                true, 0);
+
+        JSONObject json = new JSONObject();
+        json.put("name", "name");
+        json.put("value", JSONArray.fromObject(new String[] {"value", ""}));
+
+        StaplerRequest2 request = Mockito.mock(StaplerRequest2.class);
+        Mockito.when(request.bindJSON(Mockito.eq(StringParameterValue.class), Mockito.any(JSONObject.class)))
+                .thenAnswer(invocation -> {
+                    JSONObject parameterJsonModel = invocation.getArgument(1);
+                    return new StringParameterValue(
+                            parameterJsonModel.getString("name"),
+                            parameterJsonModel.getString("value"));
+                });
+
+        ParameterValue value = param.createValue(request, json);
 
         assertEquals("value", value.getValue().toString());
     }
