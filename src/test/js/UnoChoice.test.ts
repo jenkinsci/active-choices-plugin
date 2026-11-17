@@ -41,6 +41,8 @@ let UnoChoice: any;
 let backends: { [id: string]: (refs: { [name: string]: string }) => string[] } = {};
 let refsById: { [id: string]: { [name: string]: string } } = {};
 let failing: { [url: string]: boolean } = {};
+// Extra milliseconds per "<id>/<method>/<Environment value>": a doUpdate that arrives late, or a script that runs long.
+let latency: { [key: string]: number } = {};
 let log: string[] = [];
 let observer: MutationObserver | null = null;
 
@@ -50,28 +52,36 @@ const later = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 function fakeFetch(url: string, init: any): Promise<any> {
     let [, id, method] = url.match(/\/bound\/([^/]+)\/(.+)$/) as RegExpMatchArray;
     let args = JSON.parse(init.body);
-    return later(15 + Math.random() * 25).then(() => {
+    let sent: { [name: string]: string } = {};
+    if (method === 'doUpdate') {
+        String(args[0]).split(SEPARATOR).filter(Boolean).forEach(pair => {
+            let [name, value] = pair.split('=');
+            sent[name] = value;
+        });
+    }
+    let extra = (refs: { [name: string]: string }) => latency[`${id}/${method}/${refs.Environment}`] || 0;
+    return later(15 + Math.random() * 25 + extra(sent)).then(() => {
         if (failing[url]) {
             return {ok: false, status: 500, statusText: 'Server Error', headers: new Map()};
         }
         let data: any = null;
+        let scriptTime = 0;
         if (method === 'doUpdate') {
-            refsById[id] = {};
-            String(args[0]).split(SEPARATOR).filter(Boolean).forEach(pair => {
-                let [name, value] = pair.split('=');
-                refsById[id][name] = value;
-            });
+            refsById[id] = sent;
         } else {
-            let values = backends[id](refsById[id] || {});
+            // Like the server, the script sees the values stored when the call arrives.
+            let refs = refsById[id] || {};
+            let values = backends[id](refs);
             data = [values, values];
+            scriptTime = extra(refs);
         }
-        return {
+        return later(scriptTime).then(() => ({
             ok: true,
             status: 200,
             statusText: 'OK',
             headers: new Map([['content-type', 'application/json;charset=UTF-8']]),
             json: () => later(10 + Math.random() * 20).then(() => data),
-        };
+        }));
     });
 }
 
@@ -121,6 +131,7 @@ beforeEach(async () => {
     UnoChoice.loadingGuard.disabledByGuard = [];
     if (observer) observer.disconnect();
     failing = {};
+    latency = {};
     log = [];
     document.body.innerHTML = `
         <form name="parameters" class="jenkins-form">
@@ -206,5 +217,57 @@ describe('Build button while cascading parameters update (JENKINS-73556)', () =>
         expect(build().disabled).toBe(true);
         expect(document.querySelector('.ac-loading-status')!.textContent)
                 .toBe('A parameter failed to load. Reload the page before building.');
+    });
+});
+
+// Selects a value of the referenced parameter, as a user would.
+function selectEnvironment(value: string): void {
+    let environment = document.querySelector('select') as HTMLSelectElement;
+    environment.value = value;
+    jQuery(environment).trigger('change');
+}
+
+describe('A referenced parameter that changes again while its dependents are updating', () => {
+    test('leaves the choices of the last value when the script is slower for the earlier value', async () => {
+        await settle();
+        latency['service/getChoicesForUI/b'] = 500;
+        selectEnvironment('b');
+        await later(150);
+        selectEnvironment('a');
+        await settle();
+        expect(options('service')).toEqual(['a-svc1', 'a-svc2']);
+        expect(options('version')).toEqual(['a-svc1-v1']);
+        expect(build().disabled).toBe(false);
+    });
+
+    test('leaves the choices of the last value when the earlier value reaches the server last', async () => {
+        await settle();
+        latency['service/doUpdate/b'] = 300;
+        selectEnvironment('b');
+        await later(50);
+        selectEnvironment('a');
+        await settle();
+        expect(options('service')).toEqual(['a-svc1', 'a-svc2']);
+        expect(options('version')).toEqual(['a-svc1-v1']);
+        expect(build().disabled).toBe(false);
+    });
+
+    test('evaluates a parameter once more, not once per change, for changes made while it is updating', async () => {
+        await settle();
+        let evaluations = 0;
+        let service = backends.service;
+        backends.service = refs => {
+            evaluations++;
+            return service(refs);
+        };
+        latency['service/getChoicesForUI/b'] = 200;
+        selectEnvironment('b');
+        await later(150);
+        selectEnvironment('a');
+        selectEnvironment('b');
+        selectEnvironment('a');
+        await settle();
+        expect(options('service')).toEqual(['a-svc1', 'a-svc2']);
+        expect(evaluations).toBe(2);
     });
 });

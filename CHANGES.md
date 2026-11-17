@@ -13,6 +13,8 @@
 - Bump prettier from 3.9.9 to 3.9.10
 - Bump webpack from 5.111.1 to 5.112.2
 - Bump webpack-cli from 7.2.3 to 7.3.1
+- Run the updates of a parameter one at a time, so that a late response for an earlier value no longer
+  replaces the choices of the latest value while Build is enabled (thanks @Tomer9000)
 
 ## Version 2.8.11 (2026/10/12)
 

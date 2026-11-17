@@ -848,12 +848,21 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     }
 
     // Updates the parameter once the browser is idle; Build stays disabled from now until the returned promise settles.
+    // One update per parameter at a time: in parallel, a late response for an old value overwrites the latest choices.
     function scheduleUpdate(parameter, avoidRecursion) {
+        let queued = parameter.queuedUpdate;
+        if (queued) {
+            // Not started yet, so it will read the latest values: one more update would only repeat it.
+            queued.avoidRecursion = queued.avoidRecursion && avoidRecursion;
+            return queued.promise;
+        }
         let done = loadingGuard.begin(parameter.getParameterElement());
-        return new Promise(resolve => {
+        queued = parameter.queuedUpdate = {avoidRecursion: avoidRecursion};
+        queued.promise = (parameter.lastUpdate || Promise.resolve()).then(() => new Promise(resolve => {
             window.requestIdleCallback(async () => {
+                parameter.queuedUpdate = null;
                 try {
-                    await parameter.update(avoidRecursion);
+                    await parameter.update(queued.avoidRecursion);
                 } catch (e) {
                     loadingGuard.fail();
                     console.error(`[${parameter.getParameterName()}] - scheduleUpdate - Update failed`, e);
@@ -862,7 +871,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     resolve();
                 }
             });
-        });
+        }));
+        parameter.lastUpdate = queued.promise;
+        return queued.promise;
     }
 
     // Calls made through this proxy keep Build disabled until their response has been rendered.
