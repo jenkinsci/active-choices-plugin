@@ -59,4 +59,7 @@
   <f:entry title="${%Cache default value}" field="cacheDefaultValue" help="/plugin/uno-choice/help-cacheDefaultValue.html">
     <f:checkbox name="parameter.cacheDefaultValue" checked="${instance.cacheDefaultValue}" default="false">${%Cache default value}</f:checkbox>
   </f:entry>
+  <f:entry title="${%Required}" field="required" help="/plugin/uno-choice/help-required.html">
+    <f:checkbox name="parameter.required" checked="${instance.required}" default="false">${%Required}</f:checkbox>
+  </f:entry>
 </j:jelly>
