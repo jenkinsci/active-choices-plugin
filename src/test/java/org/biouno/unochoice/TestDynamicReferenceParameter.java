@@ -35,17 +35,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
+import org.kohsuke.stapler.HttpResponses;
 
 @WithJenkins
 class TestDynamicReferenceParameter {
 
     private static final String SCRIPT = "return ['D', 'C', 'B', 'A']";
     private static final String FALLBACK_SCRIPT = "";
+    private static final String REFERENCING_SCRIPT = "return param001";
 
     @BeforeEach
     void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
+        ScriptApproval.get().preapprove(REFERENCING_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
@@ -78,6 +81,25 @@ class TestDynamicReferenceParameter {
         assertEquals("ET_FORMATTED_HIDDEN_HTML", param.getChoiceType());
         assertEquals("param001, param002", param.getReferencedParameters());
         assertFalse(param.getOmitValueField());
+    }
+
+    @Test
+    void testChoicesAsStringForUIWithUsesOnlyTheGivenValues() throws Descriptor.FormException {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(REFERENCING_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        DynamicReferenceParameter param = new DynamicReferenceParameter("param000", "description", "some-random-name",
+                script, CascadeChoiceParameter.ELEMENT_TYPE_FORMATTED_HTML, "param001", true);
+
+        // the values another page of the same job stored in the parameter, which all pages share
+        try {
+            param.doUpdate("param001=A");
+        } catch (HttpResponses.HttpResponseException response) {
+            // ignore
+        }
+
+        assertEquals("B", param.getChoicesAsStringForUIWith("param001=B"));
+        // nothing was stored, so the other page still gets its own values
+        assertEquals("A", param.getChoicesAsStringForUI());
     }
 
 }

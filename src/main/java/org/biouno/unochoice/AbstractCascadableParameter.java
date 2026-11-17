@@ -116,17 +116,29 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
     @JavaScriptMethod
     public void doUpdate(String parameters) {
         getParameters().clear();
+        getParameters().putAll(parseParameters(parameters));
+        throw new JsonHttpResponse(null);
+    }
+
+    /**
+     * Parses the referenced parameters sent by the UI, as {@code name=value} pairs joined by the separator.
+     *
+     * @param parameters the referenced parameters and their values
+     * @return a new map with the name and the value of each referenced parameter
+     */
+    protected static Map<Object, Object> parseParameters(String parameters) {
+        final Map<Object, Object> parsed = new LinkedHashMap<>();
         final String[] params = parameters.split(SEPARATOR);
         for (String param : params) {
             final String[] nameValue = param.split(EQUALS);
             if (nameValue.length == 1) {
                 final String name = nameValue[0].trim();
                 if (!name.isEmpty())
-                    getParameters().put(name, "");
+                    parsed.put(name, "");
             } else if (nameValue.length == 2) {
                 final String name = nameValue[0];
                 final String value = nameValue[1];
-                getParameters().put(name, value);
+                parsed.put(name, value);
             } else if (nameValue.length > 2) {
                 // TBD: we can eliminate this branch by splitting only on the first EQUALS
                 final String name = nameValue[0];
@@ -139,10 +151,10 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
                     }
                 }
                 final String value = sb.toString();
-                getParameters().put(name, value);
+                parsed.put(name, value);
             }
         }
-        throw new JsonHttpResponse(null);
+        return parsed;
     }
 
     /*
@@ -153,6 +165,20 @@ public abstract class AbstractCascadableParameter extends AbstractScriptablePara
     @JavaScriptMethod
     public List<Object> getChoicesForUI() {
         Map<Object, Object> mapResult = getChoices(getParameters());
+        return Arrays.asList(mapResult.values(), mapResult.keySet());
+    }
+
+    /**
+     * Evaluates the script with the given values of the referenced parameters. Unlike {@link #doUpdate(String)}
+     * followed by {@link #getChoicesForUI()}, it stores nothing in this object, which is shared by every user
+     * and every page of the job, so updates made at the same time cannot get each other's values.
+     *
+     * @param parameters the referenced parameters and their values, as in {@link #doUpdate(String)}
+     * @return the values and the keys of the choices
+     */
+    @JavaScriptMethod
+    public List<Object> getChoicesForUIWith(String parameters) {
+        Map<Object, Object> mapResult = getChoices(parseParameters(parameters));
         return Arrays.asList(mapResult.values(), mapResult.keySet());
     }
 

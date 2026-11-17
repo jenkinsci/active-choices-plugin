@@ -130,6 +130,18 @@ public class DynamicReferenceParameter extends AbstractCascadableParameter {
         return getChoicesAsString(getParameters());
     }
 
+    /**
+     * Evaluates the script with the given values of the referenced parameters, storing nothing in this object.
+     *
+     * @param parameters the referenced parameters and their values, as in {@link #doUpdate(String)}
+     * @return the result of the script as a string
+     * @see #getChoicesForUIWith(String)
+     */
+    @JavaScriptMethod
+    public String getChoicesAsStringForUIWith(String parameters) {
+        return getChoicesAsString(parseParameters(parameters));
+    }
+
     // --- descriptor
 
     @Extension

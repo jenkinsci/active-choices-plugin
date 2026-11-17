@@ -175,11 +175,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     /**
      * Updates the CascadeParameter object.
      *
-     * <p>Once this method gets called, it will call the Java code (using Stapler proxy),
-     * that is responsible for updating the referenced parameter values. The Java method receives the value of
-     * other referenced parameters.</p>
-     *
-     * <p>Then, we call the Java code again, now to decide the next values to be displayed. From here, the
+     * <p>Once this method gets called, it will call the Java code (using Stapler proxy) with the values of the
+     * referenced parameters, to decide the next values to be displayed. The values travel with that call, as the
+     * Java object is shared by every page of the job and must not keep them between two calls. From here, the
      * flow gets split into several branches, one for each HTML element type supported (SELECT, INPUT, UL, etc).
      * Each HTML element gets rendered accordingly and events are triggered.</p>
      *
@@ -191,9 +189,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     CascadeParameter.prototype.update = async function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
         console.log(`[${this.paramName}] - CascadeParameter#update - Values retrieved from Referenced Parameters: ${parametersString}`);
-        // Update the CascadeChoiceParameter Map of parameters
-        await this.proxy.doUpdate(parametersString);
-
         let spinner, rootDiv;
         if (this.getRandomName()) {
             let spinnerId = this.getRandomName().split('_').pop();
@@ -209,11 +204,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
             }
         }
 
-        // Now we get the updated choices, after the Groovy script is evaluated using the updated Map of parameters
+        // Now we get the updated choices, after the Groovy script is evaluated using the values sent with the call
         // The inner function is called with the response provided by Stapler. Then we update the HTML elements.
         let _self = this; // re-reference this to use within the inner function
         console.log(`[${this.paramName}] - CascadeParameter#update - Calling Java server code to update HTML elements...`);
-        await this.proxy.getChoicesForUI(t => {
+        await this.proxy.getChoicesForUIWith(parametersString, t => {
             let data = t.responseObject();
             console.log(`[${this.paramName}] - CascadeParameter#update - Values returned from server: ${data}`);
             let newValues = data[0];
@@ -475,11 +470,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     /**
      * <p>Updates the DynamicReferenceParameter object. Debug information goes into the browser console.</p>
      *
-     * <p>Once this method gets called, it will call the Java code (using Stapler proxy),
-     * that is responsible for updating the referenced parameter values. The Java method receives the value of
-     * other referenced parameters.</p>
-     *
-     * <p>Then, we call the Java code again, now to decide the next values to be displayed. From here, the
+     * <p>Once this method gets called, it will call the Java code (using Stapler proxy) with the values of the
+     * referenced parameters, to decide the next values to be displayed. The values travel with that call, as the
+     * Java object is shared by every page of the job and must not keep them between two calls. From here, the
      * flow gets split into several branches, one for each HTML element type supported (SELECT, INPUT, UL, etc).
      * Each HTML element gets rendered accordingly and events are triggered.</p>
      *
@@ -491,8 +484,6 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     DynamicReferenceParameter.prototype.update = async function(avoidRecursion) {
         let parametersString = this.getReferencedParametersAsText(); // gets the array parameters, joined by , (e.g. a,b,c,d)
         console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values retrieved from Referenced Parameters: ${parametersString}`);
-        // Update the Map of parameters
-        await this.proxy.doUpdate(parametersString);
         let parameterElement = this.getParameterElement();
 
         let spinner, rootDiv;
@@ -513,7 +504,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         // or maybe call a string to put as value in a INPUT.
         if (parameterElement.tagName === 'OL') { // handle OL's
             console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Calling Java server code to update HTML elements...`);
-            await this.proxy.getChoicesForUI(t => {
+            await this.proxy.getChoicesForUIWith(parametersString, t => {
                 jQuery3(parameterElement).empty(); // remove all children elements
                 const data = t.responseObject();
                 console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values returned from server: ${data}`);
@@ -528,7 +519,7 @@ var UnoChoice = UnoChoice || (jQuery3 => {
         } else if (parameterElement.tagName === 'UL') { // handle OL's
             jQuery3(parameterElement).empty(); // remove all children elements
             console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Calling Java server code to update HTML elements...`);
-            await this.proxy.getChoicesForUI(t => {
+            await this.proxy.getChoicesForUIWith(parametersString, t => {
                 const data = t.responseObject();
                 console.log(`[${this.paramName}] - DynamicReferenceParameter#update - Values returned from server: ${data}`);
                 let newValues = data[0];
@@ -540,11 +531,11 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                 }
             });
         } else if (parameterElement.id.indexOf('inputElement_') > -1) { // handle input text boxes
-            await this.proxy.getChoicesAsStringForUI(t => {
+            await this.proxy.getChoicesAsStringForUIWith(parametersString, t => {
                 parameterElement.value = JSON.stringify(t.responseObject());
             });
         } else if (parameterElement.id.indexOf('formattedHtml_') > -1) { // handle formatted HTML
-            await this.proxy.getChoicesAsStringForUI(t => {
+            await this.proxy.getChoicesAsStringForUIWith(parametersString, t => {
                 parameterElement.innerHTML = t.responseObject();
             });
         }
@@ -848,12 +839,21 @@ var UnoChoice = UnoChoice || (jQuery3 => {
     }
 
     // Updates the parameter once the browser is idle; Build stays disabled from now until the returned promise settles.
+    // One update per parameter at a time: in parallel, a late response for an old value overwrites the latest choices.
     function scheduleUpdate(parameter, avoidRecursion) {
+        let queued = parameter.queuedUpdate;
+        if (queued) {
+            // Not started yet, so it will read the latest values: one more update would only repeat it.
+            queued.avoidRecursion = queued.avoidRecursion && avoidRecursion;
+            return queued.promise;
+        }
         let done = loadingGuard.begin(parameter.getParameterElement());
-        return new Promise(resolve => {
+        queued = parameter.queuedUpdate = {avoidRecursion: avoidRecursion};
+        queued.promise = (parameter.lastUpdate || Promise.resolve()).then(() => new Promise(resolve => {
             window.requestIdleCallback(async () => {
+                parameter.queuedUpdate = null;
                 try {
-                    await parameter.update(avoidRecursion);
+                    await parameter.update(queued.avoidRecursion);
                 } catch (e) {
                     loadingGuard.fail();
                     console.error(`[${parameter.getParameterName()}] - scheduleUpdate - Update failed`, e);
@@ -862,7 +862,9 @@ var UnoChoice = UnoChoice || (jQuery3 => {
                     resolve();
                 }
             });
-        });
+        }));
+        parameter.lastUpdate = queued.promise;
+        return queued.promise;
     }
 
     // Calls made through this proxy keep Build disabled until their response has been rendered.
