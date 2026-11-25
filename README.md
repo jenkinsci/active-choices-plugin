@@ -385,6 +385,60 @@ Your Groovy script binding has access to two additional variables for use:
 - `jenkinsProject` -> The Jenkins Project object
 - `jenkinsBuild` -> The Jenkins Build object
 
+### Builds started without the UI
+
+By default, when a build starts without the build page (a timer, a webhook, the REST API, CLI `build -p` or Pipeline
+`build job:`), an Active Choices Reactive or Reactive Reference parameter that is not given a value runs its script
+without the values of its 'Referenced parameters', so it usually gets the value of the fallback script.
+
+To get a value computed from the referenced parameters instead, turn on 'Compute default from referenced parameters'
+in the parameter's configuration (under the advanced options for a Reactive Reference parameter). In a Pipeline, set
+`computeDefaultFromReferences: true`:
+
+```groovy
+properties([
+  parameters([
+    [
+      $class: 'CascadeChoiceParameter',
+      choiceType: 'PT_SINGLE_SELECT',
+      name: 'Host',
+      referencedParameters: 'Environment',
+      computeDefaultFromReferences: true,
+      script: [
+        $class: 'ScriptlerScript',
+        scriptlerScriptId:'HostsInEnv.groovy'
+      ]
+    ]
+  ])
+])
+```
+
+With the option on:
+
+- A POST to the job's `buildWithParameters` by a user with Build permission on the job passes its values of the
+referenced parameters to the script, and their defaults for the rest. A posted value of a referenced parameter that
+does not take plain text (for example a file parameter) is replaced by its default.
+- Any other `buildWithParameters` request that has values for the referenced parameters gets the value the parameter
+gets with the option off. This covers a GET, a POST allowed only by the job's trigger token, and the URL of the Build
+Authorization Token Root plugin.
+- Builds started without such a request, such as timer builds, CLI `build -p` and Pipeline `build job:`, run the
+script with the default values of the referenced parameters, even when values were given for them, as the plugin
+cannot see those values.
+- Only values that are plain text and not sensitive reach the script: text, choice and boolean parameters, and other
+Active Choices parameters. Password, file and run parameters are passed as empty.
+- A referenced Reactive Reference parameter whose script returns HTML is passed as empty.
+- A referenced Reactive parameter passes the same value it gets as its own default. So with 'Cache default value'
+on, it passes its cached value unless a parameter it depends on has a posted value.
+- If the job of the parameter cannot be found, the parameter gets the value it gets with the option off.
+- The scripts of the parameters it depends on run too. Within one HTTP request, such as a REST API call or a
+`buildWithParameters` POST, each value is computed once, so a chain of n parameters runs about n scripts. Other
+builds, such as timer builds, run about n(n+1)/2 scripts.
+
+Whether the option is on or off, scripts of Pipeline and other jobs that are not Freestyle projects now get the
+`jenkinsProject` and `jenkinsBuild` variables also outside the build page, for example in timer builds and REST API
+calls. A script that used to fail there without them, and so gave the value of the fallback script, may now run its
+main path.
+
 ### Passing Reactive Reference Values to the build
 
 As was mentioned earlier, in general the values of reactive reference parameters are not passed to the build. However,
