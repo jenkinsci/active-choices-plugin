@@ -49,6 +49,7 @@ import org.biouno.unochoice.AbstractUnoChoiceParameter;
 
 import hudson.model.Item;
 import hudson.model.Items;
+import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Project;
@@ -210,7 +211,10 @@ public class Utils {
      * @since 1.3
      * @param parameterUUID parameter UUID
      * @return {@code null} if the current project cannot be found
+     * @deprecated Jobs can share a UUID, e.g. the branches of a multibranch project; use
+     * {@link #findJobByParameter(ParameterDefinition)} instead.
      */
+    @Deprecated
     @SuppressWarnings("rawtypes")
     public static @CheckForNull Project findProjectByParameterUUID(@NonNull String parameterUUID) {
         Authentication auth = Jenkins.getAuthentication2();
@@ -220,6 +224,51 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds the job that holds this parameter definition instance, whatever the current user may read. Callers
+     * check {@link Item#READ} before using it.
+     *
+     * @since 2.8.12
+     * @param parameter the parameter definition
+     * @return the job, or {@code null} if no job holds it
+     */
+    public static @CheckForNull Job<?, ?> findJobByParameter(@NonNull ParameterDefinition parameter) {
+        for (Job<?, ?> job : Items.allItems2(ACL.SYSTEM2, Jenkins.get(), Job.class)) {
+            if (isParameterOf(parameter, job)) {
+                return job;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if the job holds this parameter definition instance. Compares instances, not names or UUIDs,
+     * as jobs can share those.
+     *
+     * @since 2.8.12
+     * @param parameter the parameter definition
+     * @param job the job
+     * @return {@code true} if the job holds this instance
+     */
+    public static boolean isParameterOf(@NonNull ParameterDefinition parameter, @NonNull Job<?, ?> job) {
+        final List<ParameterDefinition> parameterDefinitions = new ArrayList<>();
+        final ParametersDefinitionProperty property = job.getProperty(ParametersDefinitionProperty.class);
+        if (property != null) {
+            parameterDefinitions.addAll(property.getParameterDefinitions());
+        }
+        if (job instanceof Project) {
+            for (List<ParameterDefinition> params : getBuildWrapperParameterDefinitions((Project<?, ?>) job).values()) {
+                parameterDefinitions.addAll(params);
+            }
+        }
+        for (ParameterDefinition pd : parameterDefinitions) {
+            if (pd == parameter) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

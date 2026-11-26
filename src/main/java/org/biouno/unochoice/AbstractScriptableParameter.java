@@ -43,9 +43,9 @@ import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest2;
 
 import hudson.model.AbstractItem;
+import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.ParameterValue;
-import hudson.model.Project;
 import hudson.model.Run;
 import hudson.model.StringParameterValue;
 import jenkins.model.Jenkins;
@@ -107,6 +107,10 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
      * Cached project full name resolved after construction, used to avoid repeated project scans.
      */
     private volatile String projectFullNameCache;
+    /**
+     * Set when no job holds this instance, so the job found by name is used without scanning all jobs again.
+     */
+    private transient volatile boolean notHeldByAnyJob;
     /**
      * Whether the default parameter value may be cached (JENKINS-76298). Disabled by default,
      * as the cached value is persisted with the job configuration and would shadow values
@@ -235,62 +239,7 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         // map with parameters
         final Map<Object, Object> helperParameters = new LinkedHashMap<>();
 
-        // First, if the project name is set, we then find the project by its name, and inject into the map
-        Job<?, ?> project = null;
-        final String resolvedProjectFullName = StringUtils.defaultIfBlank(this.projectFullNameCache, this.projectFullName);
-        final String resolvedProjectName = StringUtils.defaultIfBlank(this.projectNameCache, this.projectName);
-        if (StringUtils.isNotBlank(resolvedProjectFullName)) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(String.format("Attempting project resolution by full name '%s' for parameter '%s'", resolvedProjectFullName, getName()));
-            }
-            // First try full name if exists
-            project = Jenkins.get().getItemByFullName(resolvedProjectFullName, Project.class);
-            if (project != null) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(String.format("Resolved project by full name '%s' for parameter '%s'", resolvedProjectFullName, getName()));
-                }
-                rememberProject(project);
-            }
-        } else if (StringUtils.isNotBlank(resolvedProjectName)) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(String.format("Attempting project resolution by name '%s' for parameter '%s'", resolvedProjectName, getName()));
-            }
-            // next we try to get the item given its name, which is more efficient
-            project = Utils.getProjectByName(resolvedProjectName);
-            if (project != null) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(String.format("Resolved project by name '%s' for parameter '%s'", resolvedProjectName, getName()));
-                }
-                rememberProject(project);
-            }
-        } else {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(String.format("No cached project name available for parameter '%s'; attempting request-based project detection", getName()));
-            }
-            // check whether the current thread has enough info to detect project
-            // i.e. it serves a web request to the project build page
-            final AbstractItem parentItem = detectProject();
-            if (parentItem != null) {
-                project = Jenkins.get().getItemByFullName(parentItem.getFullName(), Job.class);
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(String.format("Resolved project from current request '%s' for parameter '%s'", parentItem.getFullName(), getName()));
-                }
-                rememberProject(parentItem);
-            } else if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(String.format("Request-based project detection did not find a project for parameter '%s'", getName()));
-            }
-        }
-        // Last chance, if we were unable to get project from name and full name, try uuid
-        if (project == null) {
-            // otherwise, in case we don't have the item name, we iterate looking for a job that uses this UUID
-            project = Utils.findProjectByParameterUUID(this.getRandomName());
-            if (project != null) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(String.format("Resolved project by parameter UUID '%s' for parameter '%s'", this.getRandomName(), getName()));
-                }
-                rememberProject(project);
-            }
-        }
+        final Job<?, ?> project = findProject();
         if (project != null) {
             helperParameters.put(JENKINS_PROJECT_VARIABLE_NAME, project);
             Run<?, ?> build = project.getLastBuild();
@@ -306,6 +255,67 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         final Map<String, Object> globalNodeProperties = Utils.getGlobalNodeProperties();
         helperParameters.putAll(globalNodeProperties);
         return helperParameters;
+    }
+
+    /**
+     * Finds the job that owns this parameter.
+     * @return the job, or {@code null} if it cannot be found
+     * @since 2.8.12
+     */
+    protected Job<?, ?> findProject() {
+        // First, if the project name is set, we then find the project by its name
+        Job<?, ?> found = null;
+        final String resolvedProjectFullName = StringUtils.defaultIfBlank(this.projectFullNameCache, this.projectFullName);
+        final String resolvedProjectName = StringUtils.defaultIfBlank(this.projectNameCache, this.projectName);
+        if (StringUtils.isNotBlank(resolvedProjectFullName)) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Attempting project resolution by full name '%s' for parameter '%s'", resolvedProjectFullName, getName()));
+            }
+            found = Jenkins.get().getItemByFullName(resolvedProjectFullName, Job.class);
+        } else if (StringUtils.isNotBlank(resolvedProjectName)) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Attempting project resolution by name '%s' for parameter '%s'", resolvedProjectName, getName()));
+            }
+            // next we try to get the item given its name, which is more efficient
+            found = Utils.getProjectByName(resolvedProjectName);
+        } else {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("No cached project name available for parameter '%s'; attempting request-based project detection", getName()));
+            }
+            // check whether the current thread has enough info to detect project
+            // i.e. it serves a web request to the project build page
+            final AbstractItem parentItem = detectProject();
+            if (parentItem != null) {
+                found = Jenkins.get().getItemByFullName(parentItem.getFullName(), Job.class);
+            }
+        }
+        // The job found by name or request may not hold this instance: a copied job keeps the name of the original,
+        // and the request can be for another job. Jobs can share the UUID too, so look for the job holding it.
+        if (found != null && (notHeldByAnyJob || Utils.isParameterOf(this, found))) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Resolved project '%s' for parameter '%s'", found.getFullName(), getName()));
+            }
+            rememberProject(found);
+            return found;
+        }
+        final Job<?, ?> holder = Utils.findJobByParameter(this);
+        if (holder != null) {
+            notHeldByAnyJob = false;
+            if (!holder.hasPermission(Item.READ)) {
+                return null;
+            }
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Resolved project '%s' holding parameter '%s'", holder.getFullName(), getName()));
+            }
+            rememberProject(holder);
+            return holder;
+        }
+        // No job holds this instance, e.g. on a build page opened before the job's parameters were saved again
+        if (found != null) {
+            notHeldByAnyJob = true;
+            rememberProject(found);
+        }
+        return found;
     }
 
     public Map<Object, Object> getChoices() {
@@ -380,10 +390,40 @@ public abstract class AbstractScriptableParameter extends AbstractUnoChoiceParam
         if (getCacheDefaultValue() && cachedDefaultValue != null) {
             return new StringParameterValue(name, cachedDefaultValue);
         }
-        String defaultValue = findDefaultValue(getChoices(Collections.emptyMap()));
-        final String value = Objects.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
+        final String value = computeDefaultValue(getDefaultValueParameters());
         cachedDefaultValue = getCacheDefaultValue() ? value : null;
         return new StringParameterValue(name, value);
+    }
+
+    /**
+     * Parameters passed to the script when computing the default value.
+     *
+     * @return the parameters used for the default value
+     * @since 2.8.12
+     */
+    protected Map<Object, Object> getDefaultValueParameters() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Computes the default value from the choices the script returns for the given parameters.
+     *
+     * @param parameters parameters passed to the script
+     * @return the default value, never {@code null}
+     * @since 2.8.12
+     */
+    protected String computeDefaultValue(Map<Object, Object> parameters) {
+        String defaultValue = findDefaultValue(getChoices(parameters));
+        return Objects.toString(defaultValue, ""); // Jenkins doesn't like null parameter values
+    }
+
+    /**
+     * Gets the cached default value.
+     *
+     * @return the cached default value, or {@code null} if caching is off or nothing is cached yet
+     */
+    String getCachedDefaultValue() {
+        return getCacheDefaultValue() ? cachedDefaultValue : null;
     }
 
     private static String findDefaultValue(Map<Object, Object> choices) {

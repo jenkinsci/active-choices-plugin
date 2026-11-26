@@ -1,0 +1,25 @@
+<div>
+    <p>
+        When enabled, a build started without the build page gets this parameter's value from the main script, run
+        with values of the referenced parameters:
+    </p>
+    <ul>
+        <li>
+            A POST to the job's <code>buildWithParameters</code> by a user with Build permission on the job: the
+            posted values of the referenced parameters, and their defaults for the rest.
+        </li>
+        <li>
+            Any other <code>buildWithParameters</code> request that has values for the referenced parameters (a GET,
+            a POST allowed only by the job's trigger token, or one of another plugin): no referenced values, the same
+            value as with this option disabled.
+        </li>
+        <li>
+            Builds started without such a request (a timer, the CLI, another job): the default values of the
+            referenced parameters, even when values were given for them, as they cannot be seen here.
+        </li>
+    </ul>
+    <p>
+        Leave it disabled (default) to keep the old behaviour: the script gets no referenced values, so these
+        builds usually get the value of the fallback script.
+    </p>
+</div>

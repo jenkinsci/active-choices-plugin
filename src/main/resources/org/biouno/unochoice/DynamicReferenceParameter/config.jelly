@@ -68,5 +68,8 @@
     <f:entry title="${%Cache default value}" field="cacheDefaultValue" help="/plugin/uno-choice/help-cacheDefaultValue.html">
         <f:checkbox name="parameter.cacheDefaultValue" checked="${instance.cacheDefaultValue}" default="false">${%Cache default value}</f:checkbox>
     </f:entry>
+    <f:entry title="${%Compute default from referenced parameters}" field="computeDefaultFromReferences" help="/plugin/uno-choice/help-computeDefaultFromReferences.html">
+        <f:checkbox name="parameter.computeDefaultFromReferences" checked="${instance.computeDefaultFromReferences}" default="false">${%Compute default from referenced parameters}</f:checkbox>
+    </f:entry>
   </f:advanced>
 </j:jelly>
