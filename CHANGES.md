@@ -5,14 +5,15 @@
 - Bump @babel/core from 7.29.7 to 7.29.13
 - Bump @babel/preset-env from 7.29.7 to 7.29.14
 - Bump brace-expansion from 1.1.11 to 1.1.21
-- Bump eslint from 10.11.0 to 10.14.0
+- Bump eslint from 10.11.0 to 10.15.0
 - Bump fast-uri from 3.1.8 to 3.1.9
+- Bump jquery from 4.0.0 to 4.1.0
 - Bump jsdom from 30.1.1 to 31.0.1
 - Bump org.jenkins-ci.plugins:plugin from 6.2236.v12dd4c483242 to 6.2250.va_d01d559a_209
-- Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.52.0
+- Bump org.seleniumhq.selenium:selenium-java from 4.50.0 to 4.53.0
 - Bump picomatch from 2.3.1 to 2.3.2
 - Bump prettier from 3.9.9 to 3.10.1
-- Bump webpack from 5.111.1 to 5.112.2
+- Bump webpack from 5.111.1 to 5.113.0
 - Bump webpack-cli from 7.2.3 to 7.3.1
 
 ## Version 2.8.11 (2026/10/12)
