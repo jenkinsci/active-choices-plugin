@@ -37,10 +37,13 @@ const jQuery = require('jquery');
 
 const SEPARATOR = '__LESEP__';
 let UnoChoice: any;
-// Per bound object: computes [values, keys] from the referenced values sent by doUpdate.
+// Per bound object: computes [values, keys] from the referenced values sent with the call.
 let backends: { [id: string]: (refs: { [name: string]: string }) => string[] } = {};
-let refsById: { [id: string]: { [name: string]: string } } = {};
 let failing: { [url: string]: boolean } = {};
+// Extra milliseconds the script of "<id>" runs for "<Environment value>".
+let scriptTime: { [key: string]: number } = {};
+// Every call the server received, in order.
+let calls: { id: string, method: string, parameters: string }[] = [];
 let log: string[] = [];
 let observer: MutationObserver | null = null;
 
@@ -49,29 +52,26 @@ const later = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // Mimics Stapler: slow responses, and response bodies that arrive later still (the callback runs after the body).
 function fakeFetch(url: string, init: any): Promise<any> {
     let [, id, method] = url.match(/\/bound\/([^/]+)\/(.+)$/) as RegExpMatchArray;
-    let args = JSON.parse(init.body);
+    let parameters = String(JSON.parse(init.body)[0]);
+    calls.push({id, method, parameters});
     return later(15 + Math.random() * 25).then(() => {
-        if (failing[url]) {
+        // Only the call that carries its values is served: what doUpdate stores is shared by every page of the job.
+        if (failing[url] || method !== 'getChoicesForUIWith') {
             return {ok: false, status: 500, statusText: 'Server Error', headers: new Map()};
         }
-        let data: any = null;
-        if (method === 'doUpdate') {
-            refsById[id] = {};
-            String(args[0]).split(SEPARATOR).filter(Boolean).forEach(pair => {
-                let [name, value] = pair.split('=');
-                refsById[id][name] = value;
-            });
-        } else {
-            let values = backends[id](refsById[id] || {});
-            data = [values, values];
-        }
-        return {
+        let refs: { [name: string]: string } = {};
+        parameters.split(SEPARATOR).filter(Boolean).forEach(pair => {
+            let [name, value] = pair.split('=');
+            refs[name] = value;
+        });
+        let values = backends[id](refs);
+        return later(scriptTime[`${id}/${refs.Environment}`] || 0).then(() => ({
             ok: true,
             status: 200,
             statusText: 'OK',
             headers: new Map([['content-type', 'application/json;charset=UTF-8']]),
-            json: () => later(10 + Math.random() * 20).then(() => data),
-        };
+            json: () => later(10 + Math.random() * 20).then(() => [values, values]),
+        }));
     });
 }
 
@@ -121,6 +121,8 @@ beforeEach(async () => {
     UnoChoice.loadingGuard.disabledByGuard = [];
     if (observer) observer.disconnect();
     failing = {};
+    scriptTime = {};
+    calls = [];
     log = [];
     document.body.innerHTML = `
         <form name="parameters" class="jenkins-form">
@@ -146,7 +148,8 @@ beforeEach(async () => {
     }));
     observer.observe(document.body, {subtree: true, childList: true, attributes: true, attributeFilter: ['disabled']});
     for (let [id, name, refs] of [['service', 'Service', ['Environment']], ['version', 'Version', ['Service']]] as [string, string, string[]][]) {
-        let proxy = UnoChoice.makeStaplerProxy2(`/bound/${id}`, 'crumb', ['doUpdate', 'getChoicesForUI']);
+        // The methods Stapler binds for a cascade parameter.
+        let proxy = UnoChoice.makeStaplerProxy2(`/bound/${id}`, 'crumb', ['doUpdate', 'getChoicesForUI', 'getChoicesForUIWith']);
         UnoChoice.renderCascadeChoiceParameter(`#${id}`, false, name, id, 0, id, refs, proxy);
     }
 });
@@ -197,7 +200,7 @@ describe('Build button while cascading parameters update (JENKINS-73556)', () =>
 
     test('stays disabled with a reload message when an update fails', async () => {
         await settle();
-        failing['/bound/version/getChoicesForUI'] = true;
+        failing['/bound/version/getChoicesForUIWith'] = true;
         let environment = document.querySelector('select') as HTMLSelectElement;
         environment.value = 'b';
         jQuery(environment).trigger('change');
@@ -206,5 +209,52 @@ describe('Build button while cascading parameters update (JENKINS-73556)', () =>
         expect(build().disabled).toBe(true);
         expect(document.querySelector('.ac-loading-status')!.textContent)
                 .toBe('A parameter failed to load. Reload the page before building.');
+    });
+});
+
+// Selects a value of the referenced parameter, as a user would.
+function selectEnvironment(value: string): void {
+    let environment = document.querySelector('select') as HTMLSelectElement;
+    environment.value = value;
+    jQuery(environment).trigger('change');
+}
+
+describe('A referenced parameter that changes again while its dependents are updating', () => {
+    test('leaves the choices of the last value when the script is slower for the earlier value', async () => {
+        await settle();
+        scriptTime['service/b'] = 500;
+        selectEnvironment('b');
+        await later(150);
+        selectEnvironment('a');
+        await settle();
+        expect(options('service')).toEqual(['a-svc1', 'a-svc2']);
+        expect(options('version')).toEqual(['a-svc1-v1']);
+        expect(build().disabled).toBe(false);
+    });
+
+    test('evaluates a parameter once more, not once per change, for changes made while it is updating', async () => {
+        await settle();
+        calls = [];
+        scriptTime['service/b'] = 200;
+        selectEnvironment('b');
+        await later(150);
+        selectEnvironment('a');
+        selectEnvironment('b');
+        selectEnvironment('a');
+        await settle();
+        expect(options('service')).toEqual(['a-svc1', 'a-svc2']);
+        expect(calls.filter(call => call.id === 'service').map(call => call.parameters))
+                .toEqual(['Environment=b', 'Environment=a']);
+    });
+});
+
+describe('The values of the referenced parameters', () => {
+    test('travel with the call that evaluates them, and are never stored on the server', async () => {
+        await settle();
+        selectEnvironment('b');
+        await settle();
+        expect(calls.map(call => call.method).filter(method => method !== 'getChoicesForUIWith')).toEqual([]);
+        expect(calls.filter(call => call.id === 'service').pop()!.parameters).toBe('Environment=b');
+        expect(calls.filter(call => call.id === 'version').pop()!.parameters).toBe('Service=b-svc1');
     });
 });

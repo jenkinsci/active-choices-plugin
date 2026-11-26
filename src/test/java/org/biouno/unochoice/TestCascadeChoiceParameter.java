@@ -27,6 +27,7 @@ package org.biouno.unochoice;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,11 +47,13 @@ class TestCascadeChoiceParameter {
 
     private static final String SCRIPT = "return ['a', 'b']";
     private static final String FALLBACK_SCRIPT = "return ['EMPTY!']";
+    private static final String REFERENCING_SCRIPT = "return [param001]";
 
     @BeforeEach
     void setUp(JenkinsRule j) {
         ScriptApproval.get().preapprove(SCRIPT, GroovyLanguage.get());
         ScriptApproval.get().preapprove(FALLBACK_SCRIPT, GroovyLanguage.get());
+        ScriptApproval.get().preapprove(REFERENCING_SCRIPT, GroovyLanguage.get());
     }
 
     @Test
@@ -116,6 +119,27 @@ class TestCascadeChoiceParameter {
         assertEquals("param001, param002", param.getReferencedParameters());
         assertFalse(param.getFilterable());
         assertEquals(Integer.valueOf(5), param.getFilterLength());
+    }
+
+    @Test
+    void testChoicesForUIWithUsesOnlyTheGivenValues() throws Descriptor.FormException {
+        GroovyScript script = new GroovyScript(new SecureGroovyScript(REFERENCING_SCRIPT, Boolean.FALSE, null),
+                new SecureGroovyScript(FALLBACK_SCRIPT, Boolean.FALSE, null));
+        CascadeChoiceParameter param = new CascadeChoiceParameter("param000", "description", "some-random-name", script,
+                CascadeChoiceParameter.PARAMETER_TYPE_SINGLE_SELECT, "param001", true, 0);
+
+        // the values another page of the same job stored in the parameter, which all pages share
+        try {
+            param.doUpdate("param001=A");
+        } catch (HttpResponses.HttpResponseException response) {
+            // ignore
+        }
+
+        assertEquals("[[B], [B]]", param.getChoicesForUIWith("param001=B").toString());
+        assertEquals("[[C=1], [C=1]]", param.getChoicesForUIWith("param001=C=1").toString());
+        // nothing was stored, so the other page still gets its own values
+        assertEquals(Collections.singletonMap("param001", "A"), param.getParameters());
+        assertEquals("[[A], [A]]", param.getChoicesForUI().toString());
     }
 
 }
